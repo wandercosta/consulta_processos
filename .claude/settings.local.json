@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(pip install -r requirements.txt)",
+      "Bash(python -c \"import requests; print\\(''OK''\\)\")",
+      "Bash(python -c \"import sys; print\\(sys.executable\\)\")",
+      "Bash(\"C:/Python314/python.exe\" -c \"import requests; print\\(''OK''\\)\")",
+      "Bash(\"C:/Python314/python.exe\" -m pip list)",
+      "Bash(cmd /c \"python\\\\run_headless_loop.bat\")"
+    ]
+  }
+}

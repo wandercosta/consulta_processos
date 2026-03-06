@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "automacao-simples",
+      "runtimeExecutable": "C:/Python314/python.exe",
+      "runtimeArgs": ["python/servidor.py", "--port", "8888"],
+      "port": 8888
+    },
+    {
+      "name": "automacao-loop",
+      "runtimeExecutable": "C:/Python314/python.exe",
+      "runtimeArgs": ["python/main.py", "--loop"],
+      "port": 0
+    },
+    {
+      "name": "automacao-headless-loop",
+      "runtimeExecutable": "C:/Python314/python.exe",
+      "runtimeArgs": ["python/main.py", "--headless", "--loop"],
+      "port": 0
+    },
+    {
+      "name": "automacao-debug",
+      "runtimeExecutable": "C:/Python314/python.exe",
+      "runtimeArgs": ["python/main.py", "--log-level", "DEBUG"],
+      "port": 0
+    }
+  ]
+}

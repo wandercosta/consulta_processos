@@ -1,0 +1,141 @@
+[2026-03-06 11:43:07] INFO    ============================================================
+[2026-03-06 11:43:07] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 11:43:07] INFO    Modo: único | Headless: True | Log: INFO
+[2026-03-06 11:43:07] INFO    ============================================================
+[2026-03-06 11:43:07] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 11:43:07] INFO    Nenhum processo pendente na fila
+[2026-03-06 11:43:07] INFO    Sistema encerrado
+[2026-03-06 11:43:27] INFO    ============================================================
+[2026-03-06 11:43:27] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 11:43:27] INFO    Modo: único | Headless: True | Log: INFO
+[2026-03-06 11:43:27] INFO    ============================================================
+[2026-03-06 11:43:27] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 11:43:27] INFO    Nenhum processo pendente na fila
+[2026-03-06 11:43:27] INFO    Sistema encerrado
+[2026-03-06 11:44:08] INFO    ============================================================
+[2026-03-06 11:44:08] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 11:44:08] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 11:44:08] INFO    ============================================================
+[2026-03-06 11:44:08] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 11:44:08] INFO    Nenhum processo pendente na fila
+[2026-03-06 11:44:08] INFO    Sistema encerrado
+[2026-03-06 11:51:32] INFO    ============================================================
+[2026-03-06 11:51:32] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 11:51:32] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 11:51:32] INFO    ============================================================
+[2026-03-06 11:51:32] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 11:51:32] INFO    Nenhum processo pendente na fila
+[2026-03-06 11:51:32] INFO    Sistema encerrado
+[2026-03-06 12:02:55] INFO    ============================================================
+[2026-03-06 12:02:55] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 12:02:55] INFO    Modo: loop | Headless: True | Log: INFO
+[2026-03-06 12:02:55] INFO    ============================================================
+[2026-03-06 12:02:55] INFO    Modo loop ativado — processando até fila vazia
+[2026-03-06 12:02:55] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 12:02:55] INFO    Nenhum processo pendente na fila
+[2026-03-06 12:02:55] INFO    Fila vazia. Encerrando modo loop.
+[2026-03-06 12:02:55] INFO    Sistema encerrado
+[2026-03-06 12:11:26] INFO    ============================================================
+[2026-03-06 12:11:26] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 12:11:26] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 12:11:26] INFO    ============================================================
+[2026-03-06 12:11:26] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 12:11:26] INFO    Nenhum processo pendente na fila
+[2026-03-06 12:11:26] INFO    Sistema encerrado
+[2026-03-06 12:12:00] INFO    ============================================================
+[2026-03-06 12:12:00] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 12:12:00] INFO    Modo: único | Headless: True | Log: INFO
+[2026-03-06 12:12:00] INFO    ============================================================
+[2026-03-06 12:12:00] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 12:12:00] INFO    Nenhum processo pendente na fila
+[2026-03-06 12:12:00] INFO    Sistema encerrado
+[2026-03-06 12:12:20] INFO    ============================================================
+[2026-03-06 12:12:20] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 12:12:20] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 12:12:20] INFO    ============================================================
+[2026-03-06 12:12:20] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 12:12:20] INFO    Nenhum processo pendente na fila
+[2026-03-06 12:12:20] INFO    Sistema encerrado
+[2026-03-06 14:32:54] INFO    ============================================================
+[2026-03-06 14:32:54] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 14:32:54] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 14:32:54] INFO    ============================================================
+[2026-03-06 14:32:54] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 14:32:54] INFO    Nenhum processo pendente na fila
+[2026-03-06 14:32:54] INFO    Sistema encerrado
+[2026-03-06 14:33:46] INFO    ============================================================
+[2026-03-06 14:33:46] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 14:33:46] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 14:33:46] INFO    ============================================================
+[2026-03-06 14:33:46] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 14:33:46] INFO    Nenhum processo pendente na fila
+[2026-03-06 14:33:46] INFO    Sistema encerrado
+[2026-03-06 14:35:06] INFO    ============================================================
+[2026-03-06 14:35:06] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 14:35:06] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 14:35:06] INFO    ============================================================
+[2026-03-06 14:35:06] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 14:35:06] INFO    Nenhum processo pendente na fila
+[2026-03-06 14:35:06] INFO    Sistema encerrado
+[2026-03-06 14:35:37] INFO    ============================================================
+[2026-03-06 14:35:37] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 14:35:37] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 14:35:37] INFO    ============================================================
+[2026-03-06 14:35:37] ERROR   HTTP 404 em GET /processos_pendentes
+[2026-03-06 14:35:37] INFO    Nenhum processo pendente na fila
+[2026-03-06 14:35:37] INFO    Sistema encerrado
+[2026-03-06 15:23:13] INFO    ============================================================
+[2026-03-06 15:23:13] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 15:23:13] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-06 15:23:13] INFO    ============================================================
+[2026-03-06 15:23:13] INFO    ────────────────────────────────────────────────────────────
+[2026-03-06 15:23:13] INFO    ▶  PROCESSO : 5000213-62.2026.8.13.0521
+[2026-03-06 15:23:13] INFO       Tribunal : TJMG  |  ID: 1  |  Na fila: 1
+[2026-03-06 15:23:13] INFO    ────────────────────────────────────────────────────────────
+[2026-03-06 15:23:13] INFO    [1/8] Registrando início da consulta na API...
+[2026-03-06 15:23:13] INFO    [1/8] ✓ Status atualizado → CONSULTANDO
+[2026-03-06 15:23:13] INFO    [2/8] Verificando suporte ao tribunal 'TJMG'...
+[2026-03-06 15:23:13] INFO    [2/8] ✓ Tribunal TJMG suportado
+[2026-03-06 15:23:13] INFO    [3/8] Iniciando WebDriver Chrome (modo visual)...
+[2026-03-06 15:23:20] INFO    WebDriver Chrome criado (com interface)
+[2026-03-06 15:23:20] INFO    [3/8] ✓ WebDriver pronto (6.8s)
+[2026-03-06 15:23:20] INFO    [4/8] Carregando scraper para TJMG...
+[2026-03-06 15:23:20] INFO    [4/8] ✓ Scraper TJMGPJeScraper carregado
+[2026-03-06 15:23:20] INFO    [5/8] Iniciando scraping no portal TJMG...
+[2026-03-06 15:23:20] INFO    [TJMG] Abrindo consulta: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/listView.seam
+[2026-03-06 15:23:22] INFO    [TJMG] Página de consulta carregada
+[2026-03-06 15:23:23] INFO    [TJMG] Pesquisando: 5000213-62.2026.8.13.0521
+[2026-03-06 15:23:24] INFO    [TJMG] Resultado encontrado no PJe
+[2026-03-06 15:23:24] INFO    [TJMG] Navegando para detalhe: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/DetalheProcessoConsultaPublica/listView.seam?ca=7eef72c0cd5b8a8822c9041b9128728a5c28f63be3310aea
+[2026-03-06 15:23:25] INFO    [TJMG] Página de detalhe aberta com sucesso
+[2026-03-06 15:23:27] INFO    [TJMG] 7 documento(s) mapeado(s) na página de detalhe
+[2026-03-06 15:23:27] INFO    [TJMG] Ata encontrada: 02/03/2026 14:30:52 - Ata de Audiência Sem Sentença (Ata de 
+[2026-03-06 15:23:27] INFO    [TJMG] Ata encontrada: 02/03/2026 14:31:34 - ATA DE AUDIÊNCIA 5000213-62 (ATA DE AU
+[2026-03-06 15:23:27] INFO    [TJMG] Ata encontrada: VISUALIZAR DOCUMENTOS
+02/03/2026 14:31:34 - ATA DE AUDIÊNCIA
+[2026-03-06 15:23:27] INFO    [TJMG] 7 documento(s) mapeado(s), 3 ata(s) identificada(s)
+[2026-03-06 15:23:27] INFO    [5/8] ✓ Scraping concluído — 7 doc(s) | 3 ata(s) | 4 ignorado(s) (6.9s)
+[2026-03-06 15:23:27] INFO    [6/8] Iniciando download de 3 ata(s)...
+[2026-03-06 15:23:27] INFO    [6/8] Ata 1/3: '02/03/2026 14:30:52 - Ata de Audiência Sem Sentença (At' (HTML)
+[2026-03-06 15:23:28] INFO    Download OK: TJMG_5000213-62.2026.8.13.0521_ATA_1_06032026.html (111 KB)
+[2026-03-06 15:23:28] INFO    [6/8] ✓ Ata 1/3: TJMG_5000213-62.2026.8.13.0521_ATA_1_06032026.html (111 KB)
+[2026-03-06 15:23:28] INFO    [6/8] Ata 2/3: '02/03/2026 14:31:34 - ATA DE AUDIÊNCIA 5000213-62 (ATA ' (PDF)
+[2026-03-06 15:23:29] INFO    Download OK: TJMG_5000213-62.2026.8.13.0521_ATA_2_06032026.pdf (511 KB)
+[2026-03-06 15:23:29] INFO    [6/8] ✓ Ata 2/3: TJMG_5000213-62.2026.8.13.0521_ATA_2_06032026.pdf (511 KB)
+[2026-03-06 15:23:29] INFO    [6/8] Ata 3/3: 'VISUALIZAR DOCUMENTOS
+02/03/2026 14:31:34 - ATA DE AUDI' (HTML)
+[2026-03-06 15:23:30] INFO    Download OK: TJMG_5000213-62.2026.8.13.0521_ATA_3_06032026.html (111 KB)
+[2026-03-06 15:23:30] INFO    [6/8] ✓ Ata 3/3: TJMG_5000213-62.2026.8.13.0521_ATA_3_06032026.html (111 KB)
+[2026-03-06 15:23:30] INFO    [7/8] Registrando resultado na API...
+[2026-03-06 15:23:30] INFO    [7/8] ✓ 3 ata(s) registrada(s) com sucesso
+[2026-03-06 15:23:30] INFO    [8/8] Encerrando WebDriver...
+[2026-03-06 15:23:32] INFO    [8/8] ✓ WebDriver encerrado
+[2026-03-06 15:23:32] INFO    ✓ Processo concluído em 18.8s
+[2026-03-06 15:24:21] INFO    ============================================================
+[2026-03-06 15:24:21] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-06 15:24:21] INFO    Modo: loop | Headless: True | Log: INFO
+[2026-03-06 15:24:21] INFO    ============================================================
+[2026-03-06 15:24:21] INFO    Modo loop ativado — processando até fila vazia
+[2026-03-06 15:24:21] INFO    Fila vazia — nenhum processo pendente.
+[2026-03-06 15:24:21] INFO    Fila vazia. Encerrando modo loop.
+[2026-03-06 15:24:21] INFO    Sistema encerrado
