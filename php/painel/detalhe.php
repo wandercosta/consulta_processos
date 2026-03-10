@@ -151,7 +151,7 @@ include 'layout_header.php';
                                 </div>
                             </div>
                             <?php if($existeNoDisco): ?>
-                            <a href="../index.php?endpoint=download_arquivo&id=<?= $id ?>"
+                            <a href="../index.php?endpoint=download_arquivo_id&id=<?= $a["id"] ?>"
                                class="btn btn-sm btn-outline-success flex-shrink-0" title="Baixar" target="_blank">
                                 <i class="bi bi-download"></i>
                             </a>
