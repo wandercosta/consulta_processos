@@ -40,7 +40,7 @@ from main import processar_um
 
 # ── Constantes ────────────────────────────────────────────────────────────────
 
-CICLO_SEGUNDOS = 10          # intervalo entre verificações quando aguardando
+CICLO_SEGUNDOS = 20          # intervalo entre verificações quando aguardando
 SEP = "─" * 60
 
 # ── Sinal de encerramento ─────────────────────────────────────────────────────

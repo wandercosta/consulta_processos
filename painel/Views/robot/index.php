@@ -58,7 +58,7 @@ $badgeColor = $badgeMap[$status] ?? 'dark';
                 <i class="bi bi-robot mb-3" style="font-size:3rem;color:<?= $ativo ? '#10b981' : '#94a3b8' ?>"></i>
                 <h6 class="fw-bold mb-1">Automação Automática</h6>
                 <p class="text-muted small mb-4">
-                    Quando ativa, o daemon verifica a fila a cada ~10 s e processa os processos pendentes automaticamente.
+                    Quando ativa, o daemon verifica a fila a cada ~20 s e processa os processos pendentes automaticamente.
                 </p>
 
                 <!-- Toggle switch grande -->
@@ -197,7 +197,7 @@ $badgeColor = $badgeMap[$status] ?? 'dark';
                 <h6 class="fw-bold mb-2"><i class="bi bi-terminal me-1"></i>Como usar</h6>
                 <ol class="small mb-0 ps-3">
                     <li>Execute <code>python daemon.py --headless</code> na máquina local</li>
-                    <li>O daemon ficará em standby verificando o painel a cada 10 s</li>
+                    <li>O daemon ficará em standby verificando o painel a cada 20 s</li>
                     <li>Clique em <strong>Ativar Robô</strong> aqui no painel</li>
                     <li>O daemon detecta a ativação e começa a processar a fila</li>
                     <li>Clique em <strong>Desativar Robô</strong> para pausar (o ciclo atual termina antes de parar)</li>
@@ -247,7 +247,7 @@ $badgeColor = $badgeMap[$status] ?? 'dark';
 <!-- ── Auto-refresh: recarrega a página completa a cada 10s ──────── -->
 <script>
 (function () {
-    const INTERVAL = 10; // segundos
+    const INTERVAL = 20; // segundos
     let counter    = INTERVAL;
     const countdown = document.getElementById('countdown');
 
