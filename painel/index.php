@@ -5,6 +5,10 @@ define('PAINEL_URL',      '/processos_api/painel/index.php');
 define('PAINEL_URL_BASE', '/processos_api/painel/');
 define('API_DOWNLOAD_URL','/processos_api/api/index.php');
 
+// ── Variáveis de ambiente (.env) ──────────────────────────────────────────────
+require_once dirname(__DIR__) . '/api/config/Env.php';
+Env::load(dirname(__DIR__) . '/.env');
+
 require_once PAINEL_ROOT . '/config/config.php';
 
 $page = $_GET['page'] ?? 'dashboard';

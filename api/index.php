@@ -2,6 +2,10 @@
 
 header("Content-Type: application/json");
 
+// ── Variáveis de ambiente (.env) ──────────────────────────────────────────────
+require_once __DIR__ . '/config/Env.php';
+Env::load(dirname(__DIR__) . '/.env');
+
 require_once __DIR__ . '/config/Database.php';
 require_once __DIR__ . '/config/Auth.php';
 

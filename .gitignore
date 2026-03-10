@@ -1,3 +1,7 @@
+# ── Variáveis de ambiente (nunca commitar o .env real) ─────────
+.env
+# O .env.example SIM vai ao git — serve como template para o time
+
 # ── Arquivos baixados pelos scrapers ──────────────────────────
 python/downloads/**/*.pdf
 python/downloads/**/*.html

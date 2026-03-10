@@ -1,6 +1,6 @@
 <?php
 
-const API_TOKEN = "CLAUDE_AUTOMACAO_123";
+// Token lido do .env — não definir como const para suportar Env::get() em runtime
 
 // Endpoints que não exigem token (servem arquivos ao browser)
 const ENDPOINTS_PUBLICOS = ['download_arquivo', 'download_arquivo_id'];
@@ -23,7 +23,7 @@ function validarToken(): void
 
     $token = str_replace("Bearer ", "", $authHeader);
 
-    if ($token !== API_TOKEN) {
+    if ($token !== Env::get('API_TOKEN', 'CLAUDE_AUTOMACAO_123')) {
         http_response_code(403);
         exit(json_encode(["erro" => "Token inválido"]));
     }
