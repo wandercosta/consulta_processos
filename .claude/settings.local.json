@@ -14,7 +14,20 @@
       "Bash(git add -u -- python/downloads/ python/logs/)",
       "Bash(git commit:*)",
       "Bash(git push -u origin feature/implementacao-inicial)",
-      "Bash(where gh)"
+      "Bash(where gh)",
+      "Bash(powershell -Command \"\\(Get-Content ''E:\\\\wamp64\\\\www\\\\processos_api\\\\php\\\\index.php'' -Raw\\) -replace ''case \"\"registrar_arquivo\"\":\\\\r\\\\n        require \"\"endpoints/registrar_arquivo.php\"\";\\\\r\\\\n        break;'', ''case \"\"registrar_arquivo\"\":\\\\r\\\\n        require \"\"endpoints/registrar_arquivo.php\"\";\\\\r\\\\n        break;\\\\r\\\\n\\\\r\\\\n    case \"\"download_arquivo_id\"\":\\\\r\\\\n        require \"\"endpoints/download_arquivo_id.php\"\";\\\\r\\\\n        break;'' | Set-Content ''E:\\\\wamp64\\\\www\\\\processos_api\\\\php\\\\index.php'' -NoNewline\")",
+      "Bash(curl -s \"http://localhost/processos_api/api/index.php?endpoint=processos_pendentes\" -H \"Authorization: Bearer CLAUDE_AUTOMACAO_123\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost/processos_api/php/index.php?endpoint=processos_pendentes\" -H \"Authorization: Bearer CLAUDE_AUTOMACAO_123\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost/processos_api/painel/index.php?page=login\")",
+      "Bash(curl -v \"http://localhost/processos_api/api/\")",
+      "Read(//c/wamp64/bin/**)",
+      "Read(//e/wamp64//**)",
+      "Bash(curl -s \"http://localhost/processos_api/php/painel/index.php\" -c /tmp/cookies.txt -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s \"http://localhost/processos_api/php/painel/\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s \"http://localhost/processos_api/\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s \"http://localhost/\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s \"http://localhost/processos_api/\")",
+      "Bash(curl -s \"http://localhost/processos_api/painel/index.php?page=login\" -o /dev/null -w \"%{http_code}\")"
     ]
   }
 }

@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # URL base da API PHP. Ajuste conforme configuração do servidor local.
 # Se o roteador PHP usar ?endpoint=..., altere para "http://localhost/processos_api"
 # e ajuste o método _build_url em api_client.py.
-API_BASE_URL = "http://localhost/processos_api/php"
+API_BASE_URL = "http://localhost/processos_api/api"
 API_TOKEN = "CLAUDE_AUTOMACAO_123"
 API_TIMEOUT = 30  # segundos
 
