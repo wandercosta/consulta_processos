@@ -105,8 +105,9 @@ class ProcessoController
 
     public function cadastrar(): void
     {
-        $data   = $this->input();
-        $numero = trim($data['numero_processo'] ?? '');
+        $data     = $this->input();
+        $numero   = trim($data['numero_processo'] ?? '');
+        $tribunal = strtoupper(trim($data['tribunal'] ?? 'TJMG'));
 
         if ($numero === '') {
             $this->erro400("numero_processo é obrigatório");
@@ -118,7 +119,7 @@ class ProcessoController
             exit;
         }
 
-        $id = $this->repo->criar($numero);
+        $id = $this->repo->criar($numero, $tribunal);
         echo json_encode(["status" => "processo cadastrado", "id" => $id]);
     }
 

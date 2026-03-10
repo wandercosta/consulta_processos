@@ -21,7 +21,7 @@ interface ProcessoRepositoryInterface
     public function registrarErro(int $id, string $mensagem): void;
 
     /** Cria novo processo — retorna ID inserido */
-    public function criar(string $numero): int;
+    public function criar(string $numero, string $tribunal): int;
 
     /** Verifica se número de processo já existe */
     public function existeNumero(string $numero): bool;
