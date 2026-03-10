@@ -6,6 +6,7 @@ Não contém lógica de negócio, scraping ou download.
 """
 
 import logging
+import os
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -30,6 +31,7 @@ class APIClient:
         """
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
+        self._token = token
         self._session = requests.Session()
         self._session.headers.update({
             "Authorization": f"Bearer {token}",
@@ -181,11 +183,12 @@ class APIClient:
         texto_doc: str,
         indice: int,
         download_ok: bool = True,
-    ) -> bool:
+    ) -> Optional[int]:
         """
         POST /registrar_arquivo
 
         Registra um arquivo individual na tabela processos_arquivos.
+        Retorna o ID do registro inserido, ou None em caso de falha.
         Deve ser chamado para cada ata após a tentativa de download,
         independente de sucesso ou falha.
         """
@@ -199,7 +202,46 @@ class APIClient:
             "indice":          indice,
             "download_ok":     1 if download_ok else 0,
         })
-        return resultado is not None
+        if isinstance(resultado, dict) and isinstance(resultado.get("id"), int):
+            return resultado["id"]
+        return None
+
+    def upload_arquivo(self, id_arquivo: int, caminho_local: str) -> bool:
+        """
+        POST /upload_arquivo  (multipart/form-data)
+
+        Envia o arquivo binário para o servidor (VPS).
+        O PHP salva em uploads/ e atualiza caminho_arquivo no banco.
+        Retorna True se o upload foi confirmado.
+        """
+        url = self._url("upload_arquivo")
+        if not os.path.isfile(caminho_local):
+            logger.error(f"upload_arquivo: arquivo local não encontrado: {caminho_local}")
+            return False
+        try:
+            with open(caminho_local, "rb") as f:
+                # Content-Type não pode ser application/json em multipart;
+                # o requests define o boundary automaticamente ao usar files=
+                headers = {"Authorization": f"Bearer {self._token}"}
+                resp = requests.post(
+                    url,
+                    data={"id_arquivo": id_arquivo},
+                    files={"arquivo": (os.path.basename(caminho_local), f, "application/octet-stream")},
+                    headers=headers,
+                    timeout=self.timeout,
+                )
+                resp.raise_for_status()
+                logger.debug(f"POST /upload_arquivo id={id_arquivo} → {resp.status_code} OK")
+                return True
+        except requests.HTTPError as e:
+            logger.error(f"HTTP {e.response.status_code} em upload_arquivo id={id_arquivo}")
+        except requests.ConnectionError:
+            logger.error(f"Sem conexão em upload_arquivo id={id_arquivo} | URL: {url}")
+        except requests.Timeout:
+            logger.error(f"Timeout em upload_arquivo id={id_arquivo}")
+        except Exception as e:
+            logger.error(f"Erro em upload_arquivo id={id_arquivo}: {e}")
+        return False
 
     def status_processo(self, id_processo: int) -> Optional[Dict]:
         """

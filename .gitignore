@@ -2,6 +2,10 @@
 .env
 # O .env.example SIM vai ao git — serve como template para o time
 
+# ── Uploads do servidor (arquivos enviados pelo Python) ───────
+uploads/**/*
+!uploads/.gitkeep
+
 # ── Arquivos baixados pelos scrapers ──────────────────────────
 python/downloads/**/*.pdf
 python/downloads/**/*.html

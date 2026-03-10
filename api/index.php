@@ -75,6 +75,10 @@ switch ($endpoint) {
         $arquivoCtrl->downloadById();
         break;
 
+    case 'upload_arquivo':
+        $arquivoCtrl->uploadArquivo();
+        break;
+
     default:
         http_response_code(404);
         echo json_encode(["erro" => "Endpoint não encontrado"]);

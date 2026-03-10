@@ -53,4 +53,12 @@ class ArquivoRepositoryPDO implements ArquivoRepositoryInterface
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;
     }
+
+    public function updateCaminho(int $id, string $caminho): void
+    {
+        $stmt = $this->db->prepare("
+            UPDATE processos_arquivos SET caminho_arquivo = ? WHERE id = ?
+        ");
+        $stmt->execute([$caminho, $id]);
+    }
 }
