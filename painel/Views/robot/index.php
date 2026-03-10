@@ -5,16 +5,16 @@
  * @var bool   $vivo    — true se heartbeat < 30s
  */
 
-$ativo   = (bool)(int)$config['ativo'];
-$status  = $config['status']       ?? 'desconhecido';
-$pid     = $config['pid']          ?? null;
-$msg     = $config['mensagem']     ?? '—';
-$ciclo   = $config['ultimo_ciclo'] ?? null;
-$beat    = $config['atualizado_em'] ?? null;
+$ativo    = (bool)(int)$config['ativo'];
+$status   = $config['status']       ?? 'desconhecido';
+$pid      = $config['pid']          ?? null;
+$msg      = $config['mensagem']     ?? '—';
+$ciclo    = $config['ultimo_ciclo'] ?? null;
+$beat     = $config['atualizado_em'] ?? null;
 
-// Quanto tempo desde o último heartbeat
-$segundos = $beat ? (time() - strtotime($beat)) : null;
-$tempoHb  = $segundos !== null
+// Usa segundos calculados pelo MySQL (TIMESTAMPDIFF) — sem divergência de fuso
+$segundos = isset($config['segundos_desde_beat']) ? (int)$config['segundos_desde_beat'] : null;
+$tempoHb  = $segundos !== null && $segundos >= 0
     ? ($segundos < 60 ? "{$segundos}s atrás" : gmdate('i\m s\s', $segundos) . ' atrás')
     : 'nunca';
 
@@ -174,11 +174,11 @@ $badgeColor = $badgeMap[$status] ?? 'dark';
                         </tr>
                         <tr>
                             <td class="text-muted small fw-semibold">Último ciclo</td>
-                            <td class="small"><?= $ciclo ? htmlspecialchars(date('d/m/Y H:i:s', strtotime($ciclo))) : '—' ?></td>
+                            <td class="small"><?= $ciclo ? htmlspecialchars($ciclo) : '—' ?></td>
                         </tr>
                         <tr>
                             <td class="text-muted small fw-semibold">Atualizado em</td>
-                            <td class="small"><?= $beat ? htmlspecialchars(date('d/m/Y H:i:s', strtotime($beat))) : '—' ?></td>
+                            <td class="small"><?= $beat ? htmlspecialchars($beat) : '—' ?></td>
                         </tr>
                         <tr>
                             <td class="text-muted small fw-semibold">Mensagem</td>

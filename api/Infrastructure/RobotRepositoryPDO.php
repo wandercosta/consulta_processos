@@ -11,16 +11,25 @@ class RobotRepositoryPDO implements RobotRepositoryInterface
 
     public function getConfig(): array
     {
-        $stmt = $this->db->query("SELECT * FROM robot_config WHERE id = 1");
-        $row  = $stmt->fetch(PDO::FETCH_ASSOC);
+        // UNIX_TIMESTAMP e TIMESTAMPDIFF calculados dentro do MySQL para evitar
+        // problemas de fuso horário entre PHP (strtotime) e MySQL (NOW()).
+        $stmt = $this->db->query("
+            SELECT *,
+                   UNIX_TIMESTAMP(atualizado_em)                       AS atualizado_ts,
+                   TIMESTAMPDIFF(SECOND, atualizado_em, NOW())         AS segundos_desde_beat
+            FROM robot_config WHERE id = 1
+        ");
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: [
-            'id'           => 1,
-            'ativo'        => 0,
-            'status'       => 'desconhecido',
-            'pid'          => null,
-            'ultimo_ciclo' => null,
-            'mensagem'     => 'Tabela robot_config não encontrada — execute painel/migrar_robot.php',
-            'atualizado_em'=> null,
+            'id'                  => 1,
+            'ativo'               => 0,
+            'status'              => 'desconhecido',
+            'pid'                 => null,
+            'ultimo_ciclo'        => null,
+            'mensagem'            => 'Tabela robot_config não encontrada — execute painel/migrar_robot.php',
+            'atualizado_em'       => null,
+            'atualizado_ts'       => null,
+            'segundos_desde_beat' => null,
         ];
     }
 

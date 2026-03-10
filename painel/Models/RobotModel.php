@@ -13,8 +13,15 @@ class RobotModel
     public function getConfig(): array
     {
         try {
-            $stmt = $this->db->query("SELECT * FROM robot_config WHERE id = 1");
-            $row  = $stmt->fetch(PDO::FETCH_ASSOC);
+            // UNIX_TIMESTAMP e TIMESTAMPDIFF calculados no MySQL para evitar
+            // divergências de fuso horário entre PHP (strtotime) e MySQL (NOW()).
+            $stmt = $this->db->query("
+                SELECT *,
+                       UNIX_TIMESTAMP(atualizado_em)                       AS atualizado_ts,
+                       TIMESTAMPDIFF(SECOND, atualizado_em, NOW())         AS segundos_desde_beat
+                FROM robot_config WHERE id = 1
+            ");
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
             return $row ?: $this->_defaultConfig('Linha não encontrada — execute migrar_robot.php');
         } catch (Exception $e) {
             return $this->_defaultConfig('Tabela robot_config não existe — execute migrar_robot.php');
@@ -32,19 +39,24 @@ class RobotModel
     /**
      * Retorna true se o daemon está vivo com base no último heartbeat.
      *
-     * O limite varia conforme o status:
+     * Usa segundos_desde_beat calculado pelo MySQL (TIMESTAMPDIFF) para
+     * evitar divergências de fuso horário entre PHP e MySQL.
+     *
+     * Limites:
      *  - "executando" → até 5 min (scraping + download pode demorar)
-     *  - demais status → até 60s (daemon envia heartbeat a cada ~10s quando idle)
+     *  - demais status → até 60s (daemon heartbeat a cada ~10s quando idle)
      */
     public function isDaemonVivo(): bool
     {
-        $config = $this->getConfig();
-        if (empty($config['atualizado_em'])) {
+        $config   = $this->getConfig();
+        $segundos = isset($config['segundos_desde_beat']) ? (int) $config['segundos_desde_beat'] : null;
+
+        if ($segundos === null) {
             return false;
         }
-        $segundos = time() - strtotime($config['atualizado_em']);
-        $limite   = ($config['status'] === 'executando') ? 300 : 60;
-        return $segundos < $limite;
+
+        $limite = ($config['status'] === 'executando') ? 300 : 60;
+        return $segundos >= 0 && $segundos < $limite;
     }
 
     // ── helpers ───────────────────────────────────────────────────────────────
