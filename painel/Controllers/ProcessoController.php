@@ -2,10 +2,14 @@
 
 class ProcessoController extends BaseController
 {
-    public function __construct(
-        private ProcessoModel $model,
-        private ?ArquivoModel $arquivoModel = null,
-    ) {}
+    private ProcessoModel $model;
+    private ?ArquivoModel $arquivoModel;
+
+    public function __construct(ProcessoModel $model, ?ArquivoModel $arquivoModel = null)
+    {
+        $this->model        = $model;
+        $this->arquivoModel = $arquivoModel;
+    }
 
     public function index(): void
     {

@@ -2,7 +2,12 @@
 
 class ArquivoController extends BaseController
 {
-    public function __construct(private ArquivoModel $model) {}
+    private ArquivoModel $model;
+
+    public function __construct(ArquivoModel $model)
+    {
+        $this->model = $model;
+    }
 
     public function index(): void
     {

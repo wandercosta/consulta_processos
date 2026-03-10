@@ -2,7 +2,12 @@
 
 class DashboardController extends BaseController
 {
-    public function __construct(private ProcessoModel $processoModel) {}
+    private ProcessoModel $processoModel;
+
+    public function __construct(ProcessoModel $processoModel)
+    {
+        $this->processoModel = $processoModel;
+    }
 
     public function index(): void
     {

@@ -2,7 +2,12 @@
 
 class ArquivoModel
 {
-    public function __construct(private PDO $db) {}
+    private PDO $db;
+
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
 
     public function getStats(): array
     {
