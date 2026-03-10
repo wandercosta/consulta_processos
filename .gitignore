@@ -1,0 +1,35 @@
+# ── Arquivos baixados pelos scrapers ──────────────────────────
+python/downloads/**/*.pdf
+python/downloads/**/*.html
+python/downloads/**/*.docx
+python/downloads/**/*.doc
+python/downloads/**/*.zip
+# Mantém a estrutura de pastas no git
+!python/downloads/**/.gitkeep
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# ── Logs ──────────────────────────────────────────────────────
+python/logs/*.log
+!python/logs/.gitkeep
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.idea/
+.vscode/
+*.iml
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
