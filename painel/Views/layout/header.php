@@ -7,6 +7,7 @@ $nav = [
     'processos' => ['icon' => 'bi-journal-text',            'label' => 'Processos'],
     'cadastrar' => ['icon' => 'bi-plus-circle',             'label' => 'Cadastrar'],
     'arquivos'  => ['icon' => 'bi-file-earmark-arrow-down', 'label' => 'Arquivos / ATAs'],
+    'robot'     => ['icon' => 'bi-robot',                   'label' => 'Robô'],
 ];
 ?>
 <!DOCTYPE html>

@@ -36,6 +36,7 @@ requerLogin();
 require_once PAINEL_ROOT . '/Controllers/BaseController.php';
 require_once PAINEL_ROOT . '/Models/ProcessoModel.php';
 require_once PAINEL_ROOT . '/Models/ArquivoModel.php';
+require_once PAINEL_ROOT . '/Models/RobotModel.php';
 
 switch ($page) {
 
@@ -62,6 +63,17 @@ switch ($page) {
     case 'arquivos':
         require_once PAINEL_ROOT . '/Controllers/ArquivoController.php';
         (new ArquivoController(new ArquivoModel(db())))->index();
+        break;
+
+    case 'robot':
+        require_once PAINEL_ROOT . '/Controllers/RobotController.php';
+        $ctrl = new RobotController(new RobotModel(db()));
+        $action = $_GET['action'] ?? 'index';
+        if ($action === 'toggle' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            $ctrl->toggle();
+        } else {
+            $ctrl->index();
+        }
         break;
 
     default:
