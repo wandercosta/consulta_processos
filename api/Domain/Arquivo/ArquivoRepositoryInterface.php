@@ -10,4 +10,7 @@ interface ArquivoRepositoryInterface
 
     /** Busca caminho do arquivo pelo ID do processo (coluna caminho_arquivo em processos) */
     public function findCaminhoByProcesso(int $idProcesso): ?array;
+
+    /** Atualiza o caminho do arquivo no servidor após upload */
+    public function updateCaminho(int $id, string $caminho): void;
 }

@@ -112,6 +112,65 @@ class ArquivoController
         $this->servirArquivo($caminho, $nome, $ext);
     }
 
+    /**
+     * Recebe o arquivo via multipart/form-data, salva no VPS e atualiza o caminho no BD.
+     * Parâmetros POST: id_arquivo (int)
+     * Arquivo: campo "arquivo" (binário)
+     */
+    public function uploadArquivo(): void
+    {
+        $id = isset($_POST['id_arquivo']) ? (int)$_POST['id_arquivo'] : 0;
+
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(["erro" => "id_arquivo é obrigatório"]);
+            exit;
+        }
+
+        if (empty($_FILES['arquivo']) || $_FILES['arquivo']['error'] !== UPLOAD_ERR_OK) {
+            $erro = $_FILES['arquivo']['error'] ?? -1;
+            http_response_code(400);
+            echo json_encode(["erro" => "Arquivo inválido ou não enviado", "codigo" => $erro]);
+            exit;
+        }
+
+        $registro = $this->repo->findById($id);
+        if (!$registro) {
+            http_response_code(404);
+            echo json_encode(["erro" => "Registro de arquivo não encontrado (id={$id})"]);
+            exit;
+        }
+
+        // Resolve diretório de uploads
+        $uploadsPath = Env::get('UPLOADS_PATH', 'uploads');
+        if ($uploadsPath !== '' && $uploadsPath[0] === '/') {
+            $baseDir = rtrim($uploadsPath, '/');
+        } else {
+            // Relativo à raiz do projeto: sobe 3 níveis a partir de api/Http/Controllers/
+            $baseDir = rtrim(dirname(__DIR__, 3) . '/' . trim($uploadsPath, '/'), '/');
+        }
+
+        $subDir = $baseDir . '/' . strtolower($registro['formato'] ?? 'files');
+        if (!is_dir($subDir) && !mkdir($subDir, 0755, true) && !is_dir($subDir)) {
+            http_response_code(500);
+            echo json_encode(["erro" => "Não foi possível criar o diretório de upload"]);
+            exit;
+        }
+
+        $nomeSeguro = preg_replace('/[^a-zA-Z0-9._-]/', '_', $registro['nome_arquivo'] ?: "arquivo_{$id}");
+        $destino    = $subDir . '/' . $nomeSeguro;
+
+        if (!move_uploaded_file($_FILES['arquivo']['tmp_name'], $destino)) {
+            http_response_code(500);
+            echo json_encode(["erro" => "Falha ao salvar o arquivo no servidor"]);
+            exit;
+        }
+
+        $this->repo->updateCaminho($id, $destino);
+
+        echo json_encode(["status" => "arquivo salvo", "caminho" => $destino]);
+    }
+
     // ── helpers ────────────────────────────────────────────────────────────────
 
     private function normalizarCaminho(string $caminho): string

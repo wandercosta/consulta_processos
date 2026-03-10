@@ -235,7 +235,7 @@ def processar_um(
                 api.registrar_log(id_processo, f"Falha no download da ata {i}", "ERROR")
 
             # Registra o arquivo na tabela processos_arquivos (sucesso ou falha)
-            ok_arq = api.registrar_arquivo(
+            id_arq = api.registrar_arquivo(
                 id_processo=id_processo,
                 nome_arquivo=nome or f"ata_{i}_{tribunal}",
                 caminho_arquivo=caminho,
@@ -245,8 +245,15 @@ def processar_um(
                 indice=i,
                 download_ok=ok,
             )
-            if ok_arq:
-                logger.debug(f"[6/8] Arquivo {i} registrado na tabela processos_arquivos")
+            if id_arq:
+                logger.debug(f"[6/8] Arquivo {i} registrado na tabela processos_arquivos (id={id_arq})")
+                # Envia o arquivo para o VPS para que o download funcione no painel
+                if ok and caminho:
+                    upload_ok = api.upload_arquivo(id_arq, caminho)
+                    if upload_ok:
+                        logger.info(f"[6/8] ✓ Arquivo {i} enviado para o servidor")
+                    else:
+                        logger.warning(f"[6/8] ⚠ Falha ao enviar arquivo {i} para o servidor (download no painel pode não funcionar)")
             else:
                 logger.warning(f"[6/8] ⚠ Falha ao registrar arquivo {i} na tabela processos_arquivos")
 

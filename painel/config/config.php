@@ -1,6 +1,6 @@
 <?php
 
-define('PAINEL_SENHA', 'admin123');
+define('PAINEL_SENHA', Env::get('PAINEL_SENHA', 'admin123'));
 
 session_start();
 

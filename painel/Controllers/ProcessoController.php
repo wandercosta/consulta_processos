@@ -59,20 +59,26 @@ class ProcessoController extends BaseController
         $erro    = '';
         $sucesso = '';
 
+        // Tribunais disponíveis — adicione aqui quando novos conectores forem implementados
+        $tribunais = ['TJMG' => 'TJMG — Tribunal de Justiça de Minas Gerais'];
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $numero = trim($_POST['numero_processo'] ?? '');
+            $numero   = trim($_POST['numero_processo'] ?? '');
+            $tribunal = strtoupper(trim($_POST['tribunal'] ?? ''));
 
             if ($numero === '') {
                 $erro = 'O número do processo é obrigatório.';
+            } elseif (!array_key_exists($tribunal, $tribunais)) {
+                $erro = 'Tribunal inválido.';
             } elseif ($this->model->existeNumero($numero)) {
                 $erro = 'Este processo já está cadastrado.';
             } else {
-                $novoId  = $this->model->criar($numero);
-                $sucesso = "Processo <strong>" . htmlspecialchars($numero) . "</strong> cadastrado com sucesso! ID: {$novoId}";
+                $novoId  = $this->model->criar($numero, $tribunal);
+                $sucesso = "Processo <strong>" . htmlspecialchars($numero) . "</strong> cadastrado no <strong>{$tribunal}</strong> com sucesso! ID: {$novoId}";
             }
         }
 
-        $this->render('processos/cadastrar', compact('erro', 'sucesso')
+        $this->render('processos/cadastrar', compact('erro', 'sucesso', 'tribunais')
             + ['paginaAtual' => 'cadastrar', 'tituloPagina' => 'Cadastrar Processo']);
     }
 }

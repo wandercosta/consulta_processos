@@ -28,13 +28,24 @@
                 <?php else: ?>
                 <form method="post" action="<?= PAINEL_URL ?>?page=cadastrar">
                     <div class="mb-3">
+                        <label class="form-label fw-semibold">Tribunal</label>
+                        <select name="tribunal" class="form-select" required>
+                            <?php foreach ($tribunais as $sigla => $label): ?>
+                            <option value="<?= htmlspecialchars($sigla) ?>"
+                                <?= (($_POST['tribunal'] ?? $sigla) === $sigla ? 'selected' : '') ?>>
+                                <?= htmlspecialchars($label) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-semibold">Número do Processo</label>
                         <input type="text" name="numero_processo"
                                class="form-control font-monospace"
-                               placeholder="Ex: 0001234-56.2024.8.26.0001"
+                               placeholder="Ex: 5053546-33.2022.8.13.0079"
                                value="<?= htmlspecialchars($_POST['numero_processo'] ?? '') ?>"
                                autofocus required>
-                        <div class="form-text">Informe o número único do processo judicial/administrativo.</div>
+                        <div class="form-text">Informe o número único do processo judicial.</div>
                     </div>
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">

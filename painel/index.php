@@ -1,9 +1,21 @@
 <?php
 
-define('PAINEL_ROOT',     __DIR__);
-define('PAINEL_URL',      '/processos_api/painel/index.php');
-define('PAINEL_URL_BASE', '/processos_api/painel/');
-define('API_DOWNLOAD_URL','/processos_api/api/index.php');
+define('PAINEL_ROOT', __DIR__);
+
+// ── Variáveis de ambiente (.env) ──────────────────────────────────────────────
+// Carregado antes dos defines de URL para que APP_BASE_PATH seja resolvido
+require_once dirname(__DIR__) . '/api/config/Env.php';
+Env::load(dirname(__DIR__) . '/.env');
+
+// Local  → APP_BASE_PATH=/processos_api
+// Produção → APP_BASE_PATH=   (vazio, conteúdo na raiz do servidor)
+$_basePath = rtrim(Env::get('APP_BASE_PATH', ''), '/');
+
+define('PAINEL_URL',      $_basePath . '/painel/index.php');
+define('PAINEL_URL_BASE', $_basePath . '/painel/');
+define('API_DOWNLOAD_URL',$_basePath . '/api/index.php');
+
+unset($_basePath);
 
 require_once PAINEL_ROOT . '/config/config.php';
 
