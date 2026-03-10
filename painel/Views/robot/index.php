@@ -244,41 +244,23 @@ $badgeColor = $badgeMap[$status] ?? 'dark';
 }
 </style>
 
-<!-- ── Auto-refresh via JS (atualiza status sem recarregar a página) ─ -->
+<!-- ── Auto-refresh: recarrega a página completa a cada 10s ──────── -->
 <script>
 (function () {
-    const API_URL = '<?= API_DOWNLOAD_URL ?>?endpoint=robot_status';
     const INTERVAL = 10; // segundos
-    let counter = INTERVAL;
-
+    let counter    = INTERVAL;
     const countdown = document.getElementById('countdown');
-    const msgEl     = document.getElementById('msgDaemon');
 
-    // Contador regressivo
-    setInterval(() => {
+    // Contador regressivo visível
+    const tick = setInterval(() => {
         counter--;
         if (countdown) countdown.textContent = counter;
-        if (counter <= 0) counter = INTERVAL;
+        if (counter <= 0) {
+            clearInterval(tick);
+            // Recarrega a página inteira para atualizar todos os elementos:
+            // badge daemon online/offline, alerta, cards de status, PID, etc.
+            location.reload();
+        }
     }, 1000);
-
-    // Busca status a cada INTERVAL segundos e atualiza msg + badge
-    setInterval(() => {
-        fetch(API_URL, {
-            headers: { 'Authorization': 'Bearer <?= Env::get("API_TOKEN", "CLAUDE_AUTOMACAO_123") ?>' }
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (msgEl && data.mensagem) {
-                msgEl.textContent = data.mensagem;
-            }
-            // Se o status mudou (ex: outro aba toggleou), recarrega a página inteira
-            const ativoAtual = <?= $ativo ? 'true' : 'false' ?>;
-            const ativoApi   = !!parseInt(data.ativo);
-            if (ativoAtual !== ativoApi) {
-                location.reload();
-            }
-        })
-        .catch(() => {});
-    }, INTERVAL * 1000);
 })();
 </script>

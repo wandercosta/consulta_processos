@@ -30,8 +30,11 @@ class RobotModel
     }
 
     /**
-     * Retorna true se o daemon enviou heartbeat nos últimos 30 segundos.
-     * Indica que o processo Python está em execução.
+     * Retorna true se o daemon está vivo com base no último heartbeat.
+     *
+     * O limite varia conforme o status:
+     *  - "executando" → até 5 min (scraping + download pode demorar)
+     *  - demais status → até 60s (daemon envia heartbeat a cada ~10s quando idle)
      */
     public function isDaemonVivo(): bool
     {
@@ -39,7 +42,9 @@ class RobotModel
         if (empty($config['atualizado_em'])) {
             return false;
         }
-        return (time() - strtotime($config['atualizado_em'])) < 30;
+        $segundos = time() - strtotime($config['atualizado_em']);
+        $limite   = ($config['status'] === 'executando') ? 300 : 60;
+        return $segundos < $limite;
     }
 
     // ── helpers ───────────────────────────────────────────────────────────────
