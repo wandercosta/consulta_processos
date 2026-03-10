@@ -2,7 +2,12 @@
 
 class ProcessoController
 {
-    public function __construct(private ProcessoRepositoryInterface $repo) {}
+    private ProcessoRepositoryInterface $repo;
+
+    public function __construct(ProcessoRepositoryInterface $repo)
+    {
+        $this->repo = $repo;
+    }
 
     public function pendentes(): void
     {
@@ -139,7 +144,7 @@ class ProcessoController
         return json_decode(file_get_contents("php://input"), true) ?? [];
     }
 
-    private function erro400(string $mensagem): never
+    private function erro400(string $mensagem): void
     {
         http_response_code(400);
         echo json_encode(["erro" => $mensagem]);

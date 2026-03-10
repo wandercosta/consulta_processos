@@ -2,30 +2,50 @@
 
 class Processo
 {
+    public int     $id;
+    public string  $numero_processo;
+    public string  $status_consulta;
+    public ?string $possui_ata;
+    public ?int    $qtd_atas;
+    public ?string $caminho_arquivo;
+    public ?string $data_ultima_consulta;
+    public string  $criado_em;
+    public ?string $mensagem_erro;
+
     public function __construct(
-        public readonly int     $id,
-        public readonly string  $numero_processo,
-        public readonly string  $status_consulta,
-        public readonly ?string $possui_ata          = null,
-        public readonly ?int    $qtd_atas            = null,
-        public readonly ?string $caminho_arquivo     = null,
-        public readonly ?string $data_ultima_consulta = null,
-        public readonly string  $criado_em           = '',
-        public readonly ?string $mensagem_erro       = null,
-    ) {}
+        int     $id,
+        string  $numero_processo,
+        string  $status_consulta,
+        ?string $possui_ata           = null,
+        ?int    $qtd_atas             = null,
+        ?string $caminho_arquivo      = null,
+        ?string $data_ultima_consulta = null,
+        string  $criado_em            = '',
+        ?string $mensagem_erro        = null
+    ) {
+        $this->id                   = $id;
+        $this->numero_processo      = $numero_processo;
+        $this->status_consulta      = $status_consulta;
+        $this->possui_ata           = $possui_ata;
+        $this->qtd_atas             = $qtd_atas;
+        $this->caminho_arquivo      = $caminho_arquivo;
+        $this->data_ultima_consulta = $data_ultima_consulta;
+        $this->criado_em            = $criado_em;
+        $this->mensagem_erro        = $mensagem_erro;
+    }
 
     public static function fromArray(array $row): self
     {
         return new self(
-            id:                   (int)$row['id'],
-            numero_processo:      $row['numero_processo'],
-            status_consulta:      $row['status_consulta'],
-            possui_ata:           $row['possui_ata'] ?? null,
-            qtd_atas:             isset($row['qtd_atas']) ? (int)$row['qtd_atas'] : null,
-            caminho_arquivo:      $row['caminho_arquivo'] ?? null,
-            data_ultima_consulta: $row['data_ultima_consulta'] ?? null,
-            criado_em:            $row['criado_em'] ?? '',
-            mensagem_erro:        $row['mensagem_erro'] ?? null,
+            (int)$row['id'],
+            $row['numero_processo'],
+            $row['status_consulta'],
+            $row['possui_ata']           ?? null,
+            isset($row['qtd_atas'])      ? (int)$row['qtd_atas'] : null,
+            $row['caminho_arquivo']      ?? null,
+            $row['data_ultima_consulta'] ?? null,
+            $row['criado_em']            ?? '',
+            $row['mensagem_erro']        ?? null
         );
     }
 

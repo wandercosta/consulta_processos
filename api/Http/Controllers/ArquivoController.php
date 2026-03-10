@@ -10,7 +10,12 @@ class ArquivoController
         'zip'  => 'application/zip',
     ];
 
-    public function __construct(private ArquivoRepositoryInterface $repo) {}
+    private ArquivoRepositoryInterface $repo;
+
+    public function __construct(ArquivoRepositoryInterface $repo)
+    {
+        $this->repo = $repo;
+    }
 
     public function registrar(): void
     {
@@ -114,7 +119,7 @@ class ArquivoController
         return str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $caminho);
     }
 
-    private function servirArquivo(string $caminho, string $nome, string $ext): never
+    private function servirArquivo(string $caminho, string $nome, string $ext): void
     {
         while (ob_get_level()) ob_end_clean();
 

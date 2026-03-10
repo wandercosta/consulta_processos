@@ -2,32 +2,54 @@
 
 class Arquivo
 {
+    public int     $id;
+    public int     $id_processo;
+    public string  $nome_arquivo;
+    public ?string $caminho_arquivo;
+    public ?string $formato;
+    public ?int    $tamanho_bytes;
+    public ?string $texto_doc;
+    public int     $indice;
+    public int     $download_ok;
+    public string  $criado_em;
+
     public function __construct(
-        public readonly int     $id,
-        public readonly int     $id_processo,
-        public readonly string  $nome_arquivo,
-        public readonly ?string $caminho_arquivo = null,
-        public readonly ?string $formato         = null,
-        public readonly ?int    $tamanho_bytes   = null,
-        public readonly ?string $texto_doc       = null,
-        public readonly int     $indice          = 1,
-        public readonly int     $download_ok     = 1,
-        public readonly string  $criado_em       = '',
-    ) {}
+        int     $id,
+        int     $id_processo,
+        string  $nome_arquivo,
+        ?string $caminho_arquivo = null,
+        ?string $formato         = null,
+        ?int    $tamanho_bytes   = null,
+        ?string $texto_doc       = null,
+        int     $indice          = 1,
+        int     $download_ok     = 1,
+        string  $criado_em       = ''
+    ) {
+        $this->id              = $id;
+        $this->id_processo     = $id_processo;
+        $this->nome_arquivo    = $nome_arquivo;
+        $this->caminho_arquivo = $caminho_arquivo;
+        $this->formato         = $formato;
+        $this->tamanho_bytes   = $tamanho_bytes;
+        $this->texto_doc       = $texto_doc;
+        $this->indice          = $indice;
+        $this->download_ok     = $download_ok;
+        $this->criado_em       = $criado_em;
+    }
 
     public static function fromArray(array $row): self
     {
         return new self(
-            id:              (int)$row['id'],
-            id_processo:     (int)$row['id_processo'],
-            nome_arquivo:    $row['nome_arquivo'],
-            caminho_arquivo: $row['caminho_arquivo'] ?? null,
-            formato:         $row['formato'] ?? null,
-            tamanho_bytes:   isset($row['tamanho_bytes']) ? (int)$row['tamanho_bytes'] : null,
-            texto_doc:       $row['texto_doc'] ?? null,
-            indice:          (int)($row['indice'] ?? 1),
-            download_ok:     (int)($row['download_ok'] ?? 1),
-            criado_em:       $row['criado_em'] ?? '',
+            (int)$row['id'],
+            (int)$row['id_processo'],
+            $row['nome_arquivo'],
+            $row['caminho_arquivo'] ?? null,
+            $row['formato']         ?? null,
+            isset($row['tamanho_bytes']) ? (int)$row['tamanho_bytes'] : null,
+            $row['texto_doc']       ?? null,
+            (int)($row['indice']    ?? 1),
+            (int)($row['download_ok'] ?? 1),
+            $row['criado_em']       ?? ''
         );
     }
 

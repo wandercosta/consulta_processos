@@ -10,7 +10,7 @@ abstract class BaseController
         include PAINEL_ROOT . '/Views/layout/footer.php';
     }
 
-    protected function redirect(string $page, array $params = []): never
+    protected function redirect(string $page, array $params = []): void
     {
         $url = PAINEL_URL . '?page=' . $page;
         if (!empty($params)) {

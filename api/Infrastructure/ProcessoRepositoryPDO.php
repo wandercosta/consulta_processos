@@ -2,7 +2,12 @@
 
 class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
 {
-    public function __construct(private PDO $db) {}
+    private PDO $db;
+
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
 
     public function findPendentes(): array
     {
@@ -109,7 +114,7 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
 
     public function listar(array $filtros, int $pagina, int $limite): array
     {
-        [$whereSql, $params] = $this->buildWhere($filtros);
+        list($whereSql, $params) = $this->buildWhere($filtros);
         $offset = ($pagina - 1) * $limite;
 
         $countStmt = $this->db->prepare("SELECT COUNT(*) FROM processos {$whereSql}");
@@ -142,8 +147,6 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
         ");
         $stmt->execute([$idProcesso, $mensagem, $status]);
     }
-
-    // ── helpers ────────────────────────────────────────────────────────────────
 
     private function buildWhere(array $filtros): array
     {
