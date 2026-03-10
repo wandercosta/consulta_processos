@@ -11,10 +11,13 @@ require_once __DIR__ . '/config/Auth.php';
 
 require_once __DIR__ . '/Domain/Processo/ProcessoRepositoryInterface.php';
 require_once __DIR__ . '/Domain/Arquivo/ArquivoRepositoryInterface.php';
+require_once __DIR__ . '/Domain/Robot/RobotRepositoryInterface.php';
 require_once __DIR__ . '/Infrastructure/ProcessoRepositoryPDO.php';
 require_once __DIR__ . '/Infrastructure/ArquivoRepositoryPDO.php';
+require_once __DIR__ . '/Infrastructure/RobotRepositoryPDO.php';
 require_once __DIR__ . '/Http/Controllers/ProcessoController.php';
 require_once __DIR__ . '/Http/Controllers/ArquivoController.php';
+require_once __DIR__ . '/Http/Controllers/RobotController.php';
 
 validarToken();
 
@@ -22,6 +25,7 @@ $db = (new Database())->connect();
 
 $processoCtrl = new ProcessoController(new ProcessoRepositoryPDO($db));
 $arquivoCtrl  = new ArquivoController(new ArquivoRepositoryPDO($db));
+$robotCtrl    = new RobotController(new RobotRepositoryPDO($db));
 
 $endpoint = $_GET['endpoint'] ?? '';
 
@@ -77,6 +81,23 @@ switch ($endpoint) {
 
     case 'upload_arquivo':
         $arquivoCtrl->uploadArquivo();
+        break;
+
+    // ── Robot daemon ──────────────────────────────────────────────────────────
+    case 'robot_status':
+        $robotCtrl->status();
+        break;
+
+    case 'robot_ativar':
+        $robotCtrl->ativar();
+        break;
+
+    case 'robot_desativar':
+        $robotCtrl->desativar();
+        break;
+
+    case 'robot_heartbeat':
+        $robotCtrl->heartbeat();
         break;
 
     default:

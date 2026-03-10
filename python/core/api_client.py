@@ -250,3 +250,26 @@ class APIClient:
         Consulta o status atual do processo na base de dados.
         """
         return self._get("status_processo", {"id": id_processo})
+
+    def robot_status(self) -> Optional[Dict]:
+        """
+        GET /robot_status
+
+        Retorna a configuração atual do daemon (ativo, status, pid, mensagem...).
+        Usado pelo daemon para saber se deve processar ou aguardar.
+        """
+        return self._get("robot_status")
+
+    def robot_heartbeat(self, status: str, pid: int, mensagem: str = "") -> bool:
+        """
+        POST /robot_heartbeat
+
+        Daemon envia heartbeat a cada ciclo para indicar que está vivo.
+        status: parado | aguardando | verificando | executando | erro
+        """
+        resultado = self._post("robot_heartbeat", {
+            "status":   status,
+            "pid":      pid,
+            "mensagem": mensagem,
+        })
+        return resultado is not None
