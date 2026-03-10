@@ -7,7 +7,14 @@
       "Bash(python -c \"import sys; print\\(sys.executable\\)\")",
       "Bash(\"C:/Python314/python.exe\" -c \"import requests; print\\(''OK''\\)\")",
       "Bash(\"C:/Python314/python.exe\" -m pip list)",
-      "Bash(cmd /c \"python\\\\run_headless_loop.bat\")"
+      "Bash(cmd /c \"python\\\\run_headless_loop.bat\")",
+      "Bash(git rm --cached \"python/downloads/TJMG/TJMG_5001083-27.2024.8.13.0441_ATA_1_09032026.pdf\" \"python/downloads/TJMG/TJMG_5001083-27.2024.8.13.0441_ATA_2_09032026.html\" \"python/downloads/TJMG/TJMG_5053546-33.2022.8.13.0079_ATA_1_09032026.pdf\" \"python/downloads/TJMG/TJMG_5053546-33.2022.8.13.0079_ATA_2_09032026.html\")",
+      "Bash(git rm --cached \"python/logs/automacao.log\")",
+      "Bash(git add .gitignore)",
+      "Bash(git add -u -- python/downloads/ python/logs/)",
+      "Bash(git commit:*)",
+      "Bash(git push -u origin feature/implementacao-inicial)",
+      "Bash(where gh)"
     ]
   }
 }

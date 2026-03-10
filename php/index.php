@@ -55,6 +55,10 @@ switch($endpoint){
         require "endpoints/registrar_arquivo.php";
         break;
 
+    case "download_arquivo_id":
+        require "endpoints/download_arquivo_id.php";
+        break;
+
     default:
         echo json_encode([
             "erro" => "Endpoint não encontrado"

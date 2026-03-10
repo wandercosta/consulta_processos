@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bd9da29f-b968-40ec-b44c-79d11d316181" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/php/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/php/painel/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/php/painel/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python/core/api_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/core/api_client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python/logs/automacao.log" beforeDir="false" afterPath="$PROJECT_DIR$/python/logs/automacao.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/python/servidor.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/servidor.py" afterDir="false" />
-    </list>
+    <list default="true" id="bd9da29f-b968-40ec-b44c-79d11d316181" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -84,7 +76,7 @@
       <updated>1772798960043</updated>
       <workItem from="1772798961416" duration="780000" />
       <workItem from="1772800093579" duration="6004000" />
-      <workItem from="1773099925366" duration="1029000" />
+      <workItem from="1773099925366" duration="1513000" />
     </task>
     <servers />
   </component>

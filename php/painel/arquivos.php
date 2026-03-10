@@ -229,7 +229,7 @@ include 'layout_header.php';
                                 <i class="bi bi-eye"></i>
                             </a>
                             <?php if($existeNoDisco): ?>
-                            <a href="../index.php?endpoint=download_arquivo&id=<?= $a['id_processo'] ?>"
+                            <a href="../index.php?endpoint=download_arquivo_id&id=<?= $a['id'] ?>"
                                class="btn btn-sm btn-success" title="Baixar arquivo" target="_blank">
                                 <i class="bi bi-download"></i>
                             </a>
