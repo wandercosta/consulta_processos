@@ -19,6 +19,12 @@ _script_dir = _os.path.dirname(_os.path.abspath(__file__))
 if _script_dir not in _sys.path:
     _sys.path.insert(0, _script_dir)
 
+# Força UTF-8 no stdout/stderr para evitar UnicodeEncodeError no Windows (cp1252)
+if hasattr(_sys.stdout, "reconfigure"):
+    _sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(_sys.stderr, "reconfigure"):
+    _sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 import argparse
 import importlib
 import logging
@@ -227,6 +233,22 @@ def processar_um(
             else:
                 logger.warning(f"[6/8] ⚠ Falha no download da ata {i}/{atas_encontradas}")
                 api.registrar_log(id_processo, f"Falha no download da ata {i}", "ERROR")
+
+            # Registra o arquivo na tabela processos_arquivos (sucesso ou falha)
+            ok_arq = api.registrar_arquivo(
+                id_processo=id_processo,
+                nome_arquivo=nome or f"ata_{i}_{tribunal}",
+                caminho_arquivo=caminho,
+                formato=ata.formato,
+                tamanho_bytes=tamanho or 0,
+                texto_doc=ata.texto[:500],
+                indice=i,
+                download_ok=ok,
+            )
+            if ok_arq:
+                logger.debug(f"[6/8] Arquivo {i} registrado na tabela processos_arquivos")
+            else:
+                logger.warning(f"[6/8] ⚠ Falha ao registrar arquivo {i} na tabela processos_arquivos")
 
         # ── ETAPA 7: Registrar resultado final ────────────────────────────────
         logger.info("[7/8] Registrando resultado na API...")

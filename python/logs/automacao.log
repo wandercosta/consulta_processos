@@ -139,3 +139,231 @@
 [2026-03-06 15:24:21] INFO    Fila vazia — nenhum processo pendente.
 [2026-03-06 15:24:21] INFO    Fila vazia. Encerrando modo loop.
 [2026-03-06 15:24:21] INFO    Sistema encerrado
+[2026-03-09 20:47:57] INFO    ============================================================
+[2026-03-09 20:47:57] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 20:47:57] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 20:47:57] INFO    ============================================================
+[2026-03-09 20:47:57] ERROR   HTTP 404 em GET /processos_pendentes | URL: http://localhost/processos_api/php/?endpoint=processos_pendentes
+[2026-03-09 20:47:57] INFO    Fila vazia — nenhum processo pendente.
+[2026-03-09 20:47:57] INFO    Sistema encerrado
+[2026-03-09 20:48:44] INFO    ============================================================
+[2026-03-09 20:48:44] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 20:48:44] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 20:48:44] INFO    ============================================================
+[2026-03-09 20:48:45] INFO    Fila vazia — nenhum processo pendente.
+[2026-03-09 20:48:45] INFO    Sistema encerrado
+[2026-03-09 20:55:02] INFO    ============================================================
+[2026-03-09 20:55:02] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 20:55:02] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 20:55:02] INFO    ============================================================
+[2026-03-09 20:55:02] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 20:55:02] INFO    ▶  PROCESSO : 5053546-33.2022.8.13.0079
+[2026-03-09 20:55:02] INFO       Tribunal : TJMG  |  ID: 1  |  Na fila: 1
+[2026-03-09 20:55:02] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 20:55:02] INFO    [1/8] Registrando início da consulta na API...
+[2026-03-09 20:55:02] INFO    [1/8] ✓ Status atualizado → CONSULTANDO
+[2026-03-09 20:55:02] INFO    [2/8] Verificando suporte ao tribunal 'TJMG'...
+[2026-03-09 20:55:02] INFO    [2/8] ✓ Tribunal TJMG suportado
+[2026-03-09 20:55:02] INFO    [3/8] Iniciando WebDriver Chrome (modo visual)...
+[2026-03-09 20:55:10] INFO    WebDriver Chrome criado (com interface)
+[2026-03-09 20:55:10] INFO    [3/8] ✓ WebDriver pronto (8.2s)
+[2026-03-09 20:55:10] INFO    [4/8] Carregando scraper para TJMG...
+[2026-03-09 20:55:10] INFO    [4/8] ✓ Scraper TJMGPJeScraper carregado
+[2026-03-09 20:55:10] INFO    [5/8] Iniciando scraping no portal TJMG...
+[2026-03-09 20:55:10] INFO    [TJMG] Abrindo consulta: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/listView.seam
+[2026-03-09 20:55:18] INFO    [TJMG] Página de consulta carregada
+[2026-03-09 20:55:19] INFO    [TJMG] Pesquisando: 5053546-33.2022.8.13.0079
+[2026-03-09 20:55:20] INFO    [TJMG] Resultado encontrado no PJe
+[2026-03-09 20:55:20] INFO    [TJMG] Navegando para detalhe: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/DetalheProcessoConsultaPublica/listView.seam?ca=1e05e0f6a2915f5ae9d2269be492c4465c28f63be3310aea
+[2026-03-09 20:55:29] INFO    [TJMG] Página de detalhe aberta com sucesso
+[2026-03-09 20:55:32] INFO    [TJMG] 9 documento(s) mapeado(s) na página de detalhe
+[2026-03-09 20:55:32] INFO    [TJMG] Ata encontrada: 09/05/2023 15:34:35 - 3546 (ATA DE AUDIÊNCIA)
+[2026-03-09 20:55:32] INFO    [TJMG] Ata encontrada: VISUALIZAR DOCUMENTOS
+09/05/2023 15:34:35 - ATA DE AUDIÊNCIA
+[2026-03-09 20:55:32] INFO    [TJMG] 9 documento(s) mapeado(s), 2 ata(s) identificada(s)
+[2026-03-09 20:55:32] INFO    [5/8] ✓ Scraping concluído — 9 doc(s) | 2 ata(s) | 7 ignorado(s) (21.8s)
+[2026-03-09 20:55:32] INFO    [6/8] Iniciando download de 2 ata(s)...
+[2026-03-09 20:55:32] INFO    [6/8] Ata 1/2: '09/05/2023 15:34:35 - 3546 (ATA DE AUDIÊNCIA)' (PDF)
+[2026-03-09 20:55:36] INFO    Download OK: TJMG_5053546-33.2022.8.13.0079_ATA_1_09032026.pdf (37 KB)
+[2026-03-09 20:55:36] INFO    [6/8] ✓ Ata 1/2: TJMG_5053546-33.2022.8.13.0079_ATA_1_09032026.pdf (38 KB)
+[2026-03-09 20:55:36] INFO    [6/8] Ata 2/2: 'VISUALIZAR DOCUMENTOS
+09/05/2023 15:34:35 - ATA DE AUDI' (HTML)
+[2026-03-09 20:55:37] INFO    Download OK: TJMG_5053546-33.2022.8.13.0079_ATA_2_09032026.html (112 KB)
+[2026-03-09 20:55:37] INFO    [6/8] ✓ Ata 2/2: TJMG_5053546-33.2022.8.13.0079_ATA_2_09032026.html (112 KB)
+[2026-03-09 20:55:37] INFO    [7/8] Registrando resultado na API...
+[2026-03-09 20:55:37] INFO    [7/8] ✓ 2 ata(s) registrada(s) com sucesso
+[2026-03-09 20:55:38] INFO    [8/8] Encerrando WebDriver...
+[2026-03-09 20:55:40] INFO    [8/8] ✓ WebDriver encerrado
+[2026-03-09 20:55:40] INFO    ✓ Processo concluído em 38.1s
+[2026-03-09 20:59:20] INFO    ============================================================
+[2026-03-09 20:59:20] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 20:59:20] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 20:59:20] INFO    ============================================================
+[2026-03-09 20:59:20] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 20:59:20] INFO    ▶  PROCESSO : 5004294-51.2025.8.13.0016
+[2026-03-09 20:59:20] INFO       Tribunal : TJMG  |  ID: 2  |  Na fila: 1
+[2026-03-09 20:59:20] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 20:59:20] INFO    [1/8] Registrando início da consulta na API...
+[2026-03-09 20:59:20] INFO    [1/8] ✓ Status atualizado → CONSULTANDO
+[2026-03-09 20:59:20] INFO    [2/8] Verificando suporte ao tribunal 'TJMG'...
+[2026-03-09 20:59:20] INFO    [2/8] ✓ Tribunal TJMG suportado
+[2026-03-09 20:59:20] INFO    [3/8] Iniciando WebDriver Chrome (modo visual)...
+[2026-03-09 20:59:27] INFO    WebDriver Chrome criado (com interface)
+[2026-03-09 20:59:27] INFO    [3/8] ✓ WebDriver pronto (7.5s)
+[2026-03-09 20:59:27] INFO    [4/8] Carregando scraper para TJMG...
+[2026-03-09 20:59:27] INFO    [4/8] ✓ Scraper TJMGPJeScraper carregado
+[2026-03-09 20:59:27] INFO    [5/8] Iniciando scraping no portal TJMG...
+[2026-03-09 20:59:27] INFO    [TJMG] Abrindo consulta: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/listView.seam
+[2026-03-09 20:59:29] INFO    [TJMG] Página de consulta carregada
+[2026-03-09 20:59:30] INFO    [TJMG] Pesquisando: 5004294-51.2025.8.13.0016
+[2026-03-09 20:59:31] INFO    [TJMG] Resultado encontrado no PJe
+[2026-03-09 20:59:31] INFO    [TJMG] Navegando para detalhe: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/DetalheProcessoConsultaPublica/listView.seam?ca=adee2d7bfa7cd0434cd30cfde4d753685c28f63be3310aea
+[2026-03-09 20:59:32] INFO    [TJMG] Página de detalhe aberta com sucesso
+[2026-03-09 20:59:34] INFO    [TJMG] 19 documento(s) mapeado(s) na página de detalhe
+[2026-03-09 20:59:34] INFO    [TJMG] 19 documento(s) mapeado(s), 0 ata(s) identificada(s)
+[2026-03-09 20:59:34] INFO    [5/8] ✓ Scraping concluído — 19 doc(s) | 0 ata(s) | 19 ignorado(s) (6.6s)
+[2026-03-09 20:59:34] INFO    [6/8] Nenhuma ata encontrada — finalizando processo na API...
+[2026-03-09 20:59:34] INFO    [6/8] ✓ Processo marcado como FINALIZADO (sem ata)
+[2026-03-09 20:59:34] INFO    ■ Concluído em 14.2s
+[2026-03-09 20:59:34] ERROR   ✗ Erro inesperado: UnicodeEncodeError: 'charmap' codec can't encode characters in position 2-51: character maps to <undefined>
+[2026-03-09 20:59:34] INFO    [8/8] Encerrando WebDriver...
+[2026-03-09 20:59:36] INFO    [8/8] ✓ WebDriver encerrado
+[2026-03-09 20:59:36] INFO    ✓ Processo concluído em 16.4s
+[2026-03-09 21:00:45] INFO    ============================================================
+[2026-03-09 21:00:45] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 21:00:45] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 21:00:45] INFO    ============================================================
+[2026-03-09 21:00:45] INFO    Fila vazia — nenhum processo pendente.
+[2026-03-09 21:00:45] INFO    Sistema encerrado
+[2026-03-09 21:01:21] INFO    ============================================================
+[2026-03-09 21:01:21] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 21:01:21] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 21:01:21] INFO    ============================================================
+[2026-03-09 21:01:21] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 21:01:21] INFO    ▶  PROCESSO : 5001083-27.2024.8.13.0441
+[2026-03-09 21:01:21] INFO       Tribunal : TJMG  |  ID: 3  |  Na fila: 1
+[2026-03-09 21:01:21] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 21:01:21] INFO    [1/8] Registrando início da consulta na API...
+[2026-03-09 21:01:21] INFO    [1/8] ✓ Status atualizado → CONSULTANDO
+[2026-03-09 21:01:21] INFO    [2/8] Verificando suporte ao tribunal 'TJMG'...
+[2026-03-09 21:01:21] INFO    [2/8] ✓ Tribunal TJMG suportado
+[2026-03-09 21:01:21] INFO    [3/8] Iniciando WebDriver Chrome (modo visual)...
+[2026-03-09 21:01:24] INFO    WebDriver Chrome criado (com interface)
+[2026-03-09 21:01:24] INFO    [3/8] ✓ WebDriver pronto (2.6s)
+[2026-03-09 21:01:24] INFO    [4/8] Carregando scraper para TJMG...
+[2026-03-09 21:01:24] INFO    [4/8] ✓ Scraper TJMGPJeScraper carregado
+[2026-03-09 21:01:24] INFO    [5/8] Iniciando scraping no portal TJMG...
+[2026-03-09 21:01:24] INFO    [TJMG] Abrindo consulta: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/listView.seam
+[2026-03-09 21:01:26] INFO    [TJMG] Página de consulta carregada
+[2026-03-09 21:01:27] INFO    [TJMG] Pesquisando: 5001083-27.2024.8.13.0441
+[2026-03-09 21:01:28] INFO    [TJMG] Resultado encontrado no PJe
+[2026-03-09 21:01:28] INFO    [TJMG] Navegando para detalhe: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/DetalheProcessoConsultaPublica/listView.seam?ca=50ef342a13064f5f59145c2e45ffa5135c28f63be3310aea
+[2026-03-09 21:01:30] INFO    [TJMG] Página de detalhe aberta com sucesso
+[2026-03-09 21:01:32] INFO    [TJMG] 17 documento(s) mapeado(s) na página de detalhe
+[2026-03-09 21:01:32] INFO    [TJMG] Ata encontrada: 12/11/2024 15:11:13 - TERMO DE ASSENTADA (ATA DE AUDIÊNCIA (
+[2026-03-09 21:01:32] INFO    [TJMG] Ata encontrada: VISUALIZAR DOCUMENTOS
+12/11/2024 15:11:13 - ATA DE AUDIÊNCIA
+[2026-03-09 21:01:32] INFO    [TJMG] 17 documento(s) mapeado(s), 2 ata(s) identificada(s)
+[2026-03-09 21:01:32] INFO    [5/8] ✓ Scraping concluído — 17 doc(s) | 2 ata(s) | 15 ignorado(s) (8.5s)
+[2026-03-09 21:01:32] INFO    [6/8] Iniciando download de 2 ata(s)...
+[2026-03-09 21:01:32] INFO    [6/8] Ata 1/2: '12/11/2024 15:11:13 - TERMO DE ASSENTADA (ATA DE AUDIÊN' (PDF)
+[2026-03-09 21:01:33] INFO    Download OK: TJMG_5001083-27.2024.8.13.0441_ATA_1_09032026.pdf (585 KB)
+[2026-03-09 21:01:33] INFO    [6/8] ✓ Ata 1/2: TJMG_5001083-27.2024.8.13.0441_ATA_1_09032026.pdf (586 KB)
+[2026-03-09 21:01:33] INFO    [6/8] Ata 2/2: 'VISUALIZAR DOCUMENTOS
+12/11/2024 15:11:13 - ATA DE AUDI' (HTML)
+[2026-03-09 21:01:34] INFO    Download OK: TJMG_5001083-27.2024.8.13.0441_ATA_2_09032026.html (111 KB)
+[2026-03-09 21:01:34] INFO    [6/8] ✓ Ata 2/2: TJMG_5001083-27.2024.8.13.0441_ATA_2_09032026.html (112 KB)
+[2026-03-09 21:01:34] INFO    [7/8] Registrando resultado na API...
+[2026-03-09 21:01:34] INFO    [7/8] ✓ 2 ata(s) registrada(s) com sucesso
+[2026-03-09 21:01:34] INFO    [8/8] Encerrando WebDriver...
+[2026-03-09 21:01:37] INFO    [8/8] ✓ WebDriver encerrado
+[2026-03-09 21:01:37] INFO    ✓ Processo concluído em 15.4s
+[2026-03-09 21:01:37] INFO    Sistema encerrado
+[2026-03-09 21:05:02] INFO    ============================================================
+[2026-03-09 21:05:02] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 21:05:02] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 21:05:02] INFO    ============================================================
+[2026-03-09 21:05:02] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 21:05:02] INFO    ▶  PROCESSO : 5053546-33.2022.8.13.0079
+[2026-03-09 21:05:02] INFO       Tribunal : TJMG  |  ID: 1  |  Na fila: 1
+[2026-03-09 21:05:02] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 21:05:02] INFO    [1/8] Registrando início da consulta na API...
+[2026-03-09 21:05:02] INFO    [1/8] ✓ Status atualizado → CONSULTANDO
+[2026-03-09 21:05:02] INFO    [2/8] Verificando suporte ao tribunal 'TJMG'...
+[2026-03-09 21:05:02] INFO    [2/8] ✓ Tribunal TJMG suportado
+[2026-03-09 21:05:02] INFO    [3/8] Iniciando WebDriver Chrome (modo visual)...
+[2026-03-09 21:05:05] INFO    WebDriver Chrome criado (com interface)
+[2026-03-09 21:05:05] INFO    [3/8] ✓ WebDriver pronto (2.8s)
+[2026-03-09 21:05:05] INFO    [4/8] Carregando scraper para TJMG...
+[2026-03-09 21:05:05] INFO    [4/8] ✓ Scraper TJMGPJeScraper carregado
+[2026-03-09 21:05:05] INFO    [5/8] Iniciando scraping no portal TJMG...
+[2026-03-09 21:05:05] INFO    [TJMG] Abrindo consulta: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/listView.seam
+[2026-03-09 21:05:08] INFO    [TJMG] Página de consulta carregada
+[2026-03-09 21:05:09] INFO    [TJMG] Pesquisando: 5053546-33.2022.8.13.0079
+[2026-03-09 21:05:09] INFO    [TJMG] Resultado encontrado no PJe
+[2026-03-09 21:05:09] INFO    [TJMG] Navegando para detalhe: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/DetalheProcessoConsultaPublica/listView.seam?ca=1e05e0f6a2915f5ae9d2269be492c4465c28f63be3310aea
+[2026-03-09 21:05:10] INFO    [TJMG] Página de detalhe aberta com sucesso
+[2026-03-09 21:05:13] INFO    [TJMG] 9 documento(s) mapeado(s) na página de detalhe
+[2026-03-09 21:05:13] INFO    [TJMG] Ata encontrada: 09/05/2023 15:34:35 - 3546 (ATA DE AUDIÊNCIA)
+[2026-03-09 21:05:13] INFO    [TJMG] Ata encontrada: VISUALIZAR DOCUMENTOS
+09/05/2023 15:34:35 - ATA DE AUDIÊNCIA
+[2026-03-09 21:05:13] INFO    [TJMG] 9 documento(s) mapeado(s), 2 ata(s) identificada(s)
+[2026-03-09 21:05:13] INFO    [5/8] ✓ Scraping concluído — 9 doc(s) | 2 ata(s) | 7 ignorado(s) (7.8s)
+[2026-03-09 21:05:13] INFO    [6/8] Iniciando download de 2 ata(s)...
+[2026-03-09 21:05:13] INFO    [6/8] Ata 1/2: '09/05/2023 15:34:35 - 3546 (ATA DE AUDIÊNCIA)' (PDF)
+[2026-03-09 21:05:14] INFO    Download OK: TJMG_5053546-33.2022.8.13.0079_ATA_1_09032026.pdf (37 KB)
+[2026-03-09 21:05:14] INFO    [6/8] ✓ Ata 1/2: TJMG_5053546-33.2022.8.13.0079_ATA_1_09032026.pdf (38 KB)
+[2026-03-09 21:05:14] INFO    [6/8] Ata 2/2: 'VISUALIZAR DOCUMENTOS
+09/05/2023 15:34:35 - ATA DE AUDI' (HTML)
+[2026-03-09 21:05:15] INFO    Download OK: TJMG_5053546-33.2022.8.13.0079_ATA_2_09032026.html (112 KB)
+[2026-03-09 21:05:15] INFO    [6/8] ✓ Ata 2/2: TJMG_5053546-33.2022.8.13.0079_ATA_2_09032026.html (112 KB)
+[2026-03-09 21:05:15] INFO    [7/8] Registrando resultado na API...
+[2026-03-09 21:05:15] INFO    [7/8] ✓ 2 ata(s) registrada(s) com sucesso
+[2026-03-09 21:05:15] INFO    [8/8] Encerrando WebDriver...
+[2026-03-09 21:05:17] INFO    [8/8] ✓ WebDriver encerrado
+[2026-03-09 21:05:17] INFO    ✓ Processo concluído em 14.7s
+[2026-03-09 21:05:17] INFO    Sistema encerrado
+[2026-03-09 21:09:16] INFO    ============================================================
+[2026-03-09 21:09:16] INFO    Sistema de automação de processos jurídicos iniciado
+[2026-03-09 21:09:16] INFO    Modo: único | Headless: False | Log: INFO
+[2026-03-09 21:09:16] INFO    ============================================================
+[2026-03-09 21:09:16] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 21:09:16] INFO    ▶  PROCESSO : 5053546-33.2022.8.13.0079
+[2026-03-09 21:09:16] INFO       Tribunal : TJMG  |  ID: 1  |  Na fila: 2
+[2026-03-09 21:09:16] INFO    ────────────────────────────────────────────────────────────
+[2026-03-09 21:09:16] INFO    [1/8] Registrando início da consulta na API...
+[2026-03-09 21:09:16] INFO    [1/8] ✓ Status atualizado → CONSULTANDO
+[2026-03-09 21:09:16] INFO    [2/8] Verificando suporte ao tribunal 'TJMG'...
+[2026-03-09 21:09:16] INFO    [2/8] ✓ Tribunal TJMG suportado
+[2026-03-09 21:09:16] INFO    [3/8] Iniciando WebDriver Chrome (modo visual)...
+[2026-03-09 21:09:19] INFO    WebDriver Chrome criado (com interface)
+[2026-03-09 21:09:19] INFO    [3/8] ✓ WebDriver pronto (2.5s)
+[2026-03-09 21:09:19] INFO    [4/8] Carregando scraper para TJMG...
+[2026-03-09 21:09:19] INFO    [4/8] ✓ Scraper TJMGPJeScraper carregado
+[2026-03-09 21:09:19] INFO    [5/8] Iniciando scraping no portal TJMG...
+[2026-03-09 21:09:19] INFO    [TJMG] Abrindo consulta: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/listView.seam
+[2026-03-09 21:09:21] INFO    [TJMG] Página de consulta carregada
+[2026-03-09 21:09:22] INFO    [TJMG] Pesquisando: 5053546-33.2022.8.13.0079
+[2026-03-09 21:09:24] INFO    [TJMG] Resultado encontrado no PJe
+[2026-03-09 21:09:24] INFO    [TJMG] Navegando para detalhe: https://pje-consulta-publica.tjmg.jus.br/pje/ConsultaPublica/DetalheProcessoConsultaPublica/listView.seam?ca=1e05e0f6a2915f5ae9d2269be492c4465c28f63be3310aea
+[2026-03-09 21:09:25] INFO    [TJMG] Página de detalhe aberta com sucesso
+[2026-03-09 21:09:27] INFO    [TJMG] 9 documento(s) mapeado(s) na página de detalhe
+[2026-03-09 21:09:27] INFO    [TJMG] Ata encontrada: 09/05/2023 15:34:35 - 3546 (ATA DE AUDIÊNCIA)
+[2026-03-09 21:09:27] INFO    [TJMG] Ata encontrada: VISUALIZAR DOCUMENTOS
+09/05/2023 15:34:35 - ATA DE AUDIÊNCIA
+[2026-03-09 21:09:27] INFO    [TJMG] 9 documento(s) mapeado(s), 2 ata(s) identificada(s)
+[2026-03-09 21:09:27] INFO    [5/8] ✓ Scraping concluído — 9 doc(s) | 2 ata(s) | 7 ignorado(s) (8.0s)
+[2026-03-09 21:09:27] INFO    [6/8] Iniciando download de 2 ata(s)...
+[2026-03-09 21:09:27] INFO    [6/8] Ata 1/2: '09/05/2023 15:34:35 - 3546 (ATA DE AUDIÊNCIA)' (PDF)
+[2026-03-09 21:09:28] INFO    Download OK: TJMG_5053546-33.2022.8.13.0079_ATA_1_09032026.pdf (37 KB)
+[2026-03-09 21:09:28] INFO    [6/8] ✓ Ata 1/2: TJMG_5053546-33.2022.8.13.0079_ATA_1_09032026.pdf (38 KB)
+[2026-03-09 21:09:28] INFO    [6/8] Ata 2/2: 'VISUALIZAR DOCUMENTOS
+09/05/2023 15:34:35 - ATA DE AUDI' (HTML)
+[2026-03-09 21:09:28] INFO    Download OK: TJMG_5053546-33.2022.8.13.0079_ATA_2_09032026.html (112 KB)
+[2026-03-09 21:09:28] INFO    [6/8] ✓ Ata 2/2: TJMG_5053546-33.2022.8.13.0079_ATA_2_09032026.html (112 KB)
+[2026-03-09 21:09:28] INFO    [7/8] Registrando resultado na API...
+[2026-03-09 21:09:28] INFO    [7/8] ✓ 2 ata(s) registrada(s) com sucesso
+[2026-03-09 21:09:28] INFO    [8/8] Encerrando WebDriver...
+[2026-03-09 21:09:30] INFO    [8/8] ✓ WebDriver encerrado
+[2026-03-09 21:09:30] INFO    ✓ Processo concluído em 14.2s
+[2026-03-09 21:09:30] INFO    Sistema encerrado

@@ -171,6 +171,36 @@ class APIClient:
             return self.registrar_log(id_processo, mensagem, "ERROR")
         return True
 
+    def registrar_arquivo(
+        self,
+        id_processo: int,
+        nome_arquivo: str,
+        caminho_arquivo: Optional[str],
+        formato: str,
+        tamanho_bytes: int,
+        texto_doc: str,
+        indice: int,
+        download_ok: bool = True,
+    ) -> bool:
+        """
+        POST /registrar_arquivo
+
+        Registra um arquivo individual na tabela processos_arquivos.
+        Deve ser chamado para cada ata após a tentativa de download,
+        independente de sucesso ou falha.
+        """
+        resultado = self._post("registrar_arquivo", {
+            "id_processo":     id_processo,
+            "nome_arquivo":    nome_arquivo,
+            "caminho_arquivo": caminho_arquivo,
+            "formato":         formato.upper() if formato else None,
+            "tamanho_bytes":   tamanho_bytes,
+            "texto_doc":       texto_doc,
+            "indice":          indice,
+            "download_ok":     1 if download_ok else 0,
+        })
+        return resultado is not None
+
     def status_processo(self, id_processo: int) -> Optional[Dict]:
         """
         GET /status_processo?id={id}

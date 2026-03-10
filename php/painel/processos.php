@@ -83,7 +83,7 @@ include 'layout_header.php';
             <label class="form-label form-label-sm mb-1">Status</label>
             <select name="status" class="form-select form-select-sm">
                 <option value="">Todos</option>
-                <?php foreach(['PENDENTE','CONSULTANDO','FINALIZADO','ERRO'] as $s): ?>
+                <?php foreach(['PENDENTE','CONSULTANDO','FINALIZADO COM ATA','FINALIZADO SEM ATA','ERRO'] as $s): ?>
                 <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= $s ?></option>
                 <?php endforeach; ?>
             </select>

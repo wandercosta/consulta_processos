@@ -73,6 +73,7 @@ def _executar_automacao(modo: str) -> None:
     # PYTHONUNBUFFERED=1 garante que o subprocesso não bufferize o stdout
     env = os.environ.copy()
     env["PYTHONUNBUFFERED"] = "1"
+    env["PYTHONUTF8"] = "1"
 
     args_map = {
         "simples":        [sys.executable, "-u", "main.py"],

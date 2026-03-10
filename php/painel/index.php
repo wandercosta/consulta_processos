@@ -15,15 +15,41 @@ foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row){
 }
 $totalGeral = array_sum($totais);
 
-// Finalizados com ata
-$stmtAta = $db->query("SELECT COUNT(*) FROM processos WHERE status_consulta='FINALIZADO' AND possui_ata='S'");
-$comAta = (int)$stmtAta->fetchColumn();
+// Finalizados com ata (novo status + retrocompatibilidade)
+$comAta = ($totais['FINALIZADO COM ATA'] ?? 0) + ($totais['FINALIZADO'] ?? 0);
 
 // Finalizados sem ata
-$semAta = ($totais['FINALIZADO'] ?? 0) - $comAta;
+$semAta = ($totais['FINALIZADO SEM ATA'] ?? 0);
 
-// Últimos 10 processos
-$ultimos = $db->query("SELECT id, numero_processo, status_consulta, criado_em FROM processos ORDER BY criado_em DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
+// Aguardando reprocessamento (sem ata mas ainda nos 10 min de espera)
+$reprocessando = $db->query("
+    SELECT COUNT(*) FROM processos
+    WHERE status_consulta = 'FINALIZADO SEM ATA'
+      AND data_ultima_consulta >= NOW() - INTERVAL 10 MINUTE
+")->fetchColumn();
+
+// Próximos da fila (PENDENTE + FINALIZADO SEM ATA expirados)
+$proximos = $db->query("
+    SELECT id, numero_processo, status_consulta, criado_em FROM processos
+    WHERE status_consulta = 'PENDENTE'
+       OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 10 MINUTE)
+    ORDER BY CASE status_consulta WHEN 'PENDENTE' THEN 0 ELSE 1 END ASC, criado_em ASC
+    LIMIT 10
+")->fetchAll(PDO::FETCH_ASSOC);
+
+// Últimos processados (finalizados com ou sem ata, incluindo status antigo)
+$processados = $db->query("
+    SELECT id, numero_processo, status_consulta, data_ultima_consulta FROM processos
+    WHERE status_consulta IN ('FINALIZADO COM ATA', 'FINALIZADO SEM ATA', 'FINALIZADO')
+    ORDER BY data_ultima_consulta DESC
+    LIMIT 10
+")->fetchAll(PDO::FETCH_ASSOC);
+
+// Últimos cadastrados
+$ultimos = $db->query("
+    SELECT id, numero_processo, status_consulta, criado_em FROM processos
+    ORDER BY criado_em DESC LIMIT 10
+")->fetchAll(PDO::FETCH_ASSOC);
 
 // Últimos 10 logs
 $logs = $db->query("
@@ -60,7 +86,7 @@ include 'layout_header.php';
         <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669)">
             <i class="bi bi-check-circle stat-icon"></i>
             <div>
-                <div class="stat-value"><?= $totais['FINALIZADO'] ?? 0 ?></div>
+                <div class="stat-value"><?= $comAta + $semAta ?></div>
                 <div class="stat-label">Finalizados</div>
             </div>
         </div>
@@ -100,7 +126,14 @@ include 'layout_header.php';
         <div class="stat-card" style="background:linear-gradient(135deg,#64748b,#475569)">
             <i class="bi bi-file-earmark-x stat-icon"></i>
             <div>
-                <div class="stat-value"><?= $semAta ?></div>
+                <div class="stat-value">
+                    <?= $semAta ?>
+                    <?php if ($reprocessando > 0): ?>
+                    <small class="fs-6 fw-normal opacity-75" title="Aguardando 10 min para reprocessar">
+                        (<?= $reprocessando ?> aguardando)
+                    </small>
+                    <?php endif; ?>
+                </div>
                 <div class="stat-label">Finalizados sem ATA</div>
             </div>
         </div>
@@ -114,13 +147,92 @@ include 'layout_header.php';
     </div>
 </div>
 
-<!-- Tabelas lado a lado -->
-<div class="row g-3">
-    <!-- Últimos processos -->
+<!-- Tabelas — linha 1 -->
+<div class="row g-3 mb-3">
+    <!-- Próximos da fila -->
     <div class="col-lg-6">
-        <div class="card border-0 shadow-sm" style="border-radius:12px;">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:12px;">
             <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between pt-3 pb-0 px-3">
-                <h6 class="mb-0 fw-bold">Últimos Processos</h6>
+                <h6 class="mb-0 fw-bold">
+                    <i class="bi bi-hourglass-split text-warning me-1"></i> Próximos da Fila
+                </h6>
+                <span class="badge bg-warning text-dark"><?= count($proximos) ?></span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Processo</th>
+                                <th>Status</th>
+                                <th>Cadastrado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach($proximos as $p): ?>
+                        <tr style="cursor:pointer" onclick="location.href='detalhe.php?id=<?= $p['id'] ?>'">
+                            <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                            <td><?= statusBadge($p['status_consulta']) ?></td>
+                            <td class="text-muted small"><?= formatData($p['criado_em']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if(empty($proximos)): ?>
+                        <tr><td colspan="3" class="text-center text-muted py-3">Fila vazia</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimos processados -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:12px;">
+            <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between pt-3 pb-0 px-3">
+                <h6 class="mb-0 fw-bold">
+                    <i class="bi bi-check2-circle text-success me-1"></i> Últimos Processados
+                </h6>
+                <a href="processos.php" class="btn btn-sm btn-outline-success">Ver todos</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Processo</th>
+                                <th>Status</th>
+                                <th>Processado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach($processados as $p): ?>
+                        <tr style="cursor:pointer" onclick="location.href='detalhe.php?id=<?= $p['id'] ?>'">
+                            <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                            <td><?= statusBadge($p['status_consulta']) ?></td>
+                            <td class="text-muted small"><?= formatData($p['data_ultima_consulta']) ?></td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if(empty($processados)): ?>
+                        <tr><td colspan="3" class="text-center text-muted py-3">Nenhum processo finalizado</td></tr>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabelas — linha 2 -->
+<div class="row g-3">
+    <!-- Últimos cadastrados -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:12px;">
+            <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between pt-3 pb-0 px-3">
+                <h6 class="mb-0 fw-bold">
+                    <i class="bi bi-plus-circle text-primary me-1"></i> Últimos Cadastrados
+                </h6>
                 <a href="processos.php" class="btn btn-sm btn-outline-primary">Ver todos</a>
             </div>
             <div class="card-body p-0">
@@ -153,9 +265,11 @@ include 'layout_header.php';
 
     <!-- Últimos logs -->
     <div class="col-lg-6">
-        <div class="card border-0 shadow-sm" style="border-radius:12px;">
+        <div class="card border-0 shadow-sm h-100" style="border-radius:12px;">
             <div class="card-header bg-white border-0 pt-3 pb-0 px-3">
-                <h6 class="mb-0 fw-bold">Últimos Logs</h6>
+                <h6 class="mb-0 fw-bold">
+                    <i class="bi bi-journal-text text-secondary me-1"></i> Últimos Logs
+                </h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
