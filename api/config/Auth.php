@@ -3,7 +3,7 @@
 // Token lido do .env — não definir como const para suportar Env::get() em runtime
 
 // Endpoints que não exigem token (servem arquivos ao browser)
-const ENDPOINTS_PUBLICOS = ['download_arquivo', 'download_arquivo_id'];
+const ENDPOINTS_PUBLICOS = ['download_arquivo', 'download_arquivo_id', 'visualizar_arquivo_id'];
 
 function validarToken(): void
 {

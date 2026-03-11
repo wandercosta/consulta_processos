@@ -158,9 +158,22 @@ $data_ate = $filtros['data_ate'] ?? '';
                         <div class="d-flex gap-1 justify-content-center">
                             <a href="<?= PAINEL_URL ?>?page=detalhe&id=<?= $a['id_processo'] ?>"
                                class="btn btn-sm btn-outline-primary" title="Ver processo">
-                                <i class="bi bi-eye"></i>
+                                <i class="bi bi-list-ul"></i>
                             </a>
                             <?php if ($existeNoDisco): ?>
+                                <?php if ($fmt === 'docx' && !empty($a['texto_doc'])): ?>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-info"
+                                        title="Visualizar texto extraído"
+                                        onclick="abrirTexto(<?= $a['id'] ?>, <?= htmlspecialchars(json_encode($a['nome_arquivo']), ENT_QUOTES) ?>, <?= htmlspecialchars(json_encode($a['texto_doc']), ENT_QUOTES) ?>)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <?php else: ?>
+                                <a href="<?= API_DOWNLOAD_URL ?>?endpoint=visualizar_arquivo_id&id=<?= $a['id'] ?>"
+                                   class="btn btn-sm btn-outline-info" title="Visualizar no browser" target="_blank">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <?php endif; ?>
                             <a href="<?= API_DOWNLOAD_URL ?>?endpoint=download_arquivo_id&id=<?= $a['id'] ?>"
                                class="btn btn-sm btn-success" title="Baixar arquivo" target="_blank">
                                 <i class="bi bi-download"></i>
@@ -188,6 +201,28 @@ $data_ate = $filtros['data_ate'] ?? '';
     </div>
 
     <!-- Paginação -->
+    <!-- Modal de visualização de texto (DOCX) -->
+    <div class="modal fade" id="modalTexto" tabindex="-1" aria-labelledby="modalTextoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title fw-bold" id="modalTextoLabel">
+                        <i class="bi bi-file-word me-2 text-primary"></i>
+                        <span id="modalTextoNome"></span>
+                    </h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <pre id="modalTextoConteudo" class="small mb-0"
+                         style="white-space:pre-wrap;word-break:break-word;max-height:60vh;overflow-y:auto;background:#f8f9fa;padding:1rem;border-radius:6px;"></pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <?php if ($paginas > 1): ?>
     <div class="card-footer bg-white border-top-0 px-3 py-2">
         <nav>
@@ -212,3 +247,11 @@ $data_ate = $filtros['data_ate'] ?? '';
     </div>
     <?php endif; ?>
 </div>
+
+<script>
+function abrirTexto(id, nome, texto) {
+    document.getElementById('modalTextoNome').textContent = nome;
+    document.getElementById('modalTextoConteudo').textContent = texto || '(sem conteúdo extraído)';
+    new bootstrap.Modal(document.getElementById('modalTexto')).show();
+}
+</script>
