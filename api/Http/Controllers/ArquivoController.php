@@ -112,6 +112,47 @@ class ArquivoController
         $this->servirArquivo($caminho, $nome, $ext);
     }
 
+    /** Visualização inline pelo ID da tabela processos_arquivos (abre no browser) */
+    public function visualizarById(): void
+    {
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(["erro" => "id do arquivo é obrigatório"]);
+            exit;
+        }
+
+        $arquivo = $this->repo->findById($id);
+
+        if (!$arquivo || empty($arquivo['caminho_arquivo'])) {
+            http_response_code(404);
+            echo json_encode(["erro" => "Arquivo não encontrado"]);
+            exit;
+        }
+
+        $caminho = $this->normalizarCaminho($arquivo['caminho_arquivo']);
+
+        if (!file_exists($caminho)) {
+            http_response_code(404);
+            echo json_encode(["erro" => "Arquivo não encontrado no disco"]);
+            exit;
+        }
+
+        $ext  = strtolower(pathinfo($caminho, PATHINFO_EXTENSION));
+        $nome = $arquivo['nome_arquivo'] ?: ("arquivo_{$id}.{$ext}");
+        $mime = self::MIME_TYPES[$ext] ?? 'application/octet-stream';
+
+        while (ob_get_level()) ob_end_clean();
+
+        header("Content-Type: {$mime}");
+        header("Content-Disposition: inline; filename=\"{$nome}\"");
+        header("Content-Length: " . filesize($caminho));
+        header("Cache-Control: no-cache");
+        readfile($caminho);
+        exit;
+    }
+
     /**
      * Recebe o arquivo via multipart/form-data, salva no VPS e atualiza o caminho no BD.
      * Parâmetros POST: id_arquivo (int)

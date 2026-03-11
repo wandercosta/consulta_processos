@@ -79,6 +79,10 @@ switch ($endpoint) {
         $arquivoCtrl->downloadById();
         break;
 
+    case 'visualizar_arquivo_id':
+        $arquivoCtrl->visualizarById();
+        break;
+
     case 'upload_arquivo':
         $arquivoCtrl->uploadArquivo();
         break;
