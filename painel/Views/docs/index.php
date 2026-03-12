@@ -133,7 +133,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                         <h6 class="fw-bold text-muted text-uppercase small mb-3">1. Cadastro</h6>
                         <ol class="small">
                             <li class="mb-1">Usuário cadastra o processo pelo painel (ou via API).</li>
-                            <li class="mb-1">Sistema detecta automaticamente o <strong>tipo</strong> pelo 1º dígito do número (TJMG: 5=PJE, 0/1=EPROC, 2=PROCON).</li>
+                            <li class="mb-1">Sistema detecta automaticamente o <strong>tipo</strong> pelo 1º dígito do número (MG: 5=PJE, 0/1=EPROC, 2=PROCON).</li>
                             <li class="mb-1">Processo entra com status <span class="badge bg-warning text-dark">PENDENTE</span>.</li>
                             <li>Se informada, a <strong>data do ato</strong> é registrada — o robô só processa após essa data.</li>
                         </ol>
@@ -212,7 +212,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
     "id": 42,
     "id_processo": 42,
     "numero_processo": "5003854-46.2025.8.13.0407",
-    "tribunal": "TJMG",
+    "tribunal": "MG",
     "tipo_sistema": "PJE",
     "status_consulta": "PENDENTE",
     "data_ato": "2025-03-01"
@@ -261,7 +261,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                     'endpoint' => 'registrar_nao_compativel',
                     'titulo' => 'Registrar NÃO COMPATÍVEL',
                     'descricao' => 'Muda status para NÃO COMPATÍVEL. Usado quando o tipo_sistema não tem scraper implementado. O processo não volta para a fila automaticamente.',
-                    'payload' => '{ "id_processo": 42, "mensagem": "Sistema \'EPROC\' não suportado para TJMG." }',
+                    'payload' => '{ "id_processo": 42, "mensagem": "Sistema \'EPROC\' não suportado para MG." }',
                     'resposta' => '{ "status": "ok" }',
                 ],
                 [
@@ -272,7 +272,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                     'descricao' => 'Cadastra um novo processo. O tipo_sistema é inferido automaticamente. tribunal e data_ato são opcionais.',
                     'payload' => '{
   "numero_processo": "5003854-46.2025.8.13.0407",
-  "tribunal": "TJMG",
+  "tribunal": "MG",
   "data_ato": "2025-03-01"
 }',
                     'resposta' => '{ "id": 43, "status": "ok" }',
@@ -393,7 +393,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                             <tbody>
                                 <tr><td class="ps-3 font-monospace">id</td><td>INT PK AI</td><td></td></tr>
                                 <tr><td class="ps-3 font-monospace">numero_processo</td><td>VARCHAR(50)</td><td>UNIQUE</td></tr>
-                                <tr><td class="ps-3 font-monospace">tribunal</td><td>VARCHAR(20)</td><td>DEFAULT 'TJMG'</td></tr>
+                                <tr><td class="ps-3 font-monospace">tribunal</td><td>VARCHAR(10)</td><td>UF do estado, ex: 'MG'</td></tr>
                                 <tr><td class="ps-3 font-monospace">tipo_sistema</td><td>VARCHAR(20)</td><td>PJE / EPROC / PROCON / DESCONHECIDO</td></tr>
                                 <tr><td class="ps-3 font-monospace">data_ato</td><td>DATE NULL</td><td>Filtro temporal</td></tr>
                                 <tr><td class="ps-3 font-monospace">status_consulta</td><td>VARCHAR(30)</td><td>Ver status acima</td></tr>
@@ -492,7 +492,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                 <h5 class="fw-bold mb-3"><i class="bi bi-tags text-primary me-2"></i>Regras de classificação por tribunal</h5>
                 <p class="text-muted small mb-4">
                     O tipo do processo é detectado automaticamente no momento do cadastro com base no 1º dígito numérico do número do processo e no tribunal.
-                    Cada estado pode ter suas próprias regras — atualmente apenas TJMG está implementado.
+                    Cada estado pode ter suas próprias regras — atualmente apenas MG (Minas Gerais) está implementado.
                 </p>
 
                 <div class="row g-3 mb-4">
@@ -500,7 +500,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                         <div class="card border-0 bg-light" style="border-radius:10px">
                             <div class="card-body p-3">
                                 <div class="d-flex align-items-center gap-2 mb-2">
-                                    <span class="badge bg-light text-dark border fs-6">TJMG</span>
+                                    <span class="badge bg-light text-dark border fs-6">MG</span>
                                     <span class="badge bg-success">Implementado</span>
                                 </div>
                                 <table class="table table-sm mb-0 small">

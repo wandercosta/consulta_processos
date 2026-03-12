@@ -143,7 +143,7 @@ class ProcessoModel
         $digitos  = preg_replace('/\D/', '', $numero);
         $primeiro = $digitos[0] ?? '';
 
-        if ($tribunal === 'TJMG') {
+        if ($tribunal === 'MG') {
             if ($primeiro === '5')                    return 'PJE';
             if (in_array($primeiro, ['0', '1'], true)) return 'EPROC';
             if ($primeiro === '2')                    return 'PROCON';
