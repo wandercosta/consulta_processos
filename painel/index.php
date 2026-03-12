@@ -61,6 +61,16 @@ switch ($page) {
         (new ProcessoController(new ProcessoModel(db())))->cadastrar();
         break;
 
+    case 'importar':
+        require_once PAINEL_ROOT . '/Controllers/ImportController.php';
+        (new ImportController(new ProcessoModel(db())))->index();
+        break;
+
+    case 'importar_processar':
+        require_once PAINEL_ROOT . '/Controllers/ImportController.php';
+        (new ImportController(new ProcessoModel(db())))->processar();
+        break;
+
     case 'cancelar_processo':
         require_once PAINEL_ROOT . '/Controllers/ProcessoController.php';
         (new ProcessoController(new ProcessoModel(db())))->cancelar();
