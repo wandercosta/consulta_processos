@@ -22,7 +22,7 @@ $data_ate   = $filtros['data_ate']   ?? '';
             <label class="form-label form-label-sm mb-1">Status</label>
             <select name="status" class="form-select form-select-sm">
                 <option value="">Todos</option>
-                <?php foreach (['PENDENTE','CONSULTANDO','FINALIZADO COM ATA','FINALIZADO SEM ATA','ERRO'] as $s): ?>
+                <?php foreach (['PENDENTE','CONSULTANDO','FINALIZADO COM ATA','FINALIZADO SEM ATA','ERRO','NÃO COMPATÍVEL'] as $s): ?>
                 <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= $s ?></option>
                 <?php endforeach; ?>
             </select>
@@ -73,6 +73,7 @@ $data_ate   = $filtros['data_ate']   ?? '';
                     <tr>
                         <th>#</th>
                         <th>Número do Processo</th>
+                        <th>Tribunal / Tipo</th>
                         <th>Status</th>
                         <th>ATA</th>
                         <th>Qtd ATAs</th>
@@ -85,7 +86,11 @@ $data_ate   = $filtros['data_ate']   ?? '';
                 <?php foreach ($processos as $p): ?>
                 <tr>
                     <td class="text-muted small"><?= $p['id'] ?></td>
-                    <td class="font-monospace"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                    <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                    <td>
+                        <span class="badge bg-light text-dark border me-1"><?= htmlspecialchars($p['tribunal'] ?? '—') ?></span>
+                        <?= tipoBadge($p['tipo_sistema'] ?? null) ?>
+                    </td>
                     <td><?= statusBadge($p['status_consulta']) ?></td>
                     <td><?= ataBadge($p['possui_ata']) ?></td>
                     <td><?= $p['qtd_atas'] ?? '—' ?></td>
@@ -100,7 +105,7 @@ $data_ate   = $filtros['data_ate']   ?? '';
                 </tr>
                 <?php endforeach; ?>
                 <?php if (empty($processos)): ?>
-                <tr><td colspan="8" class="text-center text-muted py-4">Nenhum processo encontrado</td></tr>
+                <tr><td colspan="9" class="text-center text-muted py-4">Nenhum processo encontrado</td></tr>
                 <?php endif; ?>
                 </tbody>
             </table>

@@ -31,6 +31,13 @@
                         <td class="font-monospace"><?= htmlspecialchars($processo['numero_processo']) ?></td>
                     </tr>
                     <tr>
+                        <th class="text-muted fw-normal">Tribunal / Tipo</th>
+                        <td>
+                            <span class="badge bg-light text-dark border me-1"><?= htmlspecialchars($processo['tribunal'] ?? '—') ?></span>
+                            <?= tipoBadge($processo['tipo_sistema'] ?? null) ?>
+                        </td>
+                    </tr>
+                    <tr>
                         <th class="text-muted fw-normal">Status</th>
                         <td><?= statusBadge($processo['status_consulta']) ?></td>
                     </tr>

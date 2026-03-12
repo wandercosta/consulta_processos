@@ -109,7 +109,8 @@ def processar_um(
     processo = pendentes[0]
     id_processo: int = processo.get("id_processo") or processo.get("id", 0)
     numero_processo: str = formatar_numero_processo(processo.get("numero_processo", ""))
-    tribunal: str  = (processo.get("tribunal") or "").upper()
+    tribunal: str    = (processo.get("tribunal") or "").upper()
+    tipo_sistema: str = (processo.get("tipo_sistema") or "DESCONHECIDO").upper()
     data_ato_str   = processo.get("data_ato") or None   # "YYYY-MM-DD" ou None
     data_ato: Date | None = Date.fromisoformat(data_ato_str) if data_ato_str else None
     qtd_fila = len(pendentes)
@@ -119,6 +120,7 @@ def processar_um(
     logger.info(SEP)
     logger.info(f"▶  PROCESSO : {numero_processo}")
     logger.info(f"   Tribunal : {tribunal or '???'}  |  ID: {id_processo}  |  Na fila: {qtd_fila}")
+    logger.info(f"   Tipo     : {tipo_sistema}")
     logger.info(SEP)
 
     # ── ETAPA 1: Registrar início da consulta ─────────────────────────────────
@@ -129,6 +131,22 @@ def processar_um(
     else:
         logger.warning("[1/8] ⚠ Falha ao atualizar status (continuando)")
     api.registrar_log(id_processo, f"Consulta iniciada no tribunal {tribunal}")
+
+    # ── ETAPA 1b: Verificar compatibilidade do tipo_sistema ───────────────────
+    SISTEMAS_SUPORTADOS: dict[str, list[str]] = {"TJMG": ["PJE"]}
+    tipos_do_tribunal = SISTEMAS_SUPORTADOS.get(tribunal, [])
+    if tipo_sistema not in tipos_do_tribunal:
+        msg = (
+            f"Sistema '{tipo_sistema}' não suportado para {tribunal}. "
+            f"Suportados: {tipos_do_tribunal or ['nenhum']}"
+        )
+        logger.warning(f"[1/8] ✗ {msg}")
+        api.registrar_nao_compativel(id_processo, msg)
+        api.registrar_log(id_processo, msg, "WARNING")
+        logger.info(f"■ Concluído em {time.time() - _inicio:.1f}s")
+        imprimir_relatorio(numero_processo, tribunal, 0, 0)
+        return True
+    logger.info(f"[1/8] ✓ Tipo {tipo_sistema} compatível para {tribunal}")
 
     # ── ETAPA 2: Verificar suporte ao tribunal ────────────────────────────────
     logger.info(f"[2/8] Verificando suporte ao tribunal '{tribunal}'...")

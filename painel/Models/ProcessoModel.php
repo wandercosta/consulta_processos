@@ -81,8 +81,8 @@ class ProcessoModel
         $total = (int)$countStmt->fetchColumn();
 
         $stmt = $this->db->prepare("
-            SELECT id, numero_processo, status_consulta, possui_ata, qtd_atas,
-                   data_ultima_consulta, criado_em, mensagem_erro
+            SELECT id, numero_processo, tribunal, tipo_sistema, status_consulta,
+                   possui_ata, qtd_atas, data_ultima_consulta, criado_em, mensagem_erro
             FROM processos {$whereSql}
             ORDER BY criado_em DESC
             LIMIT {$limite} OFFSET {$offset}
@@ -129,12 +129,27 @@ class ProcessoModel
 
     public function criar(string $numero, string $tribunal, ?string $dataAto = null): int
     {
+        $tipo = self::inferirTipo($numero, $tribunal);
         $stmt = $this->db->prepare("
-            INSERT INTO processos (numero_processo, tribunal, data_ato, status_consulta, criado_em)
-            VALUES (?, ?, ?, 'PENDENTE', NOW())
+            INSERT INTO processos (numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, criado_em)
+            VALUES (?, ?, ?, ?, 'PENDENTE', NOW())
         ");
-        $stmt->execute([$numero, $tribunal, $dataAto ?: null]);
+        $stmt->execute([$numero, $tribunal, $tipo, $dataAto ?: null]);
         return (int)$this->db->lastInsertId();
+    }
+
+    public static function inferirTipo(string $numero, string $tribunal): string
+    {
+        $digitos  = preg_replace('/\D/', '', $numero);
+        $primeiro = $digitos[0] ?? '';
+
+        if ($tribunal === 'TJMG') {
+            if ($primeiro === '5')                    return 'PJE';
+            if (in_array($primeiro, ['0', '1'], true)) return 'EPROC';
+            if ($primeiro === '2')                    return 'PROCON';
+        }
+
+        return 'DESCONHECIDO';
     }
 
     // ── helpers ────────────────────────────────────────────────────────────────

@@ -73,11 +73,21 @@
                     <i class="bi bi-list-ul me-2"></i>Cadastro em lote via API
                 </h6>
                 <p class="small text-muted mb-2">Você pode cadastrar múltiplos processos via API:</p>
-                <code class="d-block bg-light rounded p-2 small">
-                    POST /processos_api/api/?endpoint=cadastrar_processo<br>
-                    Authorization: Bearer CLAUDE_AUTOMACAO_123<br>
-                    {"numero_processo": "..."}
-                </code>
+                <pre class="bg-light rounded p-2 small mb-2" style="font-size:.78rem;overflow-x:auto">POST <?= rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/') ?>/?endpoint=cadastrar_processo
+Authorization: Bearer CLAUDE_AUTOMACAO_123
+Content-Type: application/json
+
+{
+  "numero_processo": "5003854-46.2025.8.13.0407",
+  "tribunal": "TJMG",
+  "data_ato": "2025-03-01"
+}</pre>
+                <p class="small text-muted mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Tipo detectado automaticamente pelo 1º dígito:
+                    <strong>5</strong>=PJE &bull; <strong>0/1</strong>=EPROC &bull; <strong>2</strong>=PROCON.<br>
+                    <code>tribunal</code> e <code>data_ato</code> são opcionais.
+                </p>
             </div>
         </div>
     </div>

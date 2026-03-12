@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('America/Sao_Paulo');
+
 define('PAINEL_SENHA', Env::get('PAINEL_SENHA', 'admin123'));
 
 session_start();
@@ -35,6 +37,7 @@ function statusBadge(?string $status): string
         'FINALIZADO SEM ATA' => ['secondary', 'bi-clock-history'],
         'FINALIZADO'         => ['success',   'bi-check-circle'],
         'ERRO'               => ['danger',    'bi-x-circle'],
+        'NÃO COMPATÍVEL'     => ['dark',      'bi-slash-circle'],
     ];
 
     [$cor, $icone] = $map[$status] ?? ['secondary', 'bi-question-circle'];
@@ -46,6 +49,21 @@ function ataBadge(?string $possui): string
     if ($possui === 'S') return '<span class="badge bg-success"><i class="bi bi-check me-1"></i>Sim</span>';
     if ($possui === 'N') return '<span class="badge bg-secondary"><i class="bi bi-x me-1"></i>Não</span>';
     return '<span class="badge bg-light text-dark">—</span>';
+}
+
+function tipoBadge(?string $tipo): string
+{
+    $map = [
+        'PJE'          => ['primary',   'bi-pc-display'],
+        'EPROC'        => ['warning',   'bi-pc-display'],
+        'PROCON'       => ['purple',    'bi-shield-check'],
+        'DESCONHECIDO' => ['secondary', 'bi-question-circle'],
+    ];
+    if (!$tipo) return '<span class="badge bg-secondary">—</span>';
+    [$cor, $icone] = $map[$tipo] ?? ['secondary', 'bi-question-circle'];
+    $textClass = $cor === 'purple' ? ' text-white' : '';
+    $style     = $cor === 'purple' ? ' style="background:#7c3aed"' : '';
+    return "<span class=\"badge bg-{$cor}{$textClass}\"{$style}><i class=\"bi {$icone} me-1\"></i>{$tipo}</span>";
 }
 
 function formatData(?string $dt): string

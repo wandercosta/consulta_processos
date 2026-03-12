@@ -51,6 +51,10 @@ switch ($endpoint) {
         $processoCtrl->registrarErro();
         break;
 
+    case 'registrar_nao_compativel':
+        $processoCtrl->naoCompativel();
+        break;
+
     case 'status_processo':
         $processoCtrl->status();
         break;
