@@ -20,8 +20,11 @@ interface ProcessoRepositoryInterface
     /** Registra erro no processo */
     public function registrarErro(int $id, string $mensagem): void;
 
+    /** Marca processo como NÃO COMPATÍVEL (sistema sem scraper implementado) */
+    public function marcarNaoCompativel(int $id, string $mensagem): void;
+
     /** Cria novo processo — retorna ID inserido */
-    public function criar(string $numero, string $tribunal): int;
+    public function criar(string $numero, string $tribunal, ?string $dataAto = null): int;
 
     /** Verifica se número de processo já existe */
     public function existeNumero(string $numero): bool;

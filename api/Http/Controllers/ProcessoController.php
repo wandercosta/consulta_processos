@@ -55,6 +55,20 @@ class ProcessoController
         echo json_encode(["status" => "processo finalizado sem ata"]);
     }
 
+    public function naoCompativel(): void
+    {
+        $data     = $this->input();
+        $id       = (int)($data['id_processo']  ?? 0);
+        $mensagem = $data['mensagem'] ?? 'Sistema não compatível';
+
+        if (!$id) {
+            $this->erro400("id_processo é obrigatório");
+        }
+
+        $this->repo->marcarNaoCompativel($id, $mensagem);
+        echo json_encode(["status" => "marcado como não compatível"]);
+    }
+
     public function registrarErro(): void
     {
         $data     = $this->input();

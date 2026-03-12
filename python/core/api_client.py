@@ -251,6 +251,19 @@ class APIClient:
         """
         return self._get("status_processo", {"id": id_processo})
 
+    def registrar_nao_compativel(self, id_processo: int, mensagem: str) -> bool:
+        """
+        POST /registrar_nao_compativel
+
+        Marca o processo como NÃO COMPATÍVEL (sistema sem scraper implementado).
+        O processo não será reprocessado pelo daemon.
+        """
+        resultado = self._post("registrar_nao_compativel", {
+            "id_processo": id_processo,
+            "mensagem": mensagem,
+        })
+        return resultado is not None
+
     def robot_status(self) -> Optional[Dict]:
         """
         GET /robot_status

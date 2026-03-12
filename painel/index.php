@@ -60,6 +60,16 @@ switch ($page) {
         (new ProcessoController(new ProcessoModel(db())))->cadastrar();
         break;
 
+    case 'cancelar_processo':
+        require_once PAINEL_ROOT . '/Controllers/ProcessoController.php';
+        (new ProcessoController(new ProcessoModel(db())))->cancelar();
+        break;
+
+    case 'recolocar_processo':
+        require_once PAINEL_ROOT . '/Controllers/ProcessoController.php';
+        (new ProcessoController(new ProcessoModel(db())))->recolocar();
+        break;
+
     case 'arquivos':
         require_once PAINEL_ROOT . '/Controllers/ArquivoController.php';
         (new ArquivoController(new ArquivoModel(db())))->index();
