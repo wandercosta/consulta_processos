@@ -19,13 +19,15 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
                 status_consulta,
                 tribunal,
                 tipo_sistema,
-                data_ato
+                data_ato,
+                qtd_consultas
             FROM processos
             WHERE (
                 status_consulta = 'PENDENTE'
                 OR (
                     status_consulta        = 'FINALIZADO SEM ATA'
-                    AND data_ultima_consulta < NOW() - INTERVAL 10 MINUTE
+                    AND data_ultima_consulta < NOW() - INTERVAL 60 MINUTE
+                    AND qtd_consultas       < 10
                 )
             )
             AND (data_ato IS NULL OR data_ato <= CURDATE())
@@ -88,6 +90,7 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
                 status_consulta      = 'FINALIZADO SEM ATA',
                 possui_ata           = 'N',
                 qtd_atas             = 0,
+                qtd_consultas        = qtd_consultas + 1,
                 caminho_arquivo      = NULL,
                 data_ultima_consulta = NOW(),
                 mensagem_erro        = NULL

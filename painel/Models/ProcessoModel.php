@@ -26,16 +26,16 @@ class ProcessoModel
         return (int)$this->db->query("
             SELECT COUNT(*) FROM processos
             WHERE status_consulta = 'FINALIZADO SEM ATA'
-              AND data_ultima_consulta >= NOW() - INTERVAL 10 MINUTE
+              AND data_ultima_consulta >= NOW() - INTERVAL 60 MINUTE
         ")->fetchColumn();
     }
 
     public function getProximosDaFila(): array
     {
         return $this->db->query("
-            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, criado_em FROM processos
+            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, qtd_consultas, criado_em FROM processos
             WHERE status_consulta = 'PENDENTE'
-               OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 10 MINUTE)
+               OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 60 MINUTE AND qtd_consultas < 10)
             ORDER BY CASE status_consulta WHEN 'PENDENTE' THEN 0 ELSE 1 END ASC, criado_em ASC
             LIMIT 10
         ")->fetchAll(PDO::FETCH_ASSOC);

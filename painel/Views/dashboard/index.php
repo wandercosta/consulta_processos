@@ -109,7 +109,7 @@
                                 <th>Tribunal / Tipo</th>
                                 <th>Data Ato</th>
                                 <th>Status</th>
-                                <th>Cadastrado</th>
+                                <th>Pesquisas</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,7 +124,16 @@
                                 <?= !empty($p['data_ato']) ? date('d/m/Y', strtotime($p['data_ato'])) : '—' ?>
                             </td>
                             <td><?= statusBadge($p['status_consulta']) ?></td>
-                            <td class="text-muted small"><?= formatData($p['criado_em']) ?></td>
+                            <td class="text-muted small">
+                                <?php $qtd = (int)($p['qtd_consultas'] ?? 0); ?>
+                                <?php if ($qtd > 0): ?>
+                                    <span class="badge <?= $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning text-dark' : 'bg-secondary') ?>">
+                                        <?= $qtd ?>/10
+                                    </span>
+                                <?php else: ?>
+                                    <span class="text-muted">—</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                         <?php if (empty($proximos)): ?>
