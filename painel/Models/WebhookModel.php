@@ -45,7 +45,9 @@ class WebhookModel
             ORDER BY wl.enviado_em DESC
             LIMIT ? OFFSET ?
         ");
-        $stmt->execute([$limite, $offset]);
+        $stmt->bindValue(1, $limite, PDO::PARAM_INT);
+        $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         return [
             'dados'   => $stmt->fetchAll(PDO::FETCH_ASSOC),
