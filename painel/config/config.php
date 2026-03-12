@@ -38,6 +38,7 @@ function statusBadge(?string $status): string
         'FINALIZADO'         => ['success',   'bi-check-circle'],
         'ERRO'               => ['danger',    'bi-x-circle'],
         'NÃO COMPATÍVEL'     => ['dark',      'bi-slash-circle'],
+        'CANCELADO'          => ['secondary', 'bi-pause-circle'],
     ];
 
     [$cor, $icone] = $map[$status] ?? ['secondary', 'bi-question-circle'];

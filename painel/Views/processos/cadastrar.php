@@ -84,8 +84,9 @@ Content-Type: application/json
 }</pre>
                 <p class="small text-muted mb-0">
                     <i class="bi bi-info-circle me-1"></i>
-                    Tipo detectado automaticamente pelo 1º dígito:
-                    <strong>5</strong>=PJE &bull; <strong>0/1</strong>=EPROC &bull; <strong>2</strong>=PROCON.<br>
+                    Tipo detectado automaticamente pelo 1º dígito do número (<strong>TJMG</strong>):
+                    <strong>5</strong>=PJE &bull; <strong>0/1</strong>=EPROC &bull; <strong>2</strong>=PROCON.
+                    Outros tribunais terão suas próprias regras de classificação.<br>
                     <code>tribunal</code> e <code>data_ato</code> são opcionais.
                 </p>
             </div>

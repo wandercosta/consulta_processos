@@ -22,7 +22,7 @@ $data_ate   = $filtros['data_ate']   ?? '';
             <label class="form-label form-label-sm mb-1">Status</label>
             <select name="status" class="form-select form-select-sm">
                 <option value="">Todos</option>
-                <?php foreach (['PENDENTE','CONSULTANDO','FINALIZADO COM ATA','FINALIZADO SEM ATA','ERRO','NÃO COMPATÍVEL'] as $s): ?>
+                <?php foreach (['PENDENTE','CONSULTANDO','FINALIZADO COM ATA','FINALIZADO SEM ATA','ERRO','NÃO COMPATÍVEL','CANCELADO'] as $s): ?>
                 <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= $s ?></option>
                 <?php endforeach; ?>
             </select>
@@ -96,11 +96,28 @@ $data_ate   = $filtros['data_ate']   ?? '';
                     <td><?= $p['qtd_atas'] ?? '—' ?></td>
                     <td class="text-muted small"><?= formatData($p['data_ultima_consulta']) ?></td>
                     <td class="text-muted small"><?= formatData($p['criado_em']) ?></td>
-                    <td>
+                    <td class="text-nowrap">
                         <a href="<?= PAINEL_URL ?>?page=detalhe&id=<?= $p['id'] ?>"
                            class="btn btn-sm btn-outline-primary" title="Ver detalhes">
                             <i class="bi bi-eye"></i>
                         </a>
+                        <?php if ($p['status_consulta'] === 'CANCELADO'): ?>
+                        <form method="post" action="<?= PAINEL_URL ?>?page=recolocar_processo"
+                              class="d-inline" onsubmit="return confirm('Recolocar na fila?')">
+                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                            <button class="btn btn-sm btn-outline-success" title="Recolocar na fila">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        </form>
+                        <?php elseif (in_array($p['status_consulta'], ['PENDENTE','FINALIZADO SEM ATA','ERRO','NÃO COMPATÍVEL'])): ?>
+                        <form method="post" action="<?= PAINEL_URL ?>?page=cancelar_processo"
+                              class="d-inline" onsubmit="return confirm('Cancelar este processo?')">
+                            <input type="hidden" name="id" value="<?= $p['id'] ?>">
+                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </form>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

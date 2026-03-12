@@ -84,4 +84,24 @@ class ProcessoController extends BaseController
         $this->render('processos/cadastrar', compact('erro', 'sucesso', 'tribunais')
             + ['paginaAtual' => 'cadastrar', 'tituloPagina' => 'Cadastrar Processo']);
     }
+
+    public function cancelar(): void
+    {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->cancelar($id);
+        }
+        $volta = $_POST['volta'] ?? 'processos';
+        $this->redirect($volta === 'detalhe' ? "detalhe&id={$id}" : 'processos');
+    }
+
+    public function recolocar(): void
+    {
+        $id = (int)($_POST['id'] ?? 0);
+        if ($id) {
+            $this->model->recolocar($id);
+        }
+        $volta = $_POST['volta'] ?? 'processos';
+        $this->redirect($volta === 'detalhe' ? "detalhe&id={$id}" : 'processos');
+    }
 }

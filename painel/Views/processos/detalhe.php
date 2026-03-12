@@ -3,10 +3,29 @@
 // $processo, $logs, $arquivos
 ?>
 
-<div class="mb-3">
+<div class="mb-3 d-flex gap-2 align-items-center">
     <a href="<?= PAINEL_URL ?>?page=processos" class="btn btn-sm btn-outline-secondary">
         <i class="bi bi-arrow-left"></i> Voltar
     </a>
+    <?php if ($processo['status_consulta'] === 'CANCELADO'): ?>
+    <form method="post" action="<?= PAINEL_URL ?>?page=recolocar_processo"
+          onsubmit="return confirm('Recolocar este processo na fila de consulta?')">
+        <input type="hidden" name="id" value="<?= $processo['id'] ?>">
+        <input type="hidden" name="volta" value="detalhe">
+        <button class="btn btn-sm btn-success">
+            <i class="bi bi-arrow-counterclockwise me-1"></i>Recolocar na fila
+        </button>
+    </form>
+    <?php elseif (in_array($processo['status_consulta'], ['PENDENTE','FINALIZADO SEM ATA','ERRO','NÃO COMPATÍVEL'])): ?>
+    <form method="post" action="<?= PAINEL_URL ?>?page=cancelar_processo"
+          onsubmit="return confirm('Cancelar este processo? Ele não será mais consultado automaticamente.')">
+        <input type="hidden" name="id" value="<?= $processo['id'] ?>">
+        <input type="hidden" name="volta" value="detalhe">
+        <button class="btn btn-sm btn-danger">
+            <i class="bi bi-x-circle me-1"></i>Cancelar processo
+        </button>
+    </form>
+    <?php endif; ?>
 </div>
 
 <div class="row g-3">

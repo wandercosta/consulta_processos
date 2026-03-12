@@ -152,6 +152,26 @@ class ProcessoModel
         return 'DESCONHECIDO';
     }
 
+    // ── Cancelar / Recolocar ───────────────────────────────────────────────────
+
+    public function cancelar(int $id): void
+    {
+        $this->db->prepare("
+            UPDATE processos
+            SET status_consulta = 'CANCELADO', data_ultima_consulta = NOW()
+            WHERE id = ?
+        ")->execute([$id]);
+    }
+
+    public function recolocar(int $id): void
+    {
+        $this->db->prepare("
+            UPDATE processos
+            SET status_consulta = 'PENDENTE', mensagem_erro = NULL, data_ultima_consulta = NOW()
+            WHERE id = ?
+        ")->execute([$id]);
+    }
+
     // ── helpers ────────────────────────────────────────────────────────────────
 
     private function buildWhere(array $filtros): array
