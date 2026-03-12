@@ -106,6 +106,8 @@
                         <thead>
                             <tr>
                                 <th>Processo</th>
+                                <th>Tribunal / Tipo</th>
+                                <th>Data Ato</th>
                                 <th>Status</th>
                                 <th>Cadastrado</th>
                             </tr>
@@ -114,12 +116,19 @@
                         <?php foreach ($proximos as $p): ?>
                         <tr style="cursor:pointer" onclick="location.href='<?= PAINEL_URL ?>?page=detalhe&id=<?= $p['id'] ?>'">
                             <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                            <td>
+                                <span class="badge bg-light text-dark border me-1"><?= htmlspecialchars($p['tribunal'] ?? '—') ?></span>
+                                <?= tipoBadge($p['tipo_sistema'] ?? null) ?>
+                            </td>
+                            <td class="text-muted small">
+                                <?= !empty($p['data_ato']) ? date('d/m/Y', strtotime($p['data_ato'])) : '—' ?>
+                            </td>
                             <td><?= statusBadge($p['status_consulta']) ?></td>
                             <td class="text-muted small"><?= formatData($p['criado_em']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                         <?php if (empty($proximos)): ?>
-                        <tr><td colspan="3" class="text-center text-muted py-3">Fila vazia</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted py-3">Fila vazia</td></tr>
                         <?php endif; ?>
                         </tbody>
                     </table>
@@ -143,6 +152,8 @@
                         <thead>
                             <tr>
                                 <th>Processo</th>
+                                <th>Tribunal / Tipo</th>
+                                <th>Data Ato</th>
                                 <th>Status</th>
                                 <th>Processado</th>
                             </tr>
@@ -151,12 +162,19 @@
                         <?php foreach ($processados as $p): ?>
                         <tr style="cursor:pointer" onclick="location.href='<?= PAINEL_URL ?>?page=detalhe&id=<?= $p['id'] ?>'">
                             <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                            <td>
+                                <span class="badge bg-light text-dark border me-1"><?= htmlspecialchars($p['tribunal'] ?? '—') ?></span>
+                                <?= tipoBadge($p['tipo_sistema'] ?? null) ?>
+                            </td>
+                            <td class="text-muted small">
+                                <?= !empty($p['data_ato']) ? date('d/m/Y', strtotime($p['data_ato'])) : '—' ?>
+                            </td>
                             <td><?= statusBadge($p['status_consulta']) ?></td>
                             <td class="text-muted small"><?= formatData($p['data_ultima_consulta']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                         <?php if (empty($processados)): ?>
-                        <tr><td colspan="3" class="text-center text-muted py-3">Nenhum processo finalizado</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted py-3">Nenhum processo finalizado</td></tr>
                         <?php endif; ?>
                         </tbody>
                     </table>
@@ -183,6 +201,8 @@
                         <thead>
                             <tr>
                                 <th>Processo</th>
+                                <th>Tribunal / Tipo</th>
+                                <th>Data Ato</th>
                                 <th>Status</th>
                                 <th>Cadastrado</th>
                             </tr>
@@ -191,12 +211,19 @@
                         <?php foreach ($ultimos as $p): ?>
                         <tr style="cursor:pointer" onclick="location.href='<?= PAINEL_URL ?>?page=detalhe&id=<?= $p['id'] ?>'">
                             <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                            <td>
+                                <span class="badge bg-light text-dark border me-1"><?= htmlspecialchars($p['tribunal'] ?? '—') ?></span>
+                                <?= tipoBadge($p['tipo_sistema'] ?? null) ?>
+                            </td>
+                            <td class="text-muted small">
+                                <?= !empty($p['data_ato']) ? date('d/m/Y', strtotime($p['data_ato'])) : '—' ?>
+                            </td>
                             <td><?= statusBadge($p['status_consulta']) ?></td>
                             <td class="text-muted small"><?= formatData($p['criado_em']) ?></td>
                         </tr>
                         <?php endforeach; ?>
                         <?php if (empty($ultimos)): ?>
-                        <tr><td colspan="3" class="text-center text-muted py-3">Nenhum processo cadastrado</td></tr>
+                        <tr><td colspan="5" class="text-center text-muted py-3">Nenhum processo cadastrado</td></tr>
                         <?php endif; ?>
                         </tbody>
                     </table>
