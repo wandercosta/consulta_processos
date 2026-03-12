@@ -112,14 +112,14 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
         $stmt->execute([$mensagem, $id]);
     }
 
-    public function criar(string $numero, string $tribunal, ?string $dataAto = null): int
+    public function criar(string $numero, string $tribunal, ?string $dataAto = null, ?string $codApi = null): int
     {
         $tipo = self::inferirTipo($numero, $tribunal);
         $stmt = $this->db->prepare("
-            INSERT INTO processos (numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, criado_em)
-            VALUES (?, ?, ?, ?, 'PENDENTE', NOW())
+            INSERT INTO processos (numero_processo, cod_api, tribunal, tipo_sistema, data_ato, status_consulta, criado_em)
+            VALUES (?, ?, ?, ?, ?, 'PENDENTE', NOW())
         ");
-        $stmt->execute([$numero, $tribunal, $tipo, $dataAto ?: null]);
+        $stmt->execute([$numero, $codApi ?: null, $tribunal, $tipo, $dataAto ?: null]);
         return (int)$this->db->lastInsertId();
     }
 

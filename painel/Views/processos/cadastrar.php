@@ -48,6 +48,14 @@
                         <div class="form-text">Informe o número único do processo judicial.</div>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-semibold">Cód. API / Integração <span class="text-muted fw-normal">(opcional)</span></label>
+                        <input type="text" name="cod_api"
+                               class="form-control font-monospace"
+                               placeholder="Ex: ORD-2025-001"
+                               value="<?= htmlspecialchars($_POST['cod_api'] ?? '') ?>">
+                        <div class="form-text">Identificador do seu sistema enviado no webhook ao finalizar.</div>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-semibold">Data do Ato <span class="text-muted fw-normal">(opcional)</span></label>
                         <input type="date" name="data_ato"
                                class="form-control"

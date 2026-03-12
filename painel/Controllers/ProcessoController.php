@@ -66,6 +66,7 @@ class ProcessoController extends BaseController
             $numero   = trim($_POST['numero_processo'] ?? '');
             $tribunal = strtoupper(trim($_POST['tribunal'] ?? ''));
             $dataAto  = trim($_POST['data_ato'] ?? '');
+            $codApi   = trim($_POST['cod_api'] ?? '') ?: null;
 
             if ($numero === '') {
                 $erro = 'O número do processo é obrigatório.';
@@ -76,7 +77,7 @@ class ProcessoController extends BaseController
             } elseif ($this->model->existeNumero($numero)) {
                 $erro = 'Este processo já está cadastrado.';
             } else {
-                $novoId  = $this->model->criar($numero, $tribunal, $dataAto ?: null);
+                $novoId  = $this->model->criar($numero, $tribunal, $dataAto ?: null, $codApi);
                 $sucesso = "Processo <strong>" . htmlspecialchars($numero) . "</strong> cadastrado no <strong>{$tribunal}</strong> com sucesso! ID: {$novoId}";
             }
         }

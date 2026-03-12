@@ -15,6 +15,7 @@ require_once __DIR__ . '/Domain/Robot/RobotRepositoryInterface.php';
 require_once __DIR__ . '/Infrastructure/ProcessoRepositoryPDO.php';
 require_once __DIR__ . '/Infrastructure/ArquivoRepositoryPDO.php';
 require_once __DIR__ . '/Infrastructure/RobotRepositoryPDO.php';
+require_once __DIR__ . '/Infrastructure/WebhookService.php';
 require_once __DIR__ . '/Http/Controllers/ProcessoController.php';
 require_once __DIR__ . '/Http/Controllers/ArquivoController.php';
 require_once __DIR__ . '/Http/Controllers/RobotController.php';
@@ -23,7 +24,13 @@ validarToken();
 
 $db = (new Database())->connect();
 
-$processoCtrl = new ProcessoController(new ProcessoRepositoryPDO($db));
+$_apiBase      = rtrim(Env::get('APP_BASE_PATH', ''), '/') . '/api';
+$_apiPublicUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $_apiBase;
+
+$processoCtrl = new ProcessoController(
+    new ProcessoRepositoryPDO($db),
+    new WebhookService($db, $_apiPublicUrl)
+);
 $arquivoCtrl  = new ArquivoController(new ArquivoRepositoryPDO($db));
 $robotCtrl    = new RobotController(new RobotRepositoryPDO($db));
 

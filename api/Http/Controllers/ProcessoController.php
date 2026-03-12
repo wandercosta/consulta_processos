@@ -3,10 +3,12 @@
 class ProcessoController
 {
     private ProcessoRepositoryInterface $repo;
+    private ?WebhookService             $webhook;
 
-    public function __construct(ProcessoRepositoryInterface $repo)
+    public function __construct(ProcessoRepositoryInterface $repo, ?WebhookService $webhook = null)
     {
-        $this->repo = $repo;
+        $this->repo    = $repo;
+        $this->webhook = $webhook;
     }
 
     public function pendentes(): void
@@ -39,6 +41,7 @@ class ProcessoController
         }
 
         $this->repo->finalizarComAta($id, $qtd, $caminho);
+        $this->webhook?->disparar($id);
         echo json_encode(["status" => "ata registrada"]);
     }
 
@@ -52,6 +55,7 @@ class ProcessoController
         }
 
         $this->repo->finalizarSemAta($id);
+        $this->webhook?->disparar($id);
         echo json_encode(["status" => "processo finalizado sem ata"]);
     }
 
@@ -66,6 +70,7 @@ class ProcessoController
         }
 
         $this->repo->marcarNaoCompativel($id, $mensagem);
+        $this->webhook?->disparar($id);
         echo json_encode(["status" => "marcado como não compatível"]);
     }
 
@@ -80,6 +85,7 @@ class ProcessoController
         }
 
         $this->repo->registrarErro($id, $mensagem);
+        $this->webhook?->disparar($id);
         echo json_encode(["status" => "erro registrado"]);
     }
 
@@ -123,6 +129,7 @@ class ProcessoController
         $numero   = trim($data['numero_processo'] ?? '');
         $tribunal = strtoupper(trim($data['tribunal'] ?? 'MG'));
         $dataAto  = $data['data_ato'] ?? null;
+        $codApi   = trim($data['cod_api'] ?? '') ?: null;
 
         if ($dataAto !== null && $dataAto !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataAto)) {
             $this->erro400("data_ato deve estar no formato YYYY-MM-DD");
@@ -138,7 +145,7 @@ class ProcessoController
             exit;
         }
 
-        $id = $this->repo->criar($numero, $tribunal, $dataAto ?: null);
+        $id = $this->repo->criar($numero, $tribunal, $dataAto ?: null, $codApi);
         echo json_encode(["status" => "processo cadastrado", "id" => $id]);
     }
 

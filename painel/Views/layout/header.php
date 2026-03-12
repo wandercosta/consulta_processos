@@ -8,6 +8,7 @@ $nav = [
     'cadastrar' => ['icon' => 'bi-plus-circle',             'label' => 'Cadastrar'],
     'arquivos'  => ['icon' => 'bi-file-earmark-arrow-down', 'label' => 'Arquivos / ATAs'],
     'robot'     => ['icon' => 'bi-robot',                   'label' => 'Robô'],
+    'webhook'   => ['icon' => 'bi-send',                    'label' => 'Webhooks'],
     'docs'      => ['icon' => 'bi-book',                    'label' => 'Documentação'],
 ];
 ?>
