@@ -15,6 +15,7 @@ Fluxo implementado:
 import logging
 import re
 import time
+from datetime import datetime
 from typing import List, Optional
 from urllib.parse import urljoin
 
@@ -447,6 +448,16 @@ class TJMGPJeScraper(BaseScraper):
             if url_final and not url_final.startswith("http"):
                 url_final = urljoin(_URL_BASE, url_final)
 
+            # Tenta extrair data do documento a partir do texto da linha da tabela
+            data_documento = None
+            try:
+                row = link.find_element(By.XPATH, "ancestor::tr[1]")
+                match = re.search(r'\b(\d{2}/\d{2}/\d{4})\b', row.text)
+                if match:
+                    data_documento = datetime.strptime(match.group(1), '%d/%m/%Y').date()
+            except Exception:
+                pass
+
             return Documento(
                 tribunal="TJMG",
                 numero_processo=numero_processo,
@@ -455,6 +466,7 @@ class TJMGPJeScraper(BaseScraper):
                 origem_url=self.driver.current_url,
                 formato=formato,
                 indice=indice,
+                data_documento=data_documento,
             )
 
         except StaleElementReferenceException:

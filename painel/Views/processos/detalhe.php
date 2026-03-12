@@ -42,6 +42,19 @@
                         <th class="text-muted fw-normal">Qtd. ATAs</th>
                         <td><?= $processo['qtd_atas'] ?? '—' ?></td>
                     </tr>
+                    <?php if (!empty($processo['data_ato'])): ?>
+                    <tr>
+                        <th class="text-muted fw-normal">Data do Ato</th>
+                        <td>
+                            <?= date('d/m/Y', strtotime($processo['data_ato'])) ?>
+                            <?php if ($processo['data_ato'] > date('Y-m-d')): ?>
+                            <span class="badge bg-warning text-dark ms-1" title="Busca aguardando esta data">
+                                <i class="bi bi-clock me-1"></i>Aguardando
+                            </span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
                     <tr>
                         <th class="text-muted fw-normal">Cadastrado em</th>
                         <td><?= formatData($processo['criado_em']) ?></td>

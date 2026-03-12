@@ -6,6 +6,7 @@ independentemente do tribunal ou do sistema consultado.
 """
 
 from dataclasses import dataclass, field
+from datetime import date as Date
 from typing import Optional
 
 
@@ -29,6 +30,9 @@ class Documento:
     origem_url: str = ""         # URL da página onde o documento foi encontrado
     formato: str = "pdf"         # "pdf" ou "html"
     indice: int = 0              # Posição ordinal na lista de documentos da página
+
+    # ── Data do documento ─────────────────────────────────────────────────────
+    data_documento: Optional[Date] = None  # Data extraída da listagem do portal (dd/mm/yyyy)
 
     # ── Classificação ─────────────────────────────────────────────────────────
     eh_ata: bool = False         # True quando identificado como ata de audiência
