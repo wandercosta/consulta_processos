@@ -26,12 +26,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "wandercosta"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;wandercosta&quot;
   }
-}]]></component>
+}</component>
   <component name="GitToolBoxStore">
     <option name="recentBranches">
       <RecentBranches>
@@ -41,12 +41,24 @@
               <option name="branches">
                 <list>
                   <RecentBranch>
-                    <option name="branchName" value="feature/implementacao-inicial" />
-                    <option name="lastUsedInstant" value="1773101496" />
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1773319174" />
                   </RecentBranch>
                   <RecentBranch>
-                    <option name="branchName" value="main" />
-                    <option name="lastUsedInstant" value="1773101495" />
+                    <option name="branchName" value="feature/tribunal-por-uf" />
+                    <option name="lastUsedInstant" value="1773318567" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/visualizacao-arquivos" />
+                    <option name="lastUsedInstant" value="1773186554" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/consulta-automatica" />
+                    <option name="lastUsedInstant" value="1773149180" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/implementacao-inicial" />
+                    <option name="lastUsedInstant" value="1773101496" />
                   </RecentBranch>
                 </list>
               </option>
@@ -57,12 +69,12 @@
       </RecentBranches>
     </option>
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/wandercosta/consulta_processos.git",
-    "accountId": "6f8b9084-59ed-4315-92af-0a7dd947c63a"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/wandercosta/consulta_processos.git&quot;,
+    &quot;accountId&quot;: &quot;6f8b9084-59ed-4315-92af-0a7dd947c63a&quot;
   }
-}]]></component>
+}</component>
   <component name="PhpWorkspaceProjectConfiguration" interpreter_name="$PROJECT_DIR$/../../bin/php/php7.4.26/php.exe" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -78,7 +90,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feature/implementacao-inicial",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -105,6 +117,8 @@
       <workItem from="1772798961416" duration="780000" />
       <workItem from="1772800093579" duration="6004000" />
       <workItem from="1773099925366" duration="4106000" />
+      <workItem from="1773186513523" duration="817000" />
+      <workItem from="1773316407409" duration="2748000" />
     </task>
     <servers />
   </component>

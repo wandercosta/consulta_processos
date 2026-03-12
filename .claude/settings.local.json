@@ -27,7 +27,11 @@
       "Bash(curl -s \"http://localhost/processos_api/\" -o /dev/null -w \"%{http_code}\")",
       "Bash(curl -s \"http://localhost/\" -o /dev/null -w \"%{http_code}\")",
       "Bash(curl -s \"http://localhost/processos_api/\")",
-      "Bash(curl -s \"http://localhost/processos_api/painel/index.php?page=login\" -o /dev/null -w \"%{http_code}\")"
+      "Bash(curl -s \"http://localhost/processos_api/painel/index.php?page=login\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(winget list:*)"
     ]
   }
 }
