@@ -33,7 +33,7 @@ class ProcessoModel
     public function getProximosDaFila(): array
     {
         return $this->db->query("
-            SELECT id, numero_processo, status_consulta, criado_em FROM processos
+            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, criado_em FROM processos
             WHERE status_consulta = 'PENDENTE'
                OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 10 MINUTE)
             ORDER BY CASE status_consulta WHEN 'PENDENTE' THEN 0 ELSE 1 END ASC, criado_em ASC
@@ -44,7 +44,7 @@ class ProcessoModel
     public function getUltimosProcessados(): array
     {
         return $this->db->query("
-            SELECT id, numero_processo, status_consulta, data_ultima_consulta FROM processos
+            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, data_ultima_consulta FROM processos
             WHERE status_consulta IN ('FINALIZADO COM ATA', 'FINALIZADO SEM ATA', 'FINALIZADO')
             ORDER BY data_ultima_consulta DESC
             LIMIT 10
@@ -54,7 +54,7 @@ class ProcessoModel
     public function getUltimosCadastrados(): array
     {
         return $this->db->query("
-            SELECT id, numero_processo, status_consulta, criado_em FROM processos
+            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, criado_em FROM processos
             ORDER BY criado_em DESC LIMIT 10
         ")->fetchAll(PDO::FETCH_ASSOC);
     }

@@ -86,6 +86,14 @@ switch ($page) {
         }
         break;
 
+    case 'docs':
+        $paginaAtual  = 'docs';
+        $tituloPagina = 'Documentação';
+        include PAINEL_ROOT . '/Views/layout/header.php';
+        include PAINEL_ROOT . '/Views/docs/index.php';
+        include PAINEL_ROOT . '/Views/layout/footer.php';
+        break;
+
     default:
         header("Location: " . PAINEL_URL . "?page=dashboard");
         exit;
