@@ -54,7 +54,7 @@ def carregar_scraper(tribunal: str, driver, download_dir: str) -> Optional[BaseS
       2. Adicione a entrada em config.TRIBUNAIS_SUPORTADOS
 
     Args:
-        tribunal:     Sigla do tribunal em maiúsculas (ex: "TJMG").
+        tribunal:     UF do estado em maiúsculas (ex: "MG").
         driver:       Instância do WebDriver já criada.
         download_dir: Diretório de destino dos downloads.
 
@@ -133,7 +133,7 @@ def processar_um(
     api.registrar_log(id_processo, f"Consulta iniciada no tribunal {tribunal}")
 
     # ── ETAPA 1b: Verificar compatibilidade do tipo_sistema ───────────────────
-    SISTEMAS_SUPORTADOS: dict[str, list[str]] = {"TJMG": ["PJE"]}
+    SISTEMAS_SUPORTADOS: dict[str, list[str]] = {"MG": ["PJE"]}
     tipos_do_tribunal = SISTEMAS_SUPORTADOS.get(tribunal, [])
     if tipo_sistema not in tipos_do_tribunal:
         msg = (

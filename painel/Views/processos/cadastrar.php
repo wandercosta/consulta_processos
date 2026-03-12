@@ -79,12 +79,12 @@ Content-Type: application/json
 
 {
   "numero_processo": "5003854-46.2025.8.13.0407",
-  "tribunal": "TJMG",
+  "tribunal": "MG",
   "data_ato": "2025-03-01"
 }</pre>
                 <p class="small text-muted mb-0">
                     <i class="bi bi-info-circle me-1"></i>
-                    Tipo detectado automaticamente pelo 1º dígito do número (<strong>TJMG</strong>):
+                    Tipo detectado automaticamente pelo 1º dígito do número (<strong>MG</strong>):
                     <strong>5</strong>=PJE &bull; <strong>0/1</strong>=EPROC &bull; <strong>2</strong>=PROCON.
                     Outros tribunais terão suas próprias regras de classificação.<br>
                     <code>tribunal</code> e <code>data_ato</code> são opcionais.

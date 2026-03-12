@@ -1,6 +1,6 @@
 <?php
 // Migração 007 — Adiciona coluna tipo_sistema e classifica processos existentes
-// Regra TJMG: 1º dígito 5=PJE, 0/1=EPROC, 2=PROCON. Outros tribunais: DESCONHECIDO.
+// Regra MG: 1º dígito 5=PJE, 0/1=EPROC, 2=PROCON. Outros estados: DESCONHECIDO.
 
 return [
     'descricao' => 'Adiciona coluna tipo_sistema em processos e classifica existentes',

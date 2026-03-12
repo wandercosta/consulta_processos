@@ -92,11 +92,10 @@ PALAVRAS_IGNORAR = [
 # Chave: identificador do tribunal (string uppercase)
 # Valor: caminho dotted do módulo + nome da classe
 TRIBUNAIS_SUPORTADOS = {
-    "TJMG": "tribunais.tjmg_pje.TJMGPJeScraper",
+    "MG": "tribunais.tjmg_pje.TJMGPJeScraper",
     # Futuros conectores — adicione aqui conforme implementação:
-    # "TJSP": "tribunais.tjsp_esaj.TJSPEsajScraper",
-    # "TRF5": "tribunais.trf5_pje.TRF5PJeScraper",
-    # "TJSE": "tribunais.tjse_pje.TJSEPJeScraper",
+    # "SP": "tribunais.tjsp_esaj.TJSPEsajScraper",
+    # "SE": "tribunais.tjse_pje.TJSEPJeScraper",
 }
 
 # ─── Comportamento do loop ────────────────────────────────────────────────────

@@ -121,7 +121,7 @@ class ProcessoController
     {
         $data     = $this->input();
         $numero   = trim($data['numero_processo'] ?? '');
-        $tribunal = strtoupper(trim($data['tribunal'] ?? 'TJMG'));
+        $tribunal = strtoupper(trim($data['tribunal'] ?? 'MG'));
         $dataAto  = $data['data_ato'] ?? null;
 
         if ($dataAto !== null && $dataAto !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataAto)) {

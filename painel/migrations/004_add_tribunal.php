@@ -9,7 +9,7 @@ return [
         if (empty($cols)) {
             $pdo->exec("
                 ALTER TABLE processos
-                ADD COLUMN tribunal VARCHAR(20) NOT NULL DEFAULT 'TJMG'
+                ADD COLUMN tribunal VARCHAR(10) NOT NULL DEFAULT 'MG'
                 AFTER numero_processo
             ");
         }
