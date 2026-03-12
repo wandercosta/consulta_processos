@@ -30,6 +30,7 @@ import importlib
 import logging
 import sys
 import time
+from datetime import date as Date
 from typing import List, Optional
 
 import config
@@ -108,7 +109,9 @@ def processar_um(
     processo = pendentes[0]
     id_processo: int = processo.get("id_processo") or processo.get("id", 0)
     numero_processo: str = formatar_numero_processo(processo.get("numero_processo", ""))
-    tribunal: str = (processo.get("tribunal") or "").upper()
+    tribunal: str  = (processo.get("tribunal") or "").upper()
+    data_ato_str   = processo.get("data_ato") or None   # "YYYY-MM-DD" ou None
+    data_ato: Date | None = Date.fromisoformat(data_ato_str) if data_ato_str else None
     qtd_fila = len(pendentes)
 
     _inicio = time.time()
@@ -179,6 +182,21 @@ def processar_um(
 
         atas: List[Documento] = [d for d in documentos if d.eh_ata]
         ignorados = [d for d in documentos if not d.eh_ata]
+
+        # Filtra atas pela data_ato: descarta documentos anteriores ao ato
+        if data_ato:
+            antes = len(atas)
+            atas = [
+                a for a in atas
+                if a.data_documento is None or a.data_documento >= data_ato
+            ]
+            descartadas = antes - len(atas)
+            if descartadas:
+                logger.info(
+                    f"[5/8] Filtro data_ato ({data_ato}): "
+                    f"{descartadas} ata(s) descartada(s) por data anterior ao ato"
+                )
+
         atas_encontradas = len(atas)
         logger.info(
             f"[5/8] ✓ Scraping concluído — "

@@ -127,13 +127,13 @@ class ProcessoModel
         return (bool)$stmt->fetch();
     }
 
-    public function criar(string $numero, string $tribunal): int
+    public function criar(string $numero, string $tribunal, ?string $dataAto = null): int
     {
         $stmt = $this->db->prepare("
-            INSERT INTO processos (numero_processo, tribunal, status_consulta, criado_em)
-            VALUES (?, ?, 'PENDENTE', NOW())
+            INSERT INTO processos (numero_processo, tribunal, data_ato, status_consulta, criado_em)
+            VALUES (?, ?, ?, 'PENDENTE', NOW())
         ");
-        $stmt->execute([$numero, $tribunal]);
+        $stmt->execute([$numero, $tribunal, $dataAto ?: null]);
         return (int)$this->db->lastInsertId();
     }
 

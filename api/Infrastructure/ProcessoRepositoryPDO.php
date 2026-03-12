@@ -17,13 +17,17 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
                 id AS id_processo,
                 numero_processo,
                 status_consulta,
-                tribunal
+                tribunal,
+                data_ato
             FROM processos
-            WHERE status_consulta = 'PENDENTE'
-               OR (
-                   status_consulta        = 'FINALIZADO SEM ATA'
-                   AND data_ultima_consulta < NOW() - INTERVAL 10 MINUTE
-               )
+            WHERE (
+                status_consulta = 'PENDENTE'
+                OR (
+                    status_consulta        = 'FINALIZADO SEM ATA'
+                    AND data_ultima_consulta < NOW() - INTERVAL 10 MINUTE
+                )
+            )
+            AND (data_ato IS NULL OR data_ato <= CURDATE())
             ORDER BY
                 CASE status_consulta WHEN 'PENDENTE' THEN 0 ELSE 1 END ASC,
                 criado_em ASC
@@ -95,13 +99,13 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
         $stmt->execute([$mensagem, $id]);
     }
 
-    public function criar(string $numero, string $tribunal): int
+    public function criar(string $numero, string $tribunal, ?string $dataAto = null): int
     {
         $stmt = $this->db->prepare("
-            INSERT INTO processos (numero_processo, tribunal, status_consulta, criado_em)
-            VALUES (?, ?, 'PENDENTE', NOW())
+            INSERT INTO processos (numero_processo, tribunal, data_ato, status_consulta, criado_em)
+            VALUES (?, ?, ?, 'PENDENTE', NOW())
         ");
-        $stmt->execute([$numero, $tribunal]);
+        $stmt->execute([$numero, $tribunal, $dataAto ?: null]);
         return (int)$this->db->lastInsertId();
     }
 

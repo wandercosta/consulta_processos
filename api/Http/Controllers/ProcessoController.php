@@ -108,6 +108,11 @@ class ProcessoController
         $data     = $this->input();
         $numero   = trim($data['numero_processo'] ?? '');
         $tribunal = strtoupper(trim($data['tribunal'] ?? 'TJMG'));
+        $dataAto  = $data['data_ato'] ?? null;
+
+        if ($dataAto !== null && $dataAto !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataAto)) {
+            $this->erro400("data_ato deve estar no formato YYYY-MM-DD");
+        }
 
         if ($numero === '') {
             $this->erro400("numero_processo é obrigatório");
@@ -119,7 +124,7 @@ class ProcessoController
             exit;
         }
 
-        $id = $this->repo->criar($numero, $tribunal);
+        $id = $this->repo->criar($numero, $tribunal, $dataAto ?: null);
         echo json_encode(["status" => "processo cadastrado", "id" => $id]);
     }
 

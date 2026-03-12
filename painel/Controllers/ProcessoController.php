@@ -65,15 +65,18 @@ class ProcessoController extends BaseController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $numero   = trim($_POST['numero_processo'] ?? '');
             $tribunal = strtoupper(trim($_POST['tribunal'] ?? ''));
+            $dataAto  = trim($_POST['data_ato'] ?? '');
 
             if ($numero === '') {
                 $erro = 'O número do processo é obrigatório.';
             } elseif (!array_key_exists($tribunal, $tribunais)) {
                 $erro = 'Tribunal inválido.';
+            } elseif ($dataAto !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataAto)) {
+                $erro = 'Data do ato inválida.';
             } elseif ($this->model->existeNumero($numero)) {
                 $erro = 'Este processo já está cadastrado.';
             } else {
-                $novoId  = $this->model->criar($numero, $tribunal);
+                $novoId  = $this->model->criar($numero, $tribunal, $dataAto ?: null);
                 $sucesso = "Processo <strong>" . htmlspecialchars($numero) . "</strong> cadastrado no <strong>{$tribunal}</strong> com sucesso! ID: {$novoId}";
             }
         }
