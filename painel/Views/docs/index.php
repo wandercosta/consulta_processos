@@ -16,6 +16,11 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
         </button>
     </li>
     <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#webhook">
+            <i class="bi bi-send me-1"></i>Webhook
+        </button>
+    </li>
+    <li class="nav-item">
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#api">
             <i class="bi bi-code-slash me-1"></i>API REST
         </button>
@@ -182,6 +187,153 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                     <span class="badge bg-secondary"><i class="bi bi-pause-circle me-1"></i>CANCELADO</span>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- ── WEBHOOK ────────────────────────────────────────────────────────── -->
+    <div class="tab-pane fade" id="webhook">
+        <div class="row g-3">
+
+            <!-- Visão geral + configuração -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm" style="border-radius:12px">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-send text-primary me-2"></i>O que é o webhook?</h5>
+                        <p class="small text-muted">
+                            Após cada finalização de consulta, o sistema envia automaticamente um <strong>HTTP POST</strong> para a URL configurada,
+                            entregando o resultado do processo em JSON. Isso permite que sistemas externos (ERPs, CRMs, plataformas jurídicas)
+                            sejam notificados em tempo real sem polling.
+                        </p>
+
+                        <h6 class="fw-bold mt-4 mb-2">Configuração</h6>
+                        <p class="small text-muted mb-2">Acesse <a href="<?= PAINEL_URL ?>?page=webhook">Painel → Webhooks</a> e preencha:</p>
+                        <table class="table table-sm small mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="fw-semibold ps-0" style="width:90px">URL</td>
+                                    <td>Endpoint HTTPS do seu sistema que receberá os POSTs</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold ps-0">Secret</td>
+                                    <td>Chave enviada no header <code>X-Webhook-Secret</code> para validar autenticidade (opcional)</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold ps-0">Ativo</td>
+                                    <td>Liga/desliga todos os disparos sem apagar a configuração</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mt-3" style="border-radius:12px">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-bell text-warning me-1"></i>Quando o webhook é disparado?</h6>
+                        <p class="small text-muted mb-2">Um POST é enviado sempre que o robô <strong>finaliza</strong> a consulta de um processo — independente do resultado:</p>
+                        <ul class="list-unstyled small mb-0">
+                            <li class="mb-2">
+                                <span class="badge bg-success me-2">FINALIZADO COM ATA</span>
+                                Ata(s) encontrada(s) e baixada(s)
+                            </li>
+                            <li class="mb-2">
+                                <span class="badge bg-secondary me-2">FINALIZADO SEM ATA</span>
+                                Consultado, nenhuma ata disponível
+                            </li>
+                            <li class="mb-2">
+                                <span class="badge bg-danger me-2">ERRO</span>
+                                Falha durante a execução do robô
+                            </li>
+                            <li>
+                                <span class="badge bg-dark me-2">NÃO COMPATÍVEL</span>
+                                Tipo de sistema não suportado
+                            </li>
+                        </ul>
+                        <p class="small text-muted mt-3 mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            O status <strong>CONSULTANDO</strong> não dispara webhook — ele indica apenas que o robô iniciou o trabalho.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fluxo + payload -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-diagram-2 text-primary me-1"></i>Fluxo de disparo</h6>
+                        <pre class="bg-light rounded p-3 small mb-0" style="font-size:.8rem; line-height:1.7">Robô Python
+    │
+    ├─ POST /registrar_ata         ──┐
+    ├─ POST /registrar_sem_ata     ──┤
+    ├─ POST /registrar_erro        ──┤──► API PHP (ProcessoController)
+    └─ POST /registrar_nao_compat  ──┘         │
+                                               │ 1. Atualiza status no BD
+                                               │ 2. WebhookService::disparar(id)
+                                               │    ├─ Lê webhook_config (url, ativo, secret)
+                                               │    ├─ Ativo = false? → encerra silenciosamente
+                                               │    ├─ Monta payload JSON com dados do processo
+                                               │    │  + lista de arquivos com URLs públicas
+                                               │    ├─ Envia HTTP POST (timeout: 10s)
+                                               │    └─ Grava resultado em webhook_logs
+                                               │       (status HTTP, resposta, sucesso S/N)
+                                               │
+                                               └─ Responde ao robô: { "status": "ok" }</pre>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-braces text-success me-1"></i>Payload JSON enviado</h6>
+                        <p class="small text-muted mb-2">Headers: <code>Content-Type: application/json</code> · <code>X-Webhook-Event: &lt;STATUS&gt;</code> · <code>X-Webhook-Secret: ***</code> (se configurado)</p>
+                        <pre class="bg-light rounded p-3 small mb-0" style="font-size:.78rem"><?= htmlspecialchars(json_encode([
+    'evento'          => 'FINALIZADO COM ATA',
+    'id_integracao'   => 'ORD-2025-001',
+    'numero_processo' => '5003854-46.2025.8.13.0407',
+    'status'          => 'FINALIZADO COM ATA',
+    'tribunal'        => 'MG',
+    'tipo_sistema'    => 'PJE',
+    'qtd_atas'        => 1,
+    'data_consulta'   => '2025-03-12 10:30:00',
+    'arquivos'        => [[
+        'id'            => 42,
+        'nome'          => 'ata_audiencia.pdf',
+        'formato'       => 'PDF',
+        'tamanho_bytes' => 102400,
+        'url'           => 'https://servidor.com/api/?endpoint=download_arquivo_id&id=42',
+    ]],
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) ?></pre>
+                        <table class="table table-sm small mt-3 mb-0">
+                            <thead><tr><th>Campo</th><th>Descrição</th></tr></thead>
+                            <tbody>
+                                <tr><td class="font-monospace">evento</td><td>Mesmo valor de <code>status</code> — facilita filtros no receptor</td></tr>
+                                <tr><td class="font-monospace">id_integracao</td><td>Valor do campo <code>cod_api</code> informado no cadastro (pode ser <code>null</code>)</td></tr>
+                                <tr><td class="font-monospace">numero_processo</td><td>Número CNJ do processo</td></tr>
+                                <tr><td class="font-monospace">tribunal</td><td>UF do estado (ex: <code>MG</code>)</td></tr>
+                                <tr><td class="font-monospace">qtd_atas</td><td>Quantidade de arquivos baixados (<code>0</code> para SEM ATA / ERRO)</td></tr>
+                                <tr><td class="font-monospace">arquivos[].url</td><td>URL pública para download direto do arquivo (sem autenticação)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm" style="border-radius:12px">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-arrow-repeat text-info me-1"></i>Reenvio e histórico</h6>
+                        <p class="small text-muted mb-2">
+                            Cada tentativa de envio é gravada em <code>webhook_logs</code> com payload, status HTTP e resposta.
+                            Em caso de falha (timeout, erro 4xx/5xx), o webhook <strong>não é reenviado automaticamente</strong> —
+                            acesse <a href="<?= PAINEL_URL ?>?page=webhook">Painel → Webhooks</a> para reenviar manualmente.
+                        </p>
+                        <div class="bg-light rounded p-3 small">
+                            <strong>Dica de validação no receptor:</strong><br>
+                            Verifique o header <code>X-Webhook-Secret</code> antes de processar o payload.
+                            Responda com <code>HTTP 200</code> para confirmar o recebimento —
+                            qualquer código fora de <code>2xx</code> é registrado como falha no histórico.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
