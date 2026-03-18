@@ -59,6 +59,21 @@ class ProcessoModel
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getSemAtaAguardando(): array
+    {
+        return $this->db->query("
+            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato,
+                   data_ultima_consulta,
+                   DATE_ADD(data_ultima_consulta, INTERVAL 60 MINUTE) AS proxima_consulta,
+                   qtd_consultas
+            FROM processos
+            WHERE status_consulta = 'FINALIZADO SEM ATA'
+              AND qtd_consultas < 10
+            ORDER BY proxima_consulta ASC
+            LIMIT 50
+        ")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getUltimosLogs(): array
     {
         return $this->db->query("

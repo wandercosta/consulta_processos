@@ -193,6 +193,80 @@
     </div>
 </div>
 
+<!-- Tabela — Sem ATA aguardando reprocessamento -->
+<?php if (!empty($semAtaFila)): ?>
+<div class="row g-3 mb-3">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm" style="border-radius:12px;">
+            <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between pt-3 pb-0 px-3">
+                <h6 class="mb-0 fw-bold">
+                    <i class="bi bi-arrow-clockwise text-secondary me-1"></i>
+                    Sem ATA — Aguardando Reprocessamento
+                </h6>
+                <span class="badge bg-secondary"><?= count($semAtaFila) ?></span>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Processo</th>
+                                <th>Tribunal / Tipo</th>
+                                <th>Última Consulta</th>
+                                <th>Próxima Consulta</th>
+                                <th>Progresso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($semAtaFila as $p):
+                            $qtd      = (int)($p['qtd_consultas'] ?? 0);
+                            $total    = 10;
+                            $pct      = (int)round($qtd / $total * 100);
+                            $proxima  = $p['proxima_consulta'] ?? null;
+                            $agora    = time();
+                            $tsProx   = $proxima ? strtotime($proxima) : null;
+                            $pronto   = $tsProx && $tsProx <= $agora;
+                            $barCor   = $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning' : 'bg-primary');
+                        ?>
+                        <tr style="cursor:pointer" onclick="location.href='<?= PAINEL_URL ?>?page=detalhe&id=<?= $p['id'] ?>'">
+                            <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
+                            <td>
+                                <span class="badge bg-light text-dark border me-1"><?= htmlspecialchars($p['tribunal'] ?? '—') ?></span>
+                                <?= tipoBadge($p['tipo_sistema'] ?? null) ?>
+                            </td>
+                            <td class="text-muted small"><?= formatData($p['data_ultima_consulta']) ?></td>
+                            <td class="small">
+                                <?php if ($proxima): ?>
+                                    <?php if ($pronto): ?>
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Na fila agora</span>
+                                    <?php else: ?>
+                                        <span class="text-muted"><?= formatData($proxima) ?></span>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <span class="text-muted">—</span>
+                                <?php endif; ?>
+                            </td>
+                            <td style="min-width:130px">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height:8px;border-radius:4px">
+                                        <div class="progress-bar <?= $barCor ?>" style="width:<?= $pct ?>%"></div>
+                                    </div>
+                                    <span class="badge <?= $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning text-dark' : 'bg-secondary') ?> flex-shrink-0">
+                                        <?= $qtd ?>/<?= $total ?>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- Tabelas — linha 2 -->
 <div class="row g-3">
     <!-- Últimos cadastrados -->
