@@ -59,7 +59,7 @@
                         <label class="form-label fw-semibold">Data do Ato <span class="text-muted fw-normal">(opcional)</span></label>
                         <input type="date" name="data_ato"
                                class="form-control"
-                               value="<?= htmlspecialchars($_POST['data_ato'] ?? '') ?>">
+                               value="<?= htmlspecialchars($_POST['data_ato'] ?? date('Y-m-d')) ?>">
                         <div class="form-text">
                             O robô só buscará a ATA após essa data, e retornará apenas documentos com data igual ou posterior.
                         </div>
