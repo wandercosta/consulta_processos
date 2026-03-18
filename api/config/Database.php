@@ -17,6 +17,7 @@ class Database
                 $pass
             );
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->exec("SET time_zone = '-03:00'");
             return $pdo;
         } catch (PDOException $e) {
             http_response_code(500);

@@ -19,11 +19,12 @@ class DashboardController extends BaseController
         $proximos    = $this->processoModel->getProximosDaFila();
         $processados = $this->processoModel->getUltimosProcessados();
         $ultimos     = $this->processoModel->getUltimosCadastrados();
-        $logs        = $this->processoModel->getUltimosLogs();
+        $logs           = $this->processoModel->getUltimosLogs();
+        $semAtaFila     = $this->processoModel->getSemAtaAguardando();
 
         $this->render('dashboard/index', compact(
             'totais', 'totalGeral', 'comAta', 'semAta', 'reprocessando',
-            'proximos', 'processados', 'ultimos', 'logs',
+            'proximos', 'processados', 'ultimos', 'logs', 'semAtaFila',
         ) + ['paginaAtual' => 'dashboard', 'tituloPagina' => 'Dashboard']);
     }
 }

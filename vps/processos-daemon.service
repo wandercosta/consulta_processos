@@ -1,0 +1,17 @@
+[Unit]
+Description=Daemon de Automação de Processos Jurídicos
+After=network.target apache2.service mysql.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/www/wwwroot/processos.auradevcode.com.br/python
+ExecStart=/usr/bin/python3 /www/wwwroot/processos.auradevcode.com.br/python/daemon.py --headless
+Restart=on-failure
+RestartSec=15
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
