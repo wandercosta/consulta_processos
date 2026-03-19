@@ -45,7 +45,7 @@ class ProcessoModel
     {
         return $this->db->query("
             SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, data_ultima_consulta FROM processos
-            WHERE status_consulta IN ('FINALIZADO COM ATA', 'FINALIZADO SEM ATA', 'FINALIZADO')
+            WHERE status_consulta IN ('FINALIZADO COM ATA', 'FINALIZADO SEM ATA', 'ESGOTADO', 'FINALIZADO')
             ORDER BY data_ultima_consulta DESC
             LIMIT 10
         ")->fetchAll(PDO::FETCH_ASSOC);

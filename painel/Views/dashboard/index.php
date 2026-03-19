@@ -11,7 +11,9 @@
 .stat-card-link:hover .stat-card { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.18); }
 .stat-card-link .stat-value { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.4); }
 </style>
-<div class="row g-3 mb-4">
+
+<!-- Linha 1: métricas principais -->
+<div class="row g-3 mb-3">
     <div class="col-sm-6 col-xl-3">
         <a href="<?= PAINEL_URL ?>?page=processos" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">
@@ -35,12 +37,12 @@
         </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+COM+ATA" class="stat-card-link">
-        <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669)">
-            <i class="bi bi-check-circle stat-icon"></i>
+        <a href="<?= PAINEL_URL ?>?page=processos&status=CONSULTANDO" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">
+            <i class="bi bi-arrow-repeat stat-icon"></i>
             <div>
-                <div class="stat-value"><?= $comAta + $semAta ?></div>
-                <div class="stat-label">Finalizados</div>
+                <div class="stat-value"><?= $totais['CONSULTANDO'] ?? 0 ?></div>
+                <div class="stat-label">Consultando</div>
             </div>
         </div>
         </a>
@@ -58,31 +60,20 @@
     </div>
 </div>
 
-<!-- Segunda linha de cards -->
+<!-- Linha 2: status de finalização + botão -->
 <div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
-        <a href="<?= PAINEL_URL ?>?page=processos&status=CONSULTANDO" class="stat-card-link">
-        <div class="stat-card" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">
-            <i class="bi bi-arrow-repeat stat-icon"></i>
-            <div>
-                <div class="stat-value"><?= $totais['CONSULTANDO'] ?? 0 ?></div>
-                <div class="stat-label">Consultando</div>
-            </div>
-        </div>
-        </a>
-    </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-sm-6 col-xl-2">
         <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+COM+ATA" class="stat-card-link">
-        <div class="stat-card" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">
+        <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669)">
             <i class="bi bi-file-earmark-check stat-icon"></i>
             <div>
                 <div class="stat-value"><?= $comAta ?></div>
-                <div class="stat-label">Finalizados com ATA</div>
+                <div class="stat-label">Com ATA</div>
             </div>
         </div>
         </a>
     </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-sm-6 col-xl-2">
         <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+SEM+ATA" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#64748b,#475569)">
             <i class="bi bi-file-earmark-x stat-icon"></i>
@@ -90,18 +81,49 @@
                 <div class="stat-value">
                     <?= $semAta ?>
                     <?php if ($reprocessando > 0): ?>
-                    <small class="fs-6 fw-normal opacity-75" title="Aguardando 10 min para reprocessar">
-                        (<?= $reprocessando ?> aguardando)
-                    </small>
+                    <small class="fs-6 fw-normal opacity-75" title="Aguardando reprocessar">(<?= $reprocessando ?>)</small>
                     <?php endif; ?>
                 </div>
-                <div class="stat-label">Finalizados sem ATA</div>
+                <div class="stat-label">Sem ATA</div>
             </div>
         </div>
         </a>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm d-flex flex-row align-items-center gap-3 p-3" style="border-radius:12px;">
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=ESGOTADO" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#1e293b,#0f172a)">
+            <i class="bi bi-slash-circle-fill stat-icon"></i>
+            <div>
+                <div class="stat-value"><?= $totais['ESGOTADO'] ?? 0 ?></div>
+                <div class="stat-label">Esgotados</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=N%C3%83O+COMPAT%C3%ADVEL" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#374151,#1f2937)">
+            <i class="bi bi-slash-circle stat-icon"></i>
+            <div>
+                <div class="stat-value"><?= $totais['NÃO COMPATÍVEL'] ?? 0 ?></div>
+                <div class="stat-label">Não compatível</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=CANCELADO" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#6b7280,#4b5563)">
+            <i class="bi bi-pause-circle stat-icon"></i>
+            <div>
+                <div class="stat-value"><?= $totais['CANCELADO'] ?? 0 ?></div>
+                <div class="stat-label">Cancelados</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-2">
+        <div class="card border-0 shadow-sm h-100 d-flex align-items-center justify-content-center p-3" style="border-radius:12px;">
             <a href="<?= PAINEL_URL ?>?page=cadastrar" class="btn btn-primary w-100">
                 <i class="bi bi-plus-lg"></i> Novo Processo
             </a>

@@ -87,13 +87,13 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
         $stmt = $this->db->prepare("
             UPDATE processos
             SET
-                status_consulta      = 'FINALIZADO SEM ATA',
+                status_consulta      = CASE WHEN qtd_consultas + 1 >= 10 THEN 'ESGOTADO' ELSE 'FINALIZADO SEM ATA' END,
                 possui_ata           = 'N',
                 qtd_atas             = 0,
                 qtd_consultas        = qtd_consultas + 1,
                 caminho_arquivo      = NULL,
                 data_ultima_consulta = NOW(),
-                mensagem_erro        = NULL
+                mensagem_erro        = CASE WHEN qtd_consultas + 1 >= 10 THEN 'Limite de 10 consultas atingido. Processo não será reprocessado automaticamente.' ELSE NULL END
             WHERE id = ?
         ");
         $stmt->execute([$id]);

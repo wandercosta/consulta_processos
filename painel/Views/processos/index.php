@@ -22,7 +22,7 @@ $data_ate   = $filtros['data_ate']   ?? '';
             <label class="form-label form-label-sm mb-1">Status</label>
             <select name="status" class="form-select form-select-sm">
                 <option value="">Todos</option>
-                <?php foreach (['PENDENTE','CONSULTANDO','FINALIZADO COM ATA','FINALIZADO SEM ATA','ERRO','NÃO COMPATÍVEL','CANCELADO'] as $s): ?>
+                <?php foreach (['PENDENTE','CONSULTANDO','FINALIZADO COM ATA','FINALIZADO SEM ATA','ESGOTADO','ERRO','NÃO COMPATÍVEL','CANCELADO'] as $s): ?>
                 <option value="<?= $s ?>" <?= $status === $s ? 'selected' : '' ?>><?= $s ?></option>
                 <?php endforeach; ?>
             </select>

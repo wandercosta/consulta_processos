@@ -127,7 +127,7 @@ class ProcessoController
     {
         $data     = $this->input();
         $numero   = trim($data['numero_processo'] ?? '');
-        $tribunal = strtoupper(trim($data['tribunal'] ?? 'MG'));
+        $tribunal = strtoupper(trim($data['tribunal'] ?? '')) ?: 'MG';
         $dataAto  = $data['data_ato'] ?? null;
         $codApi   = trim($data['cod_api'] ?? '') ?: null;
 

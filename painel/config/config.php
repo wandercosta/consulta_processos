@@ -35,6 +35,7 @@ function statusBadge(?string $status): string
         'CONSULTANDO'        => ['info',      'bi-arrow-repeat'],
         'FINALIZADO COM ATA' => ['success',   'bi-check-circle-fill'],
         'FINALIZADO SEM ATA' => ['secondary', 'bi-clock-history'],
+        'ESGOTADO'           => ['dark',      'bi-slash-circle-fill'],
         'FINALIZADO'         => ['success',   'bi-check-circle'],
         'ERRO'               => ['danger',    'bi-x-circle'],
         'NÃO COMPATÍVEL'     => ['dark',      'bi-slash-circle'],
