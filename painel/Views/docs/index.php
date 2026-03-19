@@ -421,13 +421,36 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                     'method' => 'POST', 'color' => 'warning',
                     'endpoint' => 'cadastrar_processo',
                     'titulo' => 'Cadastrar processo',
-                    'descricao' => 'Cadastra um novo processo. O tipo_sistema é inferido automaticamente. tribunal e data_ato são opcionais.',
+                    'descricao' => 'Cadastra um novo processo. O tipo_sistema é inferido automaticamente. tribunal, data_ato e cod_api são opcionais. cod_api é seu identificador interno — retornado no webhook como id_integracao.',
                     'payload' => '{
   "numero_processo": "5003854-46.2025.8.13.0407",
   "tribunal": "MG",
-  "data_ato": "2025-03-01"
+  "data_ato": "2025-03-01",
+  "cod_api": "ORD-2025-001"
 }',
                     'resposta' => '{ "id": 43, "status": "ok" }',
+                ],
+                [
+                    'id' => 'cadastrar-lote',
+                    'method' => 'POST', 'color' => 'warning',
+                    'endpoint' => 'cadastrar_processo',
+                    'titulo' => 'Cadastro em lote (loop)',
+                    'descricao' => 'Não há endpoint de lote — chame cadastrar_processo repetidamente para cada processo. Use cod_api para vincular cada processo ao seu sistema. Processos duplicados retornam erro 409.',
+                    'payload' => '# Exemplo em Python
+processos = [
+    {"numero_processo": "5001111-11.2025.8.13.0001", "tribunal": "MG", "data_ato": "2025-03-01", "cod_api": "ORD-001"},
+    {"numero_processo": "5002222-22.2025.8.13.0002", "tribunal": "MG", "data_ato": "2025-03-01", "cod_api": "ORD-002"},
+]
+
+for p in processos:
+    r = requests.post(
+        "https://processos.auradevcode.com.br/api/?endpoint=cadastrar_processo",
+        json=p,
+        headers={"Authorization": "Bearer CLAUDE_AUTOMACAO_123"}
+    )
+    print(p["cod_api"], r.json())',
+                    'resposta' => '{ "id": 43, "status": "ok" }  # por processo
+{ "erro": "Processo já cadastrado" }  # HTTP 409 se duplicado',
                 ],
                 [
                     'id' => 'listar',
@@ -545,6 +568,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                             <tbody>
                                 <tr><td class="ps-3 font-monospace">id</td><td>INT PK AI</td><td></td></tr>
                                 <tr><td class="ps-3 font-monospace">numero_processo</td><td>VARCHAR(50)</td><td>UNIQUE</td></tr>
+                                <tr><td class="ps-3 font-monospace">cod_api</td><td>VARCHAR(100) NULL</td><td>Identificador do sistema externo — retornado no webhook como <code>id_integracao</code></td></tr>
                                 <tr><td class="ps-3 font-monospace">tribunal</td><td>VARCHAR(10)</td><td>UF do estado, ex: 'MG'</td></tr>
                                 <tr><td class="ps-3 font-monospace">tipo_sistema</td><td>VARCHAR(20)</td><td>PJE / EPROC / PROCON / DESCONHECIDO</td></tr>
                                 <tr><td class="ps-3 font-monospace">data_ato</td><td>DATE NULL</td><td>Filtro temporal</td></tr>

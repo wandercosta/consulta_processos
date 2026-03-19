@@ -80,7 +80,7 @@
                 <h6 class="fw-bold mb-2 text-muted">
                     <i class="bi bi-list-ul me-2"></i>Cadastro em lote via API
                 </h6>
-                <p class="small text-muted mb-2">Você pode cadastrar múltiplos processos via API:</p>
+                <p class="small text-muted mb-2">Você pode cadastrar múltiplos processos via API chamando o endpoint para cada um:</p>
                 <pre class="bg-light rounded p-2 small mb-2" style="font-size:.78rem;overflow-x:auto">POST <?= rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/') ?>/?endpoint=cadastrar_processo
 Authorization: Bearer CLAUDE_AUTOMACAO_123
 Content-Type: application/json
@@ -88,14 +88,16 @@ Content-Type: application/json
 {
   "numero_processo": "5003854-46.2025.8.13.0407",
   "tribunal": "MG",
-  "data_ato": "2025-03-01"
+  "data_ato": "2025-03-01",
+  "cod_api": "ORD-2025-001"
 }</pre>
                 <p class="small text-muted mb-0">
                     <i class="bi bi-info-circle me-1"></i>
                     Tipo detectado automaticamente pelo 1º dígito do número (<strong>MG</strong>):
                     <strong>5</strong>=PJE &bull; <strong>0/1</strong>=EPROC &bull; <strong>2</strong>=PROCON.
                     Outros tribunais terão suas próprias regras de classificação.<br>
-                    <code>tribunal</code> e <code>data_ato</code> são opcionais.
+                    <code>tribunal</code>, <code>data_ato</code> e <code>cod_api</code> são opcionais.
+                    O <code>cod_api</code> é o seu identificador interno — retornado no webhook como <code>id_integracao</code>.
                 </p>
             </div>
         </div>

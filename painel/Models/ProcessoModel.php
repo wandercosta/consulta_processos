@@ -144,12 +144,15 @@ class ProcessoModel
 
     public function criar(string $numero, string $tribunal, ?string $dataAto = null, ?string $codApi = null): int
     {
-        $tipo = self::inferirTipo($numero, $tribunal);
+        $tipo   = self::inferirTipo($numero, $tribunal);
+        $status = $tipo === 'DESCONHECIDO' ? 'ERRO' : 'PENDENTE';
+        $erro   = $tipo === 'DESCONHECIDO' ? 'Tipo de processo não identificado para o tribunal informado.' : null;
+
         $stmt = $this->db->prepare("
-            INSERT INTO processos (numero_processo, cod_api, tribunal, tipo_sistema, data_ato, status_consulta, criado_em)
-            VALUES (?, ?, ?, ?, ?, 'PENDENTE', NOW())
+            INSERT INTO processos (numero_processo, cod_api, tribunal, tipo_sistema, data_ato, status_consulta, mensagem_erro, criado_em)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
         ");
-        $stmt->execute([$numero, $codApi ?: null, $tribunal, $tipo, $dataAto ?: null]);
+        $stmt->execute([$numero, $codApi ?: null, $tribunal, $tipo, $dataAto ?: null, $status, $erro]);
         return (int)$this->db->lastInsertId();
     }
 

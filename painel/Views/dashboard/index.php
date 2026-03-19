@@ -5,8 +5,15 @@
 ?>
 
 <!-- Cards de estatísticas -->
+<style>
+.stat-card-link { text-decoration: none; display: block; }
+.stat-card-link .stat-card { transition: transform .15s, box-shadow .15s; }
+.stat-card-link:hover .stat-card { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.18); }
+.stat-card-link .stat-value { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.4); }
+</style>
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">
             <i class="bi bi-collection stat-icon"></i>
             <div>
@@ -14,8 +21,10 @@
                 <div class="stat-label">Total de processos</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=PENDENTE" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
             <i class="bi bi-hourglass-split stat-icon"></i>
             <div>
@@ -23,8 +32,10 @@
                 <div class="stat-label">Pendentes</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+COM+ATA" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669)">
             <i class="bi bi-check-circle stat-icon"></i>
             <div>
@@ -32,8 +43,10 @@
                 <div class="stat-label">Finalizados</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=ERRO" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#ef4444,#dc2626)">
             <i class="bi bi-exclamation-triangle stat-icon"></i>
             <div>
@@ -41,12 +54,14 @@
                 <div class="stat-label">Com erro</div>
             </div>
         </div>
+        </a>
     </div>
 </div>
 
 <!-- Segunda linha de cards -->
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=CONSULTANDO" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">
             <i class="bi bi-arrow-repeat stat-icon"></i>
             <div>
@@ -54,8 +69,10 @@
                 <div class="stat-label">Consultando</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+COM+ATA" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">
             <i class="bi bi-file-earmark-check stat-icon"></i>
             <div>
@@ -63,8 +80,10 @@
                 <div class="stat-label">Finalizados com ATA</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+SEM+ATA" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#64748b,#475569)">
             <i class="bi bi-file-earmark-x stat-icon"></i>
             <div>
@@ -79,6 +98,7 @@
                 <div class="stat-label">Finalizados sem ATA</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
         <div class="card border-0 shadow-sm d-flex flex-row align-items-center gap-3 p-3" style="border-radius:12px;">
