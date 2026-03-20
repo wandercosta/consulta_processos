@@ -168,23 +168,30 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                         <h6 class="fw-bold text-muted text-uppercase small mb-3">4. Sem ATA / Erro</h6>
                         <ol class="small">
                             <li class="mb-1">Nenhuma ATA encontrada → <code>POST /registrar_sem_ata</code> → <span class="badge bg-secondary">FINALIZADO SEM ATA</span>.</li>
-                            <li class="mb-1">Processos com este status são <strong>reprocessados automaticamente</strong> após 10 minutos.</li>
+                            <li class="mb-1">Processos com este status são <strong>reprocessados automaticamente</strong> após 60 min, até o limite de tentativas configurado (padrão: 10).</li>
+                            <li class="mb-1">Ao atingir o limite → <span class="badge bg-dark"><i class="bi bi-slash-circle-fill me-1"></i>ESGOTADO</span> — sai da fila permanentemente.</li>
                             <li class="mb-1">Erro inesperado → <code>POST /registrar_erro</code> → <span class="badge bg-danger">ERRO</span>.</li>
-                            <li>Usuário pode <strong>cancelar</strong> ou <strong>recolocar na fila</strong> manualmente pelo painel.</li>
+                            <li>Usuário pode <strong>cancelar</strong>, <strong>recolocar na fila</strong> ou <strong>reativar um ESGOTADO</strong> (cadastrar novamente zera as tentativas).</li>
                         </ol>
                     </div>
                 </div>
 
                 <hr class="my-4">
                 <h6 class="fw-bold mb-3">Status possíveis</h6>
-                <div class="d-flex flex-wrap gap-2">
+                <div class="d-flex flex-wrap gap-2 mb-2">
                     <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>PENDENTE</span>
                     <span class="badge bg-info text-dark"><i class="bi bi-arrow-repeat me-1"></i>CONSULTANDO</span>
                     <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i>FINALIZADO COM ATA</span>
                     <span class="badge bg-secondary"><i class="bi bi-clock-history me-1"></i>FINALIZADO SEM ATA</span>
+                    <span class="badge bg-dark"><i class="bi bi-slash-circle-fill me-1"></i>ESGOTADO</span>
                     <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>ERRO</span>
                     <span class="badge bg-dark"><i class="bi bi-slash-circle me-1"></i>NÃO COMPATÍVEL</span>
                     <span class="badge bg-secondary"><i class="bi bi-pause-circle me-1"></i>CANCELADO</span>
+                </div>
+                <div class="alert alert-light border small mb-0 py-2">
+                    <i class="bi bi-info-circle me-1 text-info"></i>
+                    O limite de tentativas e as extensões aceitas são configuráveis em
+                    <a href="<?= PAINEL_URL ?>?page=configuracoes">Painel → Configurações</a>.
                 </div>
             </div>
         </div>
@@ -394,9 +401,9 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                     'method' => 'POST', 'color' => 'warning',
                     'endpoint' => 'registrar_sem_ata',
                     'titulo' => 'Registrar conclusão sem ATA',
-                    'descricao' => 'Muda status para FINALIZADO SEM ATA. Processo será reprocessado após 10 minutos.',
+                    'descricao' => 'Incrementa qtd_consultas e muda status para FINALIZADO SEM ATA. O processo é reprocessado automaticamente após 60 min. Quando qtd_consultas atingir o limite configurado (padrão 10), o status muda para ESGOTADO e o processo sai da fila permanentemente.',
                     'payload' => '{ "id_processo": 42 }',
-                    'resposta' => '{ "status": "ok" }',
+                    'resposta' => '{ "status": "processo finalizado sem ata" }',
                 ],
                 [
                     'id' => 'registrar-erro',
@@ -421,14 +428,18 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                     'method' => 'POST', 'color' => 'warning',
                     'endpoint' => 'cadastrar_processo',
                     'titulo' => 'Cadastrar processo',
-                    'descricao' => 'Cadastra um novo processo. O tipo_sistema é inferido automaticamente. tribunal, data_ato e cod_api são opcionais. cod_api é seu identificador interno — retornado no webhook como id_integracao.',
+                    'descricao' => 'Cadastra um novo processo. O tipo_sistema é inferido automaticamente pelo 1º dígito do número. tribunal (default MG), data_ato e cod_api são opcionais. cod_api é seu identificador interno — retornado no webhook como id_integracao. IMPORTANTE: se o processo já existir com status ESGOTADO, ele é reativado automaticamente (volta para PENDENTE com tentativas zeradas, sem retornar 409). Outros status duplicados retornam HTTP 409.',
                     'payload' => '{
   "numero_processo": "5003854-46.2025.8.13.0407",
   "tribunal": "MG",
   "data_ato": "2025-03-01",
   "cod_api": "ORD-2025-001"
 }',
-                    'resposta' => '{ "id": 43, "status": "ok" }',
+                    'resposta' => '{ "status": "processo cadastrado", "id": 43 }
+// Se processo ESGOTADO existir:
+{ "status": "processo reativado", "id": 43, "info": "Processo esgotado foi recolocado na fila com tentativas zeradas." }
+// Se duplicado (outro status):
+HTTP 409 { "erro": "Processo já cadastrado", "id": 43, "status_atual": "PENDENTE" }',
                 ],
                 [
                     'id' => 'cadastrar-lote',
@@ -451,6 +462,18 @@ for p in processos:
     print(p["cod_api"], r.json())',
                     'resposta' => '{ "id": 43, "status": "ok" }  # por processo
 { "erro": "Processo já cadastrado" }  # HTTP 409 se duplicado',
+                ],
+                [
+                    'id' => 'configuracoes',
+                    'method' => 'GET', 'color' => 'primary',
+                    'endpoint' => 'configuracoes',
+                    'titulo' => 'Consultar configurações do sistema',
+                    'descricao' => 'Retorna as configurações ajustáveis do sistema (definidas em Painel → Configurações). Útil para o daemon Python adaptar seu comportamento dinamicamente sem reiniciar.',
+                    'payload' => 'GET ?endpoint=configuracoes',
+                    'resposta' => '{
+  "max_tentativas": 10,
+  "extensoes_aceitas": ["pdf", "html"]
+}',
                 ],
                 [
                     'id' => 'listar',
@@ -572,9 +595,10 @@ for p in processos:
                                 <tr><td class="ps-3 font-monospace">tribunal</td><td>VARCHAR(10)</td><td>UF do estado, ex: 'MG'</td></tr>
                                 <tr><td class="ps-3 font-monospace">tipo_sistema</td><td>VARCHAR(20)</td><td>PJE / EPROC / PROCON / DESCONHECIDO</td></tr>
                                 <tr><td class="ps-3 font-monospace">data_ato</td><td>DATE NULL</td><td>Filtro temporal</td></tr>
-                                <tr><td class="ps-3 font-monospace">status_consulta</td><td>VARCHAR(30)</td><td>Ver status acima</td></tr>
+                                <tr><td class="ps-3 font-monospace">status_consulta</td><td>VARCHAR(30)</td><td>PENDENTE / CONSULTANDO / FINALIZADO COM ATA / FINALIZADO SEM ATA / ESGOTADO / ERRO / NÃO COMPATÍVEL / CANCELADO</td></tr>
                                 <tr><td class="ps-3 font-monospace">possui_ata</td><td>CHAR(1) NULL</td><td>S / N</td></tr>
                                 <tr><td class="ps-3 font-monospace">qtd_atas</td><td>INT</td><td></td></tr>
+                                <tr><td class="ps-3 font-monospace">qtd_consultas</td><td>INT DEFAULT 0</td><td>Contador de tentativas sem ATA — ao atingir o limite vira ESGOTADO</td></tr>
                                 <tr><td class="ps-3 font-monospace">caminho_arquivo</td><td>VARCHAR(500) NULL</td><td></td></tr>
                                 <tr><td class="ps-3 font-monospace">mensagem_erro</td><td>TEXT NULL</td><td></td></tr>
                                 <tr><td class="ps-3 font-monospace">data_ultima_consulta</td><td>DATETIME NULL</td><td></td></tr>
@@ -624,6 +648,26 @@ for p in processos:
                                 <tr><td class="ps-3 font-monospace">criado_em</td><td>DATETIME</td><td>DEFAULT NOW()</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+                    <div class="card-header bg-white border-0 pt-3 pb-0 px-3">
+                        <h6 class="fw-bold"><i class="bi bi-table text-info me-1"></i>configuracoes</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0 small">
+                            <thead><tr><th class="ps-3">Coluna</th><th>Tipo</th><th>Observação</th></tr></thead>
+                            <tbody>
+                                <tr><td class="ps-3 font-monospace">chave</td><td>VARCHAR(100) PK</td><td><code>max_tentativas</code>, <code>extensoes_aceitas</code></td></tr>
+                                <tr><td class="ps-3 font-monospace">valor</td><td>TEXT</td><td>Valor da configuração (string)</td></tr>
+                                <tr><td class="ps-3 font-monospace">descricao</td><td>VARCHAR(255) NULL</td><td>Descrição legível</td></tr>
+                                <tr><td class="ps-3 font-monospace">atualizado_em</td><td>DATETIME</td><td>Atualizado automaticamente pelo BD</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="px-3 pb-2 pt-1">
+                            <small class="text-muted">Configurável em <a href="<?= PAINEL_URL ?>?page=configuracoes">Painel → Configurações</a> · Consultável via <code>GET /api/?endpoint=configuracoes</code></small>
+                        </div>
                     </div>
                 </div>
 

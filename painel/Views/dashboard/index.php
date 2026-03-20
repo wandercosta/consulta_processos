@@ -131,6 +131,34 @@
     </div>
 </div>
 
+<!-- Banner: processos em consulta agora -->
+<?php if (!empty($consultando)): ?>
+<div class="card border-0 shadow-sm mb-3" style="border-radius:12px;border-left:4px solid #06b6d4!important;border-left-width:4px!important;">
+    <div class="card-body py-2 px-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="spinner-border spinner-border-sm text-info" role="status"></span>
+                <strong class="text-info">Robô consultando agora</strong>
+                <span class="badge bg-info text-dark"><?= count($consultando) ?> processo<?= count($consultando) > 1 ? 's' : '' ?></span>
+            </div>
+            <a href="<?= PAINEL_URL ?>?page=processos&status=CONSULTANDO" class="btn btn-sm btn-outline-info">
+                Ver todos <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+            <?php foreach ($consultando as $c): ?>
+            <a href="<?= PAINEL_URL ?>?page=detalhe&id=<?= $c['id'] ?>"
+               class="badge bg-info bg-opacity-10 text-info border border-info text-decoration-none font-monospace"
+               style="font-size:.78rem">
+                <?= htmlspecialchars($c['numero_processo']) ?>
+                <span class="ms-1 opacity-75"><?= htmlspecialchars($c['tribunal'] ?? '') ?></span>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- Tabelas — linha 1 -->
 <div class="row g-3 mb-3">
     <!-- Próximos da fila -->

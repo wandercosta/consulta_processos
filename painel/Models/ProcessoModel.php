@@ -62,6 +62,16 @@ class ProcessoModel
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getConsultando(): array
+    {
+        return $this->db->query("
+            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, data_ultima_consulta
+            FROM processos
+            WHERE status_consulta = 'CONSULTANDO'
+            ORDER BY data_ultima_consulta DESC
+        ")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getSemAtaAguardando(): array
     {
         $max  = $this->maxTentativas();
