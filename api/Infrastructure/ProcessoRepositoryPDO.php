@@ -11,7 +11,8 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
 
     public function findPendentes(): array
     {
-        $stmt = $this->db->query("
+        $max  = $this->maxTentativas();
+        $stmt = $this->db->prepare("
             SELECT
                 id,
                 id AS id_processo,
@@ -27,7 +28,7 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
                 OR (
                     status_consulta        = 'FINALIZADO SEM ATA'
                     AND data_ultima_consulta < NOW() - INTERVAL 60 MINUTE
-                    AND qtd_consultas       < 10
+                    AND qtd_consultas       < ?
                 )
             )
             AND (data_ato IS NULL OR data_ato <= CURDATE())
@@ -36,6 +37,7 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
                 criado_em ASC
             LIMIT 10
         ");
+        $stmt->execute([$max]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -84,19 +86,21 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
 
     public function finalizarSemAta(int $id): void
     {
+        $max  = $this->maxTentativas();
+        $msg  = "Limite de {$max} consultas atingido. Processo não será reprocessado automaticamente.";
         $stmt = $this->db->prepare("
             UPDATE processos
             SET
-                status_consulta      = CASE WHEN qtd_consultas + 1 >= 10 THEN 'ESGOTADO' ELSE 'FINALIZADO SEM ATA' END,
+                status_consulta      = CASE WHEN qtd_consultas + 1 >= ? THEN 'ESGOTADO' ELSE 'FINALIZADO SEM ATA' END,
                 possui_ata           = 'N',
                 qtd_atas             = 0,
                 qtd_consultas        = qtd_consultas + 1,
                 caminho_arquivo      = NULL,
                 data_ultima_consulta = NOW(),
-                mensagem_erro        = CASE WHEN qtd_consultas + 1 >= 10 THEN 'Limite de 10 consultas atingido. Processo não será reprocessado automaticamente.' ELSE NULL END
+                mensagem_erro        = CASE WHEN qtd_consultas + 1 >= ? THEN ? ELSE NULL END
             WHERE id = ?
         ");
-        $stmt->execute([$id]);
+        $stmt->execute([$max, $max, $msg, $id]);
     }
 
     public function registrarErro(int $id, string $mensagem): void
@@ -140,11 +144,55 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
         return 'DESCONHECIDO';
     }
 
+    private function maxTentativas(): int
+    {
+        try {
+            $row = $this->db->query("SELECT valor FROM configuracoes WHERE chave = 'max_tentativas'")->fetch(PDO::FETCH_ASSOC);
+            return $row ? max(1, (int)$row['valor']) : 10;
+        } catch (\Exception $e) {
+            return 10;
+        }
+    }
+
     public function existeNumero(string $numero): bool
     {
         $stmt = $this->db->prepare("SELECT id FROM processos WHERE numero_processo = ?");
         $stmt->execute([$numero]);
         return (bool)$stmt->fetch();
+    }
+
+    public function findByNumero(string $numero): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM processos WHERE numero_processo = ?");
+        $stmt->execute([$numero]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function reativarEsgotado(int $id): void
+    {
+        $this->db->prepare("
+            UPDATE processos
+            SET status_consulta = 'PENDENTE',
+                qtd_consultas   = 0,
+                mensagem_erro   = NULL,
+                data_ultima_consulta = NOW()
+            WHERE id = ?
+        ")->execute([$id]);
+    }
+
+    public function getConfiguracoes(): array
+    {
+        try {
+            $rows = $this->db->query("SELECT chave, valor FROM configuracoes")->fetchAll(PDO::FETCH_ASSOC);
+            $cfg  = [];
+            foreach ($rows as $r) {
+                $cfg[$r['chave']] = $r['valor'];
+            }
+            return $cfg;
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     public function listar(array $filtros, int $pagina, int $limite): array

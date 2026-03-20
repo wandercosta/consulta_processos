@@ -79,6 +79,10 @@ switch ($endpoint) {
         $processoCtrl->listar();
         break;
 
+    case 'configuracoes':
+        $processoCtrl->configuracoes();
+        break;
+
     case 'registrar_arquivo':
         $arquivoCtrl->registrar();
         break;

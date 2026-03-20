@@ -38,6 +38,7 @@ require_once PAINEL_ROOT . '/Models/ProcessoModel.php';
 require_once PAINEL_ROOT . '/Models/ArquivoModel.php';
 require_once PAINEL_ROOT . '/Models/RobotModel.php';
 require_once PAINEL_ROOT . '/Models/WebhookModel.php';
+require_once PAINEL_ROOT . '/Models/ConfiguracaoModel.php';
 
 switch ($page) {
 
@@ -110,6 +111,11 @@ switch ($page) {
     case 'webhook_reenviar':
         require_once PAINEL_ROOT . '/Controllers/WebhookController.php';
         (new WebhookController(new WebhookModel(db())))->reenviar();
+        break;
+
+    case 'configuracoes':
+        require_once PAINEL_ROOT . '/Controllers/ConfiguracaoController.php';
+        (new ConfiguracaoController(new ConfiguracaoModel(db())))->index();
         break;
 
     case 'docs':

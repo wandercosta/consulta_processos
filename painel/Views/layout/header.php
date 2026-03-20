@@ -9,8 +9,9 @@ $nav = [
     'importar'  => ['icon' => 'bi-file-earmark-excel',     'label' => 'Importar Planilha'],
     'arquivos'  => ['icon' => 'bi-file-earmark-arrow-down', 'label' => 'Arquivos / ATAs'],
     'robot'     => ['icon' => 'bi-robot',                   'label' => 'Robô'],
-    'webhook'   => ['icon' => 'bi-send',                    'label' => 'Webhooks'],
-    'docs'      => ['icon' => 'bi-book',                    'label' => 'Documentação'],
+    'webhook'       => ['icon' => 'bi-send',                    'label' => 'Webhooks'],
+    'configuracoes' => ['icon' => 'bi-gear',                    'label' => 'Configurações'],
+    'docs'          => ['icon' => 'bi-book',                    'label' => 'Documentação'],
 ];
 ?>
 <!DOCTYPE html>

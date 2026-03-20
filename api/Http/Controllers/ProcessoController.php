@@ -139,14 +139,31 @@ class ProcessoController
             $this->erro400("numero_processo é obrigatório");
         }
 
-        if ($this->repo->existeNumero($numero)) {
+        $existente = $this->repo->findByNumero($numero);
+        if ($existente) {
+            // Processo ESGOTADO pode ser reativado (zera tentativas, volta para PENDENTE)
+            if ($existente['status_consulta'] === 'ESGOTADO') {
+                $this->repo->reativarEsgotado((int)$existente['id']);
+                echo json_encode(["status" => "processo reativado", "id" => (int)$existente['id'], "info" => "Processo esgotado foi recolocado na fila com tentativas zeradas."]);
+                exit;
+            }
             http_response_code(409);
-            echo json_encode(["erro" => "Processo já cadastrado"]);
+            echo json_encode(["erro" => "Processo já cadastrado", "id" => (int)$existente['id'], "status_atual" => $existente['status_consulta']]);
             exit;
         }
 
         $id = $this->repo->criar($numero, $tribunal, $dataAto ?: null, $codApi);
         echo json_encode(["status" => "processo cadastrado", "id" => $id]);
+    }
+
+    public function configuracoes(): void
+    {
+        $cfg  = $this->repo->getConfiguracoes();
+        $exts = array_filter(array_map('trim', explode(',', $cfg['extensoes_aceitas'] ?? 'pdf,html')));
+        echo json_encode([
+            'max_tentativas'   => (int)($cfg['max_tentativas'] ?? 10),
+            'extensoes_aceitas' => array_values($exts),
+        ]);
     }
 
     public function listar(): void

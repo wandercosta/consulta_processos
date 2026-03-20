@@ -32,13 +32,16 @@ class ProcessoModel
 
     public function getProximosDaFila(): array
     {
-        return $this->db->query("
+        $max  = $this->maxTentativas();
+        $stmt = $this->db->prepare("
             SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, qtd_consultas, criado_em FROM processos
             WHERE status_consulta = 'PENDENTE'
-               OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 60 MINUTE AND qtd_consultas < 10)
+               OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 60 MINUTE AND qtd_consultas < ?)
             ORDER BY CASE status_consulta WHEN 'PENDENTE' THEN 0 ELSE 1 END ASC, criado_em ASC
             LIMIT 10
-        ")->fetchAll(PDO::FETCH_ASSOC);
+        ");
+        $stmt->execute([$max]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getUltimosProcessados(): array
@@ -61,17 +64,30 @@ class ProcessoModel
 
     public function getSemAtaAguardando(): array
     {
-        return $this->db->query("
+        $max  = $this->maxTentativas();
+        $stmt = $this->db->prepare("
             SELECT id, numero_processo, tribunal, tipo_sistema, data_ato,
                    data_ultima_consulta,
                    DATE_ADD(data_ultima_consulta, INTERVAL 60 MINUTE) AS proxima_consulta,
                    qtd_consultas
             FROM processos
             WHERE status_consulta = 'FINALIZADO SEM ATA'
-              AND qtd_consultas < 10
+              AND qtd_consultas < ?
             ORDER BY proxima_consulta ASC
             LIMIT 50
-        ")->fetchAll(PDO::FETCH_ASSOC);
+        ");
+        $stmt->execute([$max]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function maxTentativas(): int
+    {
+        try {
+            $row = $this->db->query("SELECT valor FROM configuracoes WHERE chave = 'max_tentativas'")->fetch(PDO::FETCH_ASSOC);
+            return $row ? max(1, (int)$row['valor']) : 10;
+        } catch (\Exception $e) {
+            return 10;
+        }
     }
 
     public function getUltimosLogs(): array
@@ -140,6 +156,26 @@ class ProcessoModel
         $stmt = $this->db->prepare("SELECT id FROM processos WHERE numero_processo = ?");
         $stmt->execute([$numero]);
         return (bool)$stmt->fetch();
+    }
+
+    public function findByNumero(string $numero): ?array
+    {
+        $stmt = $this->db->prepare("SELECT id, status_consulta FROM processos WHERE numero_processo = ?");
+        $stmt->execute([$numero]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function reativarEsgotado(int $id): void
+    {
+        $this->db->prepare("
+            UPDATE processos
+            SET status_consulta = 'PENDENTE',
+                qtd_consultas   = 0,
+                mensagem_erro   = NULL,
+                data_ultima_consulta = NOW()
+            WHERE id = ?
+        ")->execute([$id]);
     }
 
     public function criar(string $numero, string $tribunal, ?string $dataAto = null, ?string $codApi = null): int
