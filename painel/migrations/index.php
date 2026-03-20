@@ -46,10 +46,10 @@ if ($executar && isset($arquivos[array_search($executar, array_map('basename', $
             $migration = require $arquivo;
             ($migration['up'])($pdo);
             $pdo->prepare("INSERT INTO schema_migrations (migration) VALUES (?)")->execute([$nome]);
-            $pdo->commit();
+            if ($pdo->inTransaction()) $pdo->commit();
             $mensagens[] = ['tipo' => 'success', 'texto' => "✓ {$nome}: {$migration['descricao']}"];
         } catch (Exception $e) {
-            $pdo->rollBack();
+            if ($pdo->inTransaction()) $pdo->rollBack();
             $mensagens[] = ['tipo' => 'danger', 'texto' => "✗ {$nome}: " . $e->getMessage()];
         }
         // Recarrega aplicadas
@@ -69,10 +69,10 @@ if (isset($_POST['executar_todas'])) {
             $migration = require $arquivo;
             ($migration['up'])($pdo);
             $pdo->prepare("INSERT INTO schema_migrations (migration) VALUES (?)")->execute([$nome]);
-            $pdo->commit();
+            if ($pdo->inTransaction()) $pdo->commit();
             $mensagens[] = ['tipo' => 'success', 'texto' => "✓ {$nome}: {$migration['descricao']}"];
         } catch (Exception $e) {
-            $pdo->rollBack();
+            if ($pdo->inTransaction()) $pdo->rollBack();
             $mensagens[] = ['tipo' => 'danger', 'texto' => "✗ {$nome}: " . $e->getMessage()];
             break; // Para na primeira falha
         }
