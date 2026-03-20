@@ -197,8 +197,13 @@
                             <td class="text-muted small">
                                 <?php $qtd = (int)($p['qtd_consultas'] ?? 0); ?>
                                 <?php if ($qtd > 0): ?>
-                                    <span class="badge <?= $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning text-dark' : 'bg-secondary') ?>">
-                                        <?= $qtd ?>/10
+                                    <?php
+                                        $limDanger  = (int)round($maxTentativas * 0.8);
+                                        $limWarning = (int)round($maxTentativas * 0.5);
+                                        $corBadge   = $qtd >= $limDanger ? 'bg-danger' : ($qtd >= $limWarning ? 'bg-warning text-dark' : 'bg-secondary');
+                                    ?>
+                                    <span class="badge <?= $corBadge ?>" title="Faltam <?= $maxTentativas - $qtd ?> tentativa(s)">
+                                        <?= $qtd ?>/<?= $maxTentativas ?>
                                     </span>
                                 <?php else: ?>
                                     <span class="text-muted">—</span>
@@ -290,13 +295,17 @@
                         <tbody>
                         <?php foreach ($semAtaFila as $p):
                             $qtd      = (int)($p['qtd_consultas'] ?? 0);
-                            $total    = 10;
-                            $pct      = (int)round($qtd / $total * 100);
+                            $total    = $maxTentativas;
+                            $faltam   = $total - $qtd;
+                            $pct      = $total > 0 ? (int)round($qtd / $total * 100) : 0;
                             $proxima  = $p['proxima_consulta'] ?? null;
                             $agora    = time();
                             $tsProx   = $proxima ? strtotime($proxima) : null;
                             $pronto   = $tsProx && $tsProx <= $agora;
-                            $barCor   = $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning' : 'bg-primary');
+                            $limD     = (int)round($total * 0.8);
+                            $limW     = (int)round($total * 0.5);
+                            $barCor   = $qtd >= $limD ? 'bg-danger' : ($qtd >= $limW ? 'bg-warning' : 'bg-primary');
+                            $bdgCor   = $qtd >= $limD ? 'bg-danger' : ($qtd >= $limW ? 'bg-warning text-dark' : 'bg-secondary');
                         ?>
                         <tr style="cursor:pointer" onclick="location.href='<?= PAINEL_URL ?>?page=detalhe&id=<?= $p['id'] ?>'">
                             <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
@@ -316,14 +325,15 @@
                                     <span class="text-muted">—</span>
                                 <?php endif; ?>
                             </td>
-                            <td style="min-width:130px">
+                            <td style="min-width:160px">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="progress flex-grow-1" style="height:8px;border-radius:4px">
+                                    <div class="progress flex-grow-1" style="height:8px;border-radius:4px" title="<?= $qtd ?> de <?= $total ?> tentativas realizadas">
                                         <div class="progress-bar <?= $barCor ?>" style="width:<?= $pct ?>%"></div>
                                     </div>
-                                    <span class="badge <?= $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning text-dark' : 'bg-secondary') ?> flex-shrink-0">
-                                        <?= $qtd ?>/<?= $total ?>
-                                    </span>
+                                    <div class="flex-shrink-0 text-end" style="min-width:90px">
+                                        <span class="badge <?= $bdgCor ?>"><?= $qtd ?>/<?= $total ?></span>
+                                        <br><small class="text-muted" style="font-size:.7rem">faltam <?= $faltam ?></small>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

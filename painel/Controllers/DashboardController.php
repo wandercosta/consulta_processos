@@ -22,10 +22,12 @@ class DashboardController extends BaseController
         $logs           = $this->processoModel->getUltimosLogs();
         $semAtaFila     = $this->processoModel->getSemAtaAguardando();
         $consultando    = $this->processoModel->getConsultando();
+        $maxTentativas  = $this->processoModel->maxTentativas();
 
         $this->render('dashboard/index', compact(
             'totais', 'totalGeral', 'comAta', 'semAta', 'reprocessando',
             'proximos', 'processados', 'ultimos', 'logs', 'semAtaFila', 'consultando',
+            'maxTentativas',
         ) + ['paginaAtual' => 'dashboard', 'tituloPagina' => 'Dashboard']);
     }
 }

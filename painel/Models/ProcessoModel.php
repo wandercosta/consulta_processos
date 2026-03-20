@@ -90,7 +90,7 @@ class ProcessoModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    private function maxTentativas(): int
+    public function maxTentativas(): int
     {
         try {
             $row = $this->db->query("SELECT valor FROM configuracoes WHERE chave = 'max_tentativas'")->fetch(PDO::FETCH_ASSOC);
