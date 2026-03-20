@@ -82,6 +82,11 @@ switch ($page) {
         (new ProcessoController(new ProcessoModel(db())))->recolocar();
         break;
 
+    case 'reativar_lote':
+        require_once PAINEL_ROOT . '/Controllers/ProcessoController.php';
+        (new ProcessoController(new ProcessoModel(db())))->reativarLote();
+        break;
+
     case 'arquivos':
         require_once PAINEL_ROOT . '/Controllers/ArquivoController.php';
         (new ArquivoController(new ArquivoModel(db())))->index();

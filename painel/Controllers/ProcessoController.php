@@ -113,4 +113,14 @@ class ProcessoController extends BaseController
         $volta = $_POST['volta'] ?? 'processos';
         $this->redirect($volta === 'detalhe' ? "detalhe&id={$id}" : 'processos');
     }
+
+    public function reativarLote(): void
+    {
+        $ids = array_filter(array_map('intval', $_POST['ids'] ?? []));
+        foreach ($ids as $id) {
+            $this->model->reativarEsgotado($id);
+        }
+        $volta = $_POST['volta'] ?? 'processos';
+        $this->redirect($volta);
+    }
 }
