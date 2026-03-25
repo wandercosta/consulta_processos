@@ -295,7 +295,10 @@ def processar_um(
                 indice=i,
                 download_ok=ok,
             )
-            if id_arq:
+            if id_arq == -1:
+                # Arquivo ignorado pelo servidor (extensão não permitida) — não é erro
+                logger.info(f"[6/8] — Ata {i}/{atas_encontradas}: ignorada pelo servidor (extensão não aceita)")
+            elif id_arq:
                 logger.debug(f"[6/8] Arquivo {i} registrado na tabela processos_arquivos (id={id_arq})")
                 # Envia o arquivo para o VPS para que o download funcione no painel
                 if ok and caminho:

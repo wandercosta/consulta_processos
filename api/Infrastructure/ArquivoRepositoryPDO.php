@@ -61,4 +61,17 @@ class ArquivoRepositoryPDO implements ArquivoRepositoryInterface
         ");
         $stmt->execute([$caminho, $id]);
     }
+
+    public function getExtensoes(): array
+    {
+        try {
+            $row = $this->db->query(
+                "SELECT valor FROM configuracoes WHERE chave = 'extensoes_aceitas'"
+            )->fetch(PDO::FETCH_ASSOC);
+            if (!$row) return ['pdf', 'html'];
+            return array_values(array_filter(array_map('trim', explode(',', $row['valor']))));
+        } catch (\Exception $e) {
+            return ['pdf', 'html']; // fallback seguro
+        }
+    }
 }

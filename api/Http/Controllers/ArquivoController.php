@@ -30,6 +30,19 @@ class ArquivoController
             exit;
         }
 
+        // Valida extensão contra as configuradas no painel
+        $formato = strtolower(trim($data['formato'] ?? ''));
+        if ($formato !== '') {
+            $permitidas = array_map('strtolower', $this->repo->getExtensoes());
+            if (!in_array($formato, $permitidas, true)) {
+                echo json_encode([
+                    "ignorado" => true,
+                    "motivo"   => "Extensão '{$formato}' não está na lista de aceitas: " . implode(', ', $permitidas),
+                ]);
+                exit;
+            }
+        }
+
         $id = $this->repo->criar($data);
         echo json_encode(["status" => "arquivo registrado", "id" => $id]);
     }
@@ -172,6 +185,17 @@ class ArquivoController
             $erro = $_FILES['arquivo']['error'] ?? -1;
             http_response_code(400);
             echo json_encode(["erro" => "Arquivo inválido ou não enviado", "codigo" => $erro]);
+            exit;
+        }
+
+        // Valida extensão do arquivo enviado contra as extensões configuradas
+        $extEnviada = strtolower(pathinfo($_FILES['arquivo']['name'], PATHINFO_EXTENSION));
+        $permitidas = array_map('strtolower', $this->repo->getExtensoes());
+        if ($extEnviada !== '' && !in_array($extEnviada, $permitidas, true)) {
+            echo json_encode([
+                "ignorado" => true,
+                "motivo"   => "Extensão '{$extEnviada}' não está na lista de aceitas: " . implode(', ', $permitidas),
+            ]);
             exit;
         }
 

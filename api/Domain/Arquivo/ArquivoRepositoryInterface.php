@@ -13,4 +13,7 @@ interface ArquivoRepositoryInterface
 
     /** Atualiza o caminho do arquivo no servidor após upload */
     public function updateCaminho(int $id, string $caminho): void;
+
+    /** Retorna lista de extensões aceitas (ex: ['pdf', 'html']) lida de configuracoes */
+    public function getExtensoes(): array;
 }

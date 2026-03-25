@@ -202,8 +202,15 @@ class APIClient:
             "indice":          indice,
             "download_ok":     1 if download_ok else 0,
         })
-        if isinstance(resultado, dict) and isinstance(resultado.get("id"), int):
-            return resultado["id"]
+        if isinstance(resultado, dict):
+            if resultado.get("ignorado"):
+                logger.info(
+                    f"registrar_arquivo: arquivo ignorado pelo servidor — "
+                    f"{resultado.get('motivo', 'extensão não permitida')}"
+                )
+                return -1   # sentinela: ignorado (não é erro)
+            if isinstance(resultado.get("id"), int):
+                return resultado["id"]
         return None
 
     def upload_arquivo(self, id_arquivo: int, caminho_local: str) -> bool:
