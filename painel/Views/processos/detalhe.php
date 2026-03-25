@@ -49,6 +49,17 @@
                         <th class="text-muted fw-normal">Número</th>
                         <td class="font-monospace"><?= htmlspecialchars($processo['numero_processo']) ?></td>
                     </tr>
+                    <?php if (!empty($processo['cod_api'])): ?>
+                    <tr>
+                        <th class="text-muted fw-normal">Cód. Integração</th>
+                        <td>
+                            <span class="font-monospace badge bg-light text-dark border"
+                                  title="Identificador enviado via API no momento do cadastro">
+                                <i class="bi bi-link-45deg me-1"></i><?= htmlspecialchars($processo['cod_api']) ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
                     <tr>
                         <th class="text-muted fw-normal">Tribunal / Tipo</th>
                         <td>
