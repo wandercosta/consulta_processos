@@ -273,6 +273,19 @@ class APIClient:
         """
         return self._get("robot_status")
 
+    def buscar_configuracoes(self) -> dict:
+        """
+        GET /configuracoes
+
+        Retorna as configurações globais do sistema.
+        Ex: {'max_tentativas': 10, 'extensoes_aceitas': ['pdf', 'html']}
+        Retorna valores padrão em caso de falha para não interromper o daemon.
+        """
+        resultado = self._get("configuracoes")
+        if isinstance(resultado, dict):
+            return resultado
+        return {"max_tentativas": 10, "extensoes_aceitas": ["pdf", "html"]}
+
     def robot_heartbeat(self, status: str, pid: int, mensagem: str = "") -> bool:
         """
         POST /robot_heartbeat

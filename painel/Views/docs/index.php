@@ -150,7 +150,8 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                             <li class="mb-1">A cada ciclo (padrão: 20s), o daemon chama <code>GET /processos_pendentes</code>.</li>
                             <li class="mb-1">Verifica se o <code>tipo_sistema</code> tem scraper disponível; se não: marca <span class="badge bg-dark">NÃO COMPATÍVEL</span> e encerra.</li>
                             <li class="mb-1">Abre o Chrome, acessa o portal judicial e busca as ATAs.</li>
-                            <li>Filtra documentos com <code>data_documento &lt; data_ato</code> (se configurada).</li>
+                            <li class="mb-1">Filtra documentos com <code>data_documento &lt; data_ato</code> (se configurada).</li>
+                            <li>Filtra documentos pelo formato: somente extensões configuradas em <strong>Painel → Configurações → Extensões aceitas</strong> (ex: <code>pdf, html</code>) são baixadas. Atas com outros formatos são ignoradas.</li>
                         </ol>
                     </div>
 
@@ -428,7 +429,7 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
                     'method' => 'POST', 'color' => 'warning',
                     'endpoint' => 'cadastrar_processo',
                     'titulo' => 'Cadastrar processo',
-                    'descricao' => 'Cadastra um novo processo. O tipo_sistema é inferido automaticamente pelo 1º dígito do número. tribunal (default MG), data_ato e cod_api são opcionais. cod_api é seu identificador interno — retornado no webhook como id_integracao. IMPORTANTE: se o processo já existir com status ESGOTADO, ele é reativado automaticamente (volta para PENDENTE com tentativas zeradas, sem retornar 409). Outros status duplicados retornam HTTP 409.',
+                    'descricao' => 'Cadastra um novo processo. O tipo_sistema é inferido automaticamente pelo 1º dígito do número (MG: 5=PJE, 0/1=EPROC, 2=PROCON). tribunal (default MG), data_ato e cod_api são opcionais. Se o tipo não for reconhecido, o processo é criado diretamente com status NÃO COMPATÍVEL (não entra na fila). Se o processo já existir com status ESGOTADO, é reativado automaticamente (PENDENTE, tentativas zeradas, sem 409). Outros status duplicados retornam HTTP 409.',
                     'payload' => '{
   "numero_processo": "5003854-46.2025.8.13.0407",
   "tribunal": "MG",

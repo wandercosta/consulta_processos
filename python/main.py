@@ -215,6 +215,20 @@ def processar_um(
                     f"{descartadas} ata(s) descartada(s) por data anterior ao ato"
                 )
 
+        # Filtra atas pelas extensões aceitas (configuração do painel)
+        cfg_sistema          = api.buscar_configuracoes()
+        extensoes_aceitas    = {e.lower().strip() for e in cfg_sistema.get("extensoes_aceitas", ["pdf", "html"]) if e.strip()}
+        if extensoes_aceitas:
+            antes_ext = len(atas)
+            atas = [a for a in atas if a.formato.lower() in extensoes_aceitas]
+            descartadas_ext = antes_ext - len(atas)
+            if descartadas_ext:
+                logger.info(
+                    f"[5/8] Filtro extensão {extensoes_aceitas}: "
+                    f"{descartadas_ext} ata(s) ignorada(s) — formato não permitido"
+                )
+            logger.debug(f"[5/8] Extensões aceitas: {extensoes_aceitas}")
+
         atas_encontradas = len(atas)
         logger.info(
             f"[5/8] ✓ Scraping concluído — "
