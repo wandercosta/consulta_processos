@@ -1,112 +1,143 @@
 @echo off
 setlocal EnableDelayedExpansion
-title Processos API — Inicialização Local
-color 0A
+chcp 65001 >nul 2>&1
+title Processos API — Inicializando...
 
 echo.
-echo  ============================================
-echo   PROCESSOS API — Inicialização Local
-echo  ============================================
+echo  ██████╗ ██████╗  ██████╗  ██████╗███████╗███████╗███████╗ ██████╗ ███████╗
+echo  ██╔══██╗██╔══██╗██╔═══██╗██╔════╝██╔════╝██╔════╝██╔════╝██╔═══██╗██╔════╝
+echo  ██████╔╝██████╔╝██║   ██║██║     █████╗  ███████╗███████╗██║   ██║███████╗
+echo  ██╔═══╝ ██╔══██╗██║   ██║██║     ██╔══╝  ╚════██║╚════██║██║   ██║╚════██║
+echo  ██║     ██║  ██║╚██████╔╝╚██████╗███████╗███████║███████║╚██████╔╝███████║
+echo  ╚═╝     ╚═╝  ╚═╝ ╚═════╝  ╚═════╝╚══════╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝
+echo.
+echo  Consulta e gestao de processos juridicos — Ambiente Local
+echo  ──────────────────────────────────────────────────────────
 echo.
 
-:: ── 1. Verificar privilégios de administrador (necessário para sc start) ──────
-net session >nul 2>&1
-if %errorlevel% neq 0 (
-    echo  [AVISO] Executando sem privilégios de Administrador.
-    echo          O start dos serviços WAMP pode falhar.
-    echo          Clique direito no .bat e escolha "Executar como administrador".
-    echo.
-    pause
-)
+:: ─── Diretório raiz do projeto ────────────────────────────────────────────────
+cd /d "%~dp0"
 
-:: ── 2. Apache ──────────────────────────────────────────────────────────────────
-sc query wampapache64 | find "RUNNING" >nul 2>&1
-if %errorlevel% equ 0 (
-    echo  [OK] Apache já está rodando.
-) else (
-    echo  [--] Iniciando Apache...
-    sc start wampapache64 >nul 2>&1
-    timeout /t 3 /nobreak >nul
-    sc query wampapache64 | find "RUNNING" >nul 2>&1
-    if %errorlevel% equ 0 (
-        echo  [OK] Apache iniciado com sucesso.
-    ) else (
-        echo  [ERRO] Falha ao iniciar o Apache. Verifique o WAMP.
-    )
-)
+:: ─── 1. Localizar PHP 8.x ─────────────────────────────────────────────────────
+set PHP=
+if exist "E:\Develop\php\php8.4.15\php.exe" ( set PHP=E:\Develop\php\php8.4.15\php.exe & goto :php_ok )
+if exist "E:\Develop\php\php8.3.28\php.exe" ( set PHP=E:\Develop\php\php8.3.28\php.exe & goto :php_ok )
+if exist "E:\Develop\php\php8.2.29\php.exe" ( set PHP=E:\Develop\php\php8.2.29\php.exe & goto :php_ok )
+if exist "E:\Develop\php\php8.1.33\php.exe" ( set PHP=E:\Develop\php\php8.1.33\php.exe & goto :php_ok )
+if exist "E:\wamp64\bin\php\php8.2.18\php.exe" ( set PHP=E:\wamp64\bin\php\php8.2.18\php.exe & goto :php_ok )
+where php >nul 2>&1 && ( for /f "delims=" %%i in ('where php') do set PHP=%%i & goto :php_ok )
 
-:: ── 3. MySQL ───────────────────────────────────────────────────────────────────
+echo  [ERRO] PHP 8.x nao encontrado. Verifique E:\Develop\php\ ou adicione ao PATH.
+pause & exit /b 1
+
+:php_ok
+echo  [OK] PHP: %PHP%
+
+:: ─── 2. Localizar Python ──────────────────────────────────────────────────────
+set PYTHON=
+if exist "C:\Python314\python.exe" ( set PYTHON=C:\Python314\python.exe & goto :py_ok )
+if exist "C:\Python313\python.exe" ( set PYTHON=C:\Python313\python.exe & goto :py_ok )
+if exist "C:\Python312\python.exe" ( set PYTHON=C:\Python312\python.exe & goto :py_ok )
+where python >nul 2>&1 && ( for /f "delims=" %%i in ('where python') do set PYTHON=%%i & goto :py_ok )
+set PYTHON=python
+
+:py_ok
+echo  [OK] Python: %PYTHON%
+
+:: ─── 3. MySQL (serviço WAMP — sem Apache) ────────────────────────────────────
 sc query wampmysqld64 | find "RUNNING" >nul 2>&1
 if %errorlevel% equ 0 (
-    echo  [OK] MySQL já está rodando.
+    echo  [OK] MySQL ja esta rodando.
 ) else (
     echo  [--] Iniciando MySQL...
     sc start wampmysqld64 >nul 2>&1
     timeout /t 4 /nobreak >nul
     sc query wampmysqld64 | find "RUNNING" >nul 2>&1
     if %errorlevel% equ 0 (
-        echo  [OK] MySQL iniciado com sucesso.
+        echo  [OK] MySQL iniciado.
     ) else (
-        echo  [ERRO] Falha ao iniciar o MySQL. Verifique o WAMP.
+        echo  [AVISO] Nao foi possivel iniciar o MySQL automaticamente.
+        echo          Inicie manualmente: sc start wampmysqld64 ^(como Administrador^)
     )
 )
 
-echo.
+:: ─── 4. Configurar .env para servidor embutido ────────────────────────────────
+set PORT=8000
 
-:: ── 4. Testar API ──────────────────────────────────────────────────────────────
-echo  [--] Testando API em http://localhost/processos_api/api/?endpoint=robot_status ...
-curl -s -o nul -w "%%{http_code}" -H "Authorization: Bearer CLAUDE_AUTOMACAO_123" ^
-    "http://localhost/processos_api/api/?endpoint=robot_status" > "%TEMP%\api_check.txt" 2>nul
-set /p HTTP_CODE=<"%TEMP%\api_check.txt"
-if "%HTTP_CODE%"=="200" (
-    echo  [OK] API respondendo ^(HTTP 200^).
-) else (
-    echo  [AVISO] API retornou HTTP %HTTP_CODE%. Verifique se o WAMP está com a URL correta.
+if not exist ".env" (
+    echo  [INFO] .env nao encontrado — copiando de .env.example...
+    copy ".env.example" ".env" >nul
 )
 
+:: Ajusta APP_BASE_PATH e API_BASE_URL para o servidor embutido na porta 8000
+echo  [--] Ajustando .env para servidor embutido ^(porta %PORT%^)...
+set "ENV_TEMP=%TEMP%\processos_env_tmp.txt"
+
+(for /f "usebackq delims=" %%L in (".env") do (
+    set "LINE=%%L"
+    if "!LINE:~0,13!"=="APP_BASE_PATH" (
+        echo APP_BASE_PATH=
+    ) else if "!LINE:~0,12!"=="API_BASE_URL" (
+        echo API_BASE_URL=http://localhost:%PORT%/api
+    ) else (
+        echo !LINE!
+    )
+)) > "%ENV_TEMP%"
+
+copy /y "%ENV_TEMP%" ".env" >nul
+echo  [OK] .env configurado ^(APP_BASE_PATH vazio, API_BASE_URL porta %PORT%^).
+
+echo.
+echo  ──────────────────────────────────────────────────────────
+echo   Iniciando servicos em janelas separadas...
+echo   PHP Server  ^>  http://localhost:%PORT%/
+echo   Painel      ^>  http://localhost:%PORT%/painel/
+echo  ──────────────────────────────────────────────────────────
 echo.
 
-:: ── 5. Abrir painel no browser ─────────────────────────────────────────────────
-echo  [--] Abrindo painel em http://localhost/processos_api/painel/ ...
-start "" "http://localhost/processos_api/painel/"
+:: ─── 5. Iniciar PHP built-in server ──────────────────────────────────────────
+start "Processos API — PHP Server :%PORT%" cmd /k "color 0B && title Processos API — PHP Server :%PORT% && \"%PHP%\" -S localhost:%PORT% -t \"%~dp0\""
+timeout /t 2 /nobreak >nul
+
+:: ─── 6. Abrir painel no browser ───────────────────────────────────────────────
+echo  [--] Abrindo painel no navegador...
+start "" "http://localhost:%PORT%/painel/"
 
 echo.
 
-:: ── 6. Perguntar se quer iniciar o Robô Python ────────────────────────────────
-echo  ============================================
-echo   Deseja iniciar o Robô Python agora?
-echo  ============================================
+:: ─── 7. Robô Python (opcional) ────────────────────────────────────────────────
+echo  ──────────────────────────────────────────────────────────
+echo   Deseja iniciar o Robo Python?
+echo  ──────────────────────────────────────────────────────────
 echo.
-echo   [1] Sim — modo LOOP (headless, reinicia automaticamente)
-echo   [2] Sim — modo SIMPLES (executa uma vez, com navegador visível)
-echo   [3] Não — apenas subir os serviços e abrir o painel
+echo   [1] Sim — modo LOOP headless ^(reinicia automaticamente^)
+echo   [2] Sim — modo SIMPLES ^(uma execucao, navegador visivel^)
+echo   [3] Nao
 echo.
 set /p OPCAO="  Escolha (1/2/3): "
 
 if "%OPCAO%"=="1" (
     echo.
-    echo  [--] Iniciando robô em modo LOOP headless em nova janela...
-    start "Robo Python — Loop Headless" cmd /k "cd /d "%~dp0python" && C:\Python314\python.exe main.py --headless --loop"
-    echo  [OK] Robô iniciado. Feche a janela do robô para parar.
+    start "Processos API — Robo Loop" cmd /k "color 0A && title Processos API — Robo Loop && cd /d \"%~dp0python\" && \"%PYTHON%\" main.py --headless --loop"
+    echo  [OK] Robo iniciado em modo LOOP.
 )
-
 if "%OPCAO%"=="2" (
     echo.
-    echo  [--] Iniciando robô em modo SIMPLES em nova janela...
-    start "Robo Python — Simples" cmd /k "cd /d "%~dp0python" && C:\Python314\python.exe main.py"
-    echo  [OK] Robô iniciado.
-)
-
-if "%OPCAO%"=="3" (
-    echo.
-    echo  [OK] Serviços ativos. Robô não iniciado.
+    start "Processos API — Robo Simples" cmd /k "color 06 && title Processos API — Robo Simples && cd /d \"%~dp0python\" && \"%PYTHON%\" main.py"
+    echo  [OK] Robo iniciado em modo SIMPLES.
 )
 
 echo.
-echo  ============================================
-echo   Ambiente local pronto!
-echo   Painel:  http://localhost/processos_api/painel/
-echo   API:     http://localhost/processos_api/api/
-echo  ============================================
+echo  ══════════════════════════════════════════════════════════
+echo   Ambiente local pronto! Janelas abertas:
+echo   [azul]   PHP Built-in Server — porta %PORT%
+if "%OPCAO%"=="1" echo   [verde]  Robo Python — loop headless
+if "%OPCAO%"=="2" echo   [amarelo] Robo Python — simples
+echo.
+echo   Painel:  http://localhost:%PORT%/painel/
+echo   API:     http://localhost:%PORT%/api/
+echo  ══════════════════════════════════════════════════════════
+echo.
+echo  Para parar: feche as janelas coloridas abertas.
 echo.
 pause
