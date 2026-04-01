@@ -68,6 +68,13 @@ def _montar_opcoes(headless: bool, download_dir: str) -> Options:
     if headless:
         options.add_argument("--headless=new")   # Modo headless moderno (Chrome 112+)
         options.add_argument("--disable-gpu")
+        # Portais detectam headless pelo User-Agent ("HeadlessChrome").
+        # Sobrescreve com um UA de Chrome normal para evitar bloqueio.
+        options.add_argument(
+            "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        )
 
     # Configurações de estabilidade e compatibilidade
     options.add_argument("--no-sandbox")
@@ -79,8 +86,10 @@ def _montar_opcoes(headless: bool, download_dir: str) -> Options:
 
     # Reduz detecção de automação por parte dos portais
     options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_experimental_option("useAutomationExtension", False)
+    if not headless:
+        # experimental_option só funciona em modo não-headless
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option("useAutomationExtension", False)
 
     # Preferências de download: PDF é salvo em vez de aberto no viewer
     pasta_download = download_dir or tempfile.mkdtemp()

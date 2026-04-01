@@ -41,7 +41,7 @@ class ProcessoController
         }
 
         $this->repo->finalizarComAta($id, $qtd, $caminho);
-        $this->webhook?->disparar($id);
+        if ($this->webhook) { $this->webhook->disparar($id); }
         echo json_encode(["status" => "ata registrada"]);
     }
 
