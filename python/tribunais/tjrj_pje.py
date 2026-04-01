@@ -61,18 +61,34 @@ class TJRJPJeScraper(TJMGPJeScraper):
             logger.info(f"[TJRJ] Abrindo consulta: {_URL_CONSULTA_RJ}")
             self.driver.get(_URL_CONSULTA_RJ)
 
-            # Placeholder do TJRJ é '8.19', diferente do TJMG '8.13'
-            self._wait.until(
-                EC.presence_of_element_located(
-                    (By.CSS_SELECTOR, "input[placeholder*='8.19'], input[id*='processo'], input[name*='processo']")
-                )
-            )
-            logger.info("[TJRJ] Página de consulta carregada")
-            return True
+            # Tenta primeiro o placeholder característico do TJRJ (8.19 = J.TT do RJ)
+            # Se não encontrar, aceita qualquer input de texto — a página ainda pode estar ok
+            seletores_pagina = [
+                "input[placeholder*='8.19']",
+                "input[placeholder*='processo']",
+                "input[id*='processo']",
+                "input[name*='processo']",
+                "form input[type='text']",
+                "input[type='text']",
+            ]
+            for seletor in seletores_pagina:
+                try:
+                    self._wait.until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, seletor))
+                    )
+                    logger.info(f"[TJRJ] Página carregada — campo localizado via '{seletor}'")
+                    return True
+                except TimeoutException:
+                    continue
 
-        except TimeoutException:
-            logger.error("[TJRJ] Timeout: campo de processo não apareceu em 10s")
+            # Fallback: aceita se a página carregou (mesmo sem campo identificado)
+            if _URL_BASE_RJ in self.driver.current_url:
+                logger.warning("[TJRJ] Campo de processo não identificado pelo seletor, mas URL correta — continuando")
+                return True
+
+            logger.error("[TJRJ] Timeout: nenhum campo de processo encontrado após múltiplas tentativas")
             return False
+
         except WebDriverException as e:
             logger.error(f"[TJRJ] Erro ao abrir consulta: {e}")
             return False

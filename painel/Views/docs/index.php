@@ -35,6 +35,11 @@ $apiBase = rtrim(str_replace('/index.php', '', API_DOWNLOAD_URL), '/');
             <i class="bi bi-tags me-1"></i>Classificação
         </button>
     </li>
+    <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#novo-tribunal">
+            <i class="bi bi-plus-circle me-1"></i>Novo Tribunal
+        </button>
+    </li>
 </ul>
 
 <div class="tab-content">
@@ -768,6 +773,198 @@ for p in processos:
                     <li class="mb-1">Adicione o tipo ao dict <code>SISTEMAS_SUPORTADOS</code> em <code>python/main.py</code>.</li>
                     <li>Adicione o tribunal à lista de opções no formulário de cadastro (<code>painel/Controllers/ProcessoController.php → $tribunais</code>).</li>
                 </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── NOVO TRIBUNAL ──────────────────────────────────────────────────────── -->
+    <div class="tab-pane fade" id="novo-tribunal">
+        <div class="alert alert-primary border-0 mb-4" style="border-radius:10px">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Checklist completo</strong> — execute todos os passos em ordem ao adicionar suporte a um novo estado/tribunal.
+        </div>
+
+        <!-- Passo 1 -->
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-primary mb-3"><span class="badge bg-primary me-2">1</span>Definir a classificação do processo</h6>
+                <p class="text-muted mb-2">Edite <code>inferirTipo()</code> nos <strong>dois</strong> arquivos abaixo e adicione um bloco <code>if ($tribunal === 'UF')</code>:</p>
+                <ul class="mb-2">
+                    <li><code>api/Infrastructure/ProcessoRepositoryPDO.php</code> — usado pela API Python</li>
+                    <li><code>painel/Models/ProcessoModel.php</code> — usado pelo cadastro manual no painel</li>
+                </ul>
+                <p class="mb-1 text-muted small">Padrão de classificação (adapte às regras do tribunal):</p>
+                <pre class="bg-dark text-light p-3 rounded small mb-0"><code>if ($tribunal === 'XX') {
+    // Verifica se é formato CNJ: NNNNNNN-DD.AAAA.J.TT.OOOO
+    if (!preg_match('/^\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}$/', trim($numero))) {
+        return 'PROCON';        // não-CNJ → PROCON (protocolo administrativo)
+    }
+    $dois = substr($digitos, 0, 2);
+    if ($dois === '08') return 'PJE';          // TT=08 → portal PJe
+    if ($dois === '01') return 'TRABALHISTA';  // TT=01 → TRT
+    // outros prefixos → DESCONHECIDO (ficará NÃO COMPATÍVEL)
+}</code></pre>
+                <p class="mt-2 mb-0 text-muted small"><i class="bi bi-lightbulb me-1 text-warning"></i>O dígito <strong>J.TT</strong> no número CNJ identifica a justiça e o tribunal. Ex: <code>8.13</code> = TJMG, <code>8.19</code> = TJRJ.</p>
+            </div>
+        </div>
+
+        <!-- Passo 2 -->
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-primary mb-3"><span class="badge bg-primary me-2">2</span>Criar o scraper Python</h6>
+                <p class="text-muted mb-2">Crie o arquivo <code>python/tribunais/tjXX_pje.py</code>. Se o portal usa o mesmo sistema PJe que o TJMG, herde <code>TJMGPJeScraper</code> e sobrescreva apenas o que muda:</p>
+                <pre class="bg-dark text-light p-3 rounded small mb-0"><code>from tribunais.tjmg_pje import TJMGPJeScraper
+
+_URL_BASE_XX     = "https://tjxx.pje.jus.br"
+_URL_CONSULTA_XX = f"{_URL_BASE_XX}/pje/ConsultaPublica/listView.seam"
+
+class TJXXPJeScraper(TJMGPJeScraper):
+
+    @property
+    def nome_tribunal(self) -> str:
+        return "TJXX"
+
+    @property
+    def url_consulta(self) -> str:
+        return _URL_CONSULTA_XX
+
+    def abrir_consulta(self) -> bool:
+        # Adapte o placeholder (ex: '8.XX' onde XX é o código do tribunal no CNJ)
+        ...
+
+    def _localizar_campo_processo(self):
+        # Adicione o placeholder do tribunal como primeiro seletor
+        ...
+
+    def _extrair_url_detalhe(self) -> Optional[str]:
+        # Igual ao TJRJ, mas com _URL_BASE_XX
+        ...
+
+    def _extrair_url_onclick(self, onclick: str) -> str:
+        # Igual ao TJRJ, mas com _URL_BASE_XX
+        ...
+
+    def mapear_documentos(self, numero_processo: str):
+        documentos = super().mapear_documentos(numero_processo)
+        for doc in documentos:
+            doc.tribunal = "TJXX"
+        return documentos</code></pre>
+                <div class="alert alert-warning border-0 mt-3 mb-0 py-2 small">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    Se o portal <strong>não</strong> usa PJe (ex: e-SAJ, PROJUDI, e-PROC), crie uma classe que herda diretamente de <code>BaseScraper</code> e implemente todos os métodos abstratos do zero.
+                </div>
+            </div>
+        </div>
+
+        <!-- Passo 3 -->
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-primary mb-3"><span class="badge bg-primary me-2">3</span>Registrar o tribunal no robô</h6>
+                <p class="text-muted mb-2">Edite <strong>dois</strong> arquivos Python:</p>
+                <p class="mb-1"><strong><code>python/config.py</code></strong> — mapeamento tribunal → classe:</p>
+                <pre class="bg-dark text-light p-3 rounded small mb-2"><code>TRIBUNAIS_SUPORTADOS = {
+    "MG": "tribunais.tjmg_pje.TJMGPJeScraper",
+    "RJ": "tribunais.tjrj_pje.TJRJPJeScraper",
+    "XX": "tribunais.tjxx_pje.TJXXPJeScraper",  # ← adicione aqui
+}</code></pre>
+                <p class="mb-1"><strong><code>python/main.py</code></strong> — sistemas suportados por tribunal:</p>
+                <pre class="bg-dark text-light p-3 rounded small mb-0"><code>SISTEMAS_SUPORTADOS: dict[str, list[str]] = {
+    "MG": ["PJE"],
+    "RJ": ["PJE"],
+    "XX": ["PJE"],   # ← adicione aqui (ou ["ESAJ"], ["PROCON"] etc.)
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- Passo 4 -->
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-primary mb-3"><span class="badge bg-primary me-2">4</span>Adicionar no painel administrativo</h6>
+
+                <p class="mb-1"><strong><code>painel/Controllers/ProcessoController.php</code></strong> — dropdown do formulário de cadastro:</p>
+                <pre class="bg-dark text-light p-3 rounded small mb-3"><code>$tribunais = [
+    'MG' => 'MG — Minas Gerais',
+    'RJ' => 'RJ — Rio de Janeiro',
+    'XX' => 'XX — Nome do Estado',  // ← adicione aqui
+];</code></pre>
+
+                <p class="mb-1"><strong><code>painel/config/config.php</code></strong> — badge do tipo de sistema (função <code>tipoBadge()</code>):</p>
+                <pre class="bg-dark text-light p-3 rounded small mb-0"><code>$map = [
+    'PJE'         => ['primary', 'bi-pc-display'],
+    'EPROC'       => ['warning', 'bi-pc-display'],
+    'PROCON'      => ['purple',  'bi-shield-check'],
+    'TRABALHISTA' => ['danger',  'bi-briefcase'],
+    // Se o novo tribunal tiver um tipo exclusivo:
+    'NOVO_TIPO'   => ['info',    'bi-ICONE'],  // ← adicione aqui se necessário
+];</code></pre>
+            </div>
+        </div>
+
+        <!-- Passo 5 -->
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold text-primary mb-3"><span class="badge bg-primary me-2">5</span>Atualizar a documentação</h6>
+                <p class="text-muted mb-2">Nesta mesma aba <strong>Novo Tribunal</strong>, atualize o checklist com o estado adicionado. Adicionalmente, atualize a aba <strong>Classificação</strong> com as regras do novo tribunal.</p>
+                <p class="mb-0 text-muted">Arquivo: <code>painel/Views/docs/index.php</code></p>
+            </div>
+        </div>
+
+        <!-- Resumo dos estados -->
+        <div class="card border-0 shadow-sm mb-3" style="border-radius:12px">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-map me-2 text-success"></i>Estados com suporte implementado</h6>
+                <table class="table table-sm table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>UF</th>
+                            <th>Tribunal</th>
+                            <th>Portal</th>
+                            <th>Tipos</th>
+                            <th>Scraper</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge bg-success">MG</span></td>
+                            <td>TJMG</td>
+                            <td><span class="badge bg-primary">PJe</span></td>
+                            <td>PJE, EPROC, PROCON</td>
+                            <td><code>tribunais/tjmg_pje.py</code></td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge bg-success">RJ</span></td>
+                            <td>TJRJ</td>
+                            <td><span class="badge bg-primary">PJe</span></td>
+                            <td>PJE, TRABALHISTA, PROCON</td>
+                            <td><code>tribunais/tjrj_pje.py</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Checklist rápido -->
+        <div class="card border-0 shadow-sm" style="border-radius:12px; border-left: 4px solid #6366f1 !important">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3"><i class="bi bi-check2-all me-2 text-primary"></i>Checklist rápido</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i><code>inferirTipo()</code> — <code>ProcessoRepositoryPDO.php</code></li>
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i><code>inferirTipo()</code> — <code>ProcessoModel.php</code></li>
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i>Scraper Python criado em <code>python/tribunais/</code></li>
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i><code>TRIBUNAIS_SUPORTADOS</code> em <code>config.py</code></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i><code>SISTEMAS_SUPORTADOS</code> em <code>main.py</code></li>
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i>Dropdown <code>$tribunais</code> em <code>ProcessoController.php</code></li>
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i><code>tipoBadge()</code> em <code>config/config.php</code> (se tipo novo)</li>
+                            <li class="mb-1"><i class="bi bi-square text-muted me-2"></i>Documentação atualizada (tabela de estados + classificação)</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

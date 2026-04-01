@@ -183,17 +183,70 @@ def processar_um(
             return True
         logger.info(f"[4/8] ✓ Scraper {type(scraper).__name__} carregado")
 
-        # ── ETAPA 5: Executar scraping ────────────────────────────────────────
+        # ── ETAPA 5: Executar scraping (passo a passo com log no painel) ─────────
         logger.info(f"[5/8] Iniciando scraping no portal {tribunal}...")
         _t5 = time.time()
-        documentos: List[Documento] = scraper.executar(numero_processo)
+
+        from core.utils import classificar_documento as _classificar
+
+        # 5a — Abrir página de consulta
+        api.registrar_log(id_processo, f"[{tribunal}] Abrindo portal de consulta...", "INFO")
+        if not scraper.abrir_consulta():
+            msg = f"[{tribunal}] Falha ao carregar a página de consulta do portal"
+            logger.error(f"[5/8] ✗ {msg}")
+            api.registrar_log(id_processo, msg, "ERROR")
+            api.registrar_erro(id_processo, msg)
+            logger.info(f"■ Concluído em {time.time() - _inicio:.1f}s")
+            imprimir_relatorio(numero_processo, tribunal, 0, 0)
+            return True
+
+        # 5b — Detectar bloqueio (captcha / acesso negado)
+        bloqueio = scraper.detectar_bloqueio()
+        if bloqueio:
+            msg = f"[{tribunal}] Bloqueio detectado no portal: {bloqueio}"
+            logger.error(f"[5/8] ✗ {msg}")
+            api.registrar_log(id_processo, msg, "ERROR")
+            api.registrar_erro(id_processo, msg)
+            logger.info(f"■ Concluído em {time.time() - _inicio:.1f}s")
+            imprimir_relatorio(numero_processo, tribunal, 0, 0)
+            return True
+
+        # 5c — Pesquisar processo
+        api.registrar_log(id_processo, f"[{tribunal}] Pesquisando número no portal...", "INFO")
+        if not scraper.pesquisar_processo(numero_processo):
+            msg = f"[{tribunal}] Processo não localizado no portal (número não encontrado)"
+            logger.warning(f"[5/8] ⚠ {msg}")
+            api.registrar_log(id_processo, msg, "WARNING")
+            api.registrar_sem_ata(id_processo)
+            logger.info(f"■ Concluído em {time.time() - _inicio:.1f}s")
+            imprimir_relatorio(numero_processo, tribunal, 0, 0)
+            return True
+
+        # 5d — Abrir detalhe
+        api.registrar_log(id_processo, f"[{tribunal}] Abrindo página de detalhe...", "INFO")
+        if not scraper.abrir_detalhe(numero_processo):
+            msg = f"[{tribunal}] Falha ao abrir página de detalhe do processo"
+            logger.error(f"[5/8] ✗ {msg}")
+            api.registrar_log(id_processo, msg, "ERROR")
+            api.registrar_erro(id_processo, msg)
+            logger.info(f"■ Concluído em {time.time() - _inicio:.1f}s")
+            imprimir_relatorio(numero_processo, tribunal, 0, 0)
+            return True
+
+        # 5e — Mapear e classificar documentos
+        api.registrar_log(id_processo, f"[{tribunal}] Mapeando documentos juntados...", "INFO")
+        documentos_raw = scraper.mapear_documentos(numero_processo)
+        for doc in documentos_raw:
+            doc.eh_ata = _classificar(doc.texto)
+
+        documentos: List[Documento] = documentos_raw
         _dur5 = time.time() - _t5
 
         if not documentos:
-            msg = "Processo não encontrado no portal ou bloqueio detectado"
+            msg = f"[{tribunal}] Nenhum documento encontrado na página de detalhe"
             logger.warning(f"[5/8] ⚠ {msg} ({_dur5:.1f}s)")
             api.registrar_log(id_processo, msg, "WARNING")
-            api.registrar_erro(id_processo, msg)
+            api.registrar_sem_ata(id_processo)
             logger.info(f"■ Concluído em {time.time() - _inicio:.1f}s")
             imprimir_relatorio(numero_processo, tribunal, 0, 0)
             return True
