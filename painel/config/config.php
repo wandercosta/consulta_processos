@@ -59,6 +59,7 @@ function tipoBadge(?string $tipo): string
         'PJE'          => ['primary',   'bi-pc-display'],
         'EPROC'        => ['warning',   'bi-pc-display'],
         'PROCON'       => ['purple',    'bi-shield-check'],
+        'TRABALHISTA'  => ['danger',    'bi-briefcase'],
         'DESCONHECIDO' => ['secondary', 'bi-question-circle'],
     ];
     if (!$tipo) return '<span class="badge bg-secondary">—</span>';

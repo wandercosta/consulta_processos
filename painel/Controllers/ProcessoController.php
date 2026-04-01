@@ -60,7 +60,10 @@ class ProcessoController extends BaseController
         $sucesso = '';
 
         // Tribunais disponíveis — adicione aqui quando novos conectores forem implementados
-        $tribunais = ['MG' => 'MG — Minas Gerais'];
+        $tribunais = [
+            'MG' => 'MG — Minas Gerais',
+            'RJ' => 'RJ — Rio de Janeiro',
+        ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $numero   = trim($_POST['numero_processo'] ?? '');

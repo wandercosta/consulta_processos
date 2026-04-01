@@ -133,7 +133,7 @@ def processar_um(
     api.registrar_log(id_processo, f"Consulta iniciada no tribunal {tribunal}")
 
     # ── ETAPA 1b: Verificar compatibilidade do tipo_sistema ───────────────────
-    SISTEMAS_SUPORTADOS: dict[str, list[str]] = {"MG": ["PJE"]}
+    SISTEMAS_SUPORTADOS: dict[str, list[str]] = {"MG": ["PJE"], "RJ": ["PJE"]}
     tipos_do_tribunal = SISTEMAS_SUPORTADOS.get(tribunal, [])
     if tipo_sistema not in tipos_do_tribunal:
         msg = (

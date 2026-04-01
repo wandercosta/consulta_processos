@@ -93,6 +93,7 @@ PALAVRAS_IGNORAR = [
 # Valor: caminho dotted do módulo + nome da classe
 TRIBUNAIS_SUPORTADOS = {
     "MG": "tribunais.tjmg_pje.TJMGPJeScraper",
+    "RJ": "tribunais.tjrj_pje.TJRJPJeScraper",
     # Futuros conectores — adicione aqui conforme implementação:
     # "SP": "tribunais.tjsp_esaj.TJSPEsajScraper",
     # "SE": "tribunais.tjse_pje.TJSEPJeScraper",

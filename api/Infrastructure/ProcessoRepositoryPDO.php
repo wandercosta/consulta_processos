@@ -141,6 +141,16 @@ class ProcessoRepositoryPDO implements ProcessoRepositoryInterface
             if ($primeiro === '2')                    return 'PROCON';
         }
 
+        if ($tribunal === 'RJ') {
+            // Se NÃO está no formato CNJ (NNNNNNN-DD.AAAA.J.TT.OOOO) → PROCON
+            if (!preg_match('/^\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}$/', trim($numero))) {
+                return 'PROCON';
+            }
+            $dois = substr($digitos, 0, 2);
+            if ($dois === '08') return 'PJE';
+            if ($dois === '01') return 'TRABALHISTA';
+        }
+
         return 'DESCONHECIDO';
     }
 
