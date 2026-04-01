@@ -385,9 +385,19 @@ def main() -> None:
     _adicionar_log(f"Servidor iniciado em http://localhost:{args.port}")
     _adicionar_log(f"API: {config.API_BASE_URL}")
 
+    url = f"http://localhost:{args.port}"
+    print(f"\n  Servidor de automação iniciado!")
+    print(f"  Acesse: {url}")
+    print(f"  API:    {config.API_BASE_URL}")
+    print(f"\n  Pressione Ctrl+C para parar.\n")
+
+    import webbrowser
+    webbrowser.open(url)
+
     try:
         servidor.serve_forever()
     except KeyboardInterrupt:
+        print("\n  Servidor encerrado.")
         pass
 
 
