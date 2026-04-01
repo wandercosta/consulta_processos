@@ -236,6 +236,28 @@ class ArquivoController
         echo json_encode(["status" => "arquivo salvo", "caminho" => $destino]);
     }
 
+    // ── Expurgo ───────────────────────────────────────────────────────────────
+
+    /** GET ?endpoint=expurgo_elegiveis&dias=N — lista arquivos elegíveis para exclusão */
+    public function expurgoElegiveis(): void
+    {
+        $dias = max(1, (int)($_GET['dias'] ?? 10));
+        echo json_encode($this->repo->getElegiveisExpurgo($dias));
+    }
+
+    /** POST ?endpoint=registrar_expurgo — registra exclusão e remove da tabela */
+    public function registrarExpurgo(): void
+    {
+        $data = json_decode(file_get_contents("php://input"), true) ?? [];
+        if (empty($data['caminho_arquivo'])) {
+            http_response_code(400);
+            echo json_encode(["erro" => "caminho_arquivo é obrigatório"]);
+            exit;
+        }
+        $this->repo->registrarExpurgo($data);
+        echo json_encode(["status" => "expurgo registrado"]);
+    }
+
     // ── helpers ────────────────────────────────────────────────────────────────
 
     private function normalizarCaminho(string $caminho): string

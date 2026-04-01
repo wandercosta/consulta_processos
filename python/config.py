@@ -45,6 +45,11 @@ _ENV_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 _env_data = _carregar_env(_ENV_FILE)
 
 
+# ─── Versão do robô ───────────────────────────────────────────────────────────
+# Incremente a cada alteração relevante no código Python.
+# Formato: MAJOR.MINOR.PATCH
+VERSION = "1.1.0"
+
 # ─── Diretório base do projeto Python ────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

@@ -8,6 +8,7 @@ $nav = [
     'cadastrar' => ['icon' => 'bi-plus-circle',             'label' => 'Cadastrar'],
     'importar'  => ['icon' => 'bi-file-earmark-excel',     'label' => 'Importar Planilha'],
     'arquivos'  => ['icon' => 'bi-file-earmark-arrow-down', 'label' => 'Arquivos / ATAs'],
+    'expurgo'   => ['icon' => 'bi-trash3',                  'label' => 'Expurgo'],
     'robot'     => ['icon' => 'bi-robot',                   'label' => 'Robô'],
     'webhook'       => ['icon' => 'bi-send',                    'label' => 'Webhooks'],
     'configuracoes' => ['icon' => 'bi-gear',                    'label' => 'Configurações'],

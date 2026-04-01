@@ -39,6 +39,7 @@ require_once PAINEL_ROOT . '/Models/ArquivoModel.php';
 require_once PAINEL_ROOT . '/Models/RobotModel.php';
 require_once PAINEL_ROOT . '/Models/WebhookModel.php';
 require_once PAINEL_ROOT . '/Models/ConfiguracaoModel.php';
+require_once PAINEL_ROOT . '/Models/ExpurgoModel.php';
 
 switch ($page) {
 
@@ -121,6 +122,16 @@ switch ($page) {
     case 'configuracoes':
         require_once PAINEL_ROOT . '/Controllers/ConfiguracaoController.php';
         (new ConfiguracaoController(new ConfiguracaoModel(db())))->index();
+        break;
+
+    case 'expurgo':
+        require_once PAINEL_ROOT . '/Controllers/ExpurgoController.php';
+        (new ExpurgoController(new ExpurgoModel(db())))->index();
+        break;
+
+    case 'expurgo_executar':
+        require_once PAINEL_ROOT . '/Controllers/ExpurgoController.php';
+        (new ExpurgoController(new ExpurgoModel(db())))->executar();
         break;
 
     case 'docs':

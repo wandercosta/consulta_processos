@@ -103,6 +103,15 @@ switch ($endpoint) {
         $arquivoCtrl->uploadArquivo();
         break;
 
+    // ── Expurgo de arquivos ───────────────────────────────────────────────────
+    case 'expurgo_elegiveis':
+        $arquivoCtrl->expurgoElegiveis();
+        break;
+
+    case 'registrar_expurgo':
+        $arquivoCtrl->registrarExpurgo();
+        break;
+
     // ── Robot daemon ──────────────────────────────────────────────────────────
     case 'robot_status':
         $robotCtrl->status();

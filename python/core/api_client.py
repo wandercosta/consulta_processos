@@ -306,3 +306,23 @@ class APIClient:
             "mensagem": mensagem,
         })
         return resultado is not None
+
+    def listar_elegiveis_expurgo(self, dias: int = 10) -> list:
+        """
+        GET /expurgo_elegiveis?dias=N
+
+        Retorna arquivos com mais de N dias elegíveis para exclusão.
+        """
+        resultado = self._get(f"expurgo_elegiveis&dias={dias}")
+        if isinstance(resultado, list):
+            return resultado
+        return []
+
+    def registrar_expurgo(self, arquivo: dict) -> bool:
+        """
+        POST /registrar_expurgo
+
+        Registra a exclusão de um arquivo no histórico e remove da tabela de arquivos.
+        """
+        resultado = self._post("registrar_expurgo", arquivo)
+        return resultado is not None
