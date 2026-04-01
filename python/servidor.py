@@ -312,11 +312,14 @@ class Handler(BaseHTTPRequestHandler):
 
         # Página principal
         body = _pagina_html(self.porta).encode("utf-8")
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (ConnectionAbortedError, BrokenPipeError, OSError):
+            pass  # browser fechou a conexão antes do fim da resposta (normal)
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
@@ -343,14 +346,22 @@ class Handler(BaseHTTPRequestHandler):
 
     def _json(self, dados: dict) -> None:
         body = json.dumps(dados, ensure_ascii=False, default=str).encode("utf-8")
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (ConnectionAbortedError, BrokenPipeError, OSError):
+            pass  # cliente cancelou o polling (normal em auto-refresh)
 
     def log_message(self, fmt: str, *args) -> None:
         # Silencia logs de acesso HTTP no terminal
+        pass
+
+    def log_error(self, fmt: str, *args) -> None:
+        # Silencia erros de conexão abortada (WinError 10053 / BrokenPipe)
+        # causados pelo browser fechar a conexão antes do fim da resposta
         pass
 
 
@@ -360,7 +371,16 @@ def main() -> None:
     args = parser.parse_args()
 
     Handler.porta = args.port
-    servidor = HTTPServer(("localhost", args.port), Handler)
+
+    class _SilentHTTPServer(HTTPServer):
+        """Suprime tracebacks de conexões abortadas pelo cliente (WinError 10053)."""
+        def handle_error(self, request, client_address):
+            exc = sys.exc_info()[1]
+            if isinstance(exc, (ConnectionAbortedError, BrokenPipeError, ConnectionResetError)):
+                return  # browser fechou a conexão — não é um erro real
+            super().handle_error(request, client_address)
+
+    servidor = _SilentHTTPServer(("localhost", args.port), Handler)
 
     _adicionar_log(f"Servidor iniciado em http://localhost:{args.port}")
     _adicionar_log(f"API: {config.API_BASE_URL}")
