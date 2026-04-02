@@ -16,4 +16,10 @@ interface ArquivoRepositoryInterface
 
     /** Retorna lista de extensões aceitas (ex: ['pdf', 'html']) lida de configuracoes */
     public function getExtensoes(): array;
+
+    /** Retorna arquivos elegíveis para expurgo (download_ok=1, com mais de $dias dias) */
+    public function getElegiveisExpurgo(int $dias): array;
+
+    /** Registra exclusão em arquivos_expurgo e remove da processos_arquivos */
+    public function registrarExpurgo(array $arq): void;
 }

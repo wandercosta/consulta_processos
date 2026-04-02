@@ -64,8 +64,10 @@ def executar_expurgo(api, dias: int = DIAS_RETENCAO) -> dict:
             # Arquivo já não existe no disco — registra mesmo assim
             logger.debug(f"[Expurgo] Arquivo não encontrado no disco (já removido?): {caminho}")
 
-        # Registra no histórico via API
-        ok = api.registrar_expurgo(arq)
+        # Registra no histórico via API (inclui motivo para rastreabilidade)
+        payload = dict(arq)
+        payload["motivo"] = f"expurgo_automatico_{dias}d"
+        ok = api.registrar_expurgo(payload)
         if ok:
             bytes_lib += int(arq.get("tamanho_bytes") or 0)
             removidos += 1
