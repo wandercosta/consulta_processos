@@ -38,6 +38,8 @@ require_once PAINEL_ROOT . '/Models/ProcessoModel.php';
 require_once PAINEL_ROOT . '/Models/ArquivoModel.php';
 require_once PAINEL_ROOT . '/Models/RobotModel.php';
 require_once PAINEL_ROOT . '/Models/WebhookModel.php';
+require_once PAINEL_ROOT . '/Models/ConfiguracaoModel.php';
+require_once PAINEL_ROOT . '/Models/ExpurgoModel.php';
 
 switch ($page) {
 
@@ -81,6 +83,11 @@ switch ($page) {
         (new ProcessoController(new ProcessoModel(db())))->recolocar();
         break;
 
+    case 'reativar_lote':
+        require_once PAINEL_ROOT . '/Controllers/ProcessoController.php';
+        (new ProcessoController(new ProcessoModel(db())))->reativarLote();
+        break;
+
     case 'arquivos':
         require_once PAINEL_ROOT . '/Controllers/ArquivoController.php';
         (new ArquivoController(new ArquivoModel(db())))->index();
@@ -110,6 +117,21 @@ switch ($page) {
     case 'webhook_reenviar':
         require_once PAINEL_ROOT . '/Controllers/WebhookController.php';
         (new WebhookController(new WebhookModel(db())))->reenviar();
+        break;
+
+    case 'configuracoes':
+        require_once PAINEL_ROOT . '/Controllers/ConfiguracaoController.php';
+        (new ConfiguracaoController(new ConfiguracaoModel(db())))->index();
+        break;
+
+    case 'expurgo':
+        require_once PAINEL_ROOT . '/Controllers/ExpurgoController.php';
+        (new ExpurgoController(new ExpurgoModel(db())))->index();
+        break;
+
+    case 'expurgo_executar':
+        require_once PAINEL_ROOT . '/Controllers/ExpurgoController.php';
+        (new ExpurgoController(new ExpurgoModel(db())))->executar();
         break;
 
     case 'docs':

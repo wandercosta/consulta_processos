@@ -60,7 +60,10 @@ class ProcessoController extends BaseController
         $sucesso = '';
 
         // Tribunais disponíveis — adicione aqui quando novos conectores forem implementados
-        $tribunais = ['MG' => 'MG — Minas Gerais'];
+        $tribunais = [
+            'MG' => 'MG — Minas Gerais',
+            'RJ' => 'RJ — Rio de Janeiro',
+        ];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $numero   = trim($_POST['numero_processo'] ?? '');
@@ -74,11 +77,19 @@ class ProcessoController extends BaseController
                 $erro = 'Tribunal inválido.';
             } elseif ($dataAto !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dataAto)) {
                 $erro = 'Data do ato inválida.';
-            } elseif ($this->model->existeNumero($numero)) {
-                $erro = 'Este processo já está cadastrado.';
             } else {
-                $novoId  = $this->model->criar($numero, $tribunal, $dataAto ?: null, $codApi);
-                $sucesso = "Processo <strong>" . htmlspecialchars($numero) . "</strong> cadastrado no <strong>{$tribunal}</strong> com sucesso! ID: {$novoId}";
+                $existente = $this->model->findByNumero($numero);
+                if ($existente) {
+                    if ($existente['status_consulta'] === 'ESGOTADO') {
+                        $this->model->reativarEsgotado((int)$existente['id']);
+                        $sucesso = "Processo <strong>" . htmlspecialchars($numero) . "</strong> estava <strong>ESGOTADO</strong> e foi recolocado na fila com tentativas zeradas. ID: {$existente['id']}";
+                    } else {
+                        $erro = "Este processo já está cadastrado (status atual: <strong>{$existente['status_consulta']}</strong>).";
+                    }
+                } else {
+                    $novoId  = $this->model->criar($numero, $tribunal, $dataAto ?: null, $codApi);
+                    $sucesso = "Processo <strong>" . htmlspecialchars($numero) . "</strong> cadastrado no <strong>{$tribunal}</strong> com sucesso! ID: {$novoId}";
+                }
             }
         }
 
@@ -104,5 +115,15 @@ class ProcessoController extends BaseController
         }
         $volta = $_POST['volta'] ?? 'processos';
         $this->redirect($volta === 'detalhe' ? "detalhe&id={$id}" : 'processos');
+    }
+
+    public function reativarLote(): void
+    {
+        $ids = array_filter(array_map('intval', $_POST['ids'] ?? []));
+        foreach ($ids as $id) {
+            $this->model->reativarEsgotado($id);
+        }
+        $volta = $_POST['volta'] ?? 'processos';
+        $this->redirect($volta);
     }
 }

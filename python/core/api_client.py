@@ -202,8 +202,15 @@ class APIClient:
             "indice":          indice,
             "download_ok":     1 if download_ok else 0,
         })
-        if isinstance(resultado, dict) and isinstance(resultado.get("id"), int):
-            return resultado["id"]
+        if isinstance(resultado, dict):
+            if resultado.get("ignorado"):
+                logger.info(
+                    f"registrar_arquivo: arquivo ignorado pelo servidor — "
+                    f"{resultado.get('motivo', 'extensão não permitida')}"
+                )
+                return -1   # sentinela: ignorado (não é erro)
+            if isinstance(resultado.get("id"), int):
+                return resultado["id"]
         return None
 
     def upload_arquivo(self, id_arquivo: int, caminho_local: str) -> bool:
@@ -273,6 +280,19 @@ class APIClient:
         """
         return self._get("robot_status")
 
+    def buscar_configuracoes(self) -> dict:
+        """
+        GET /configuracoes
+
+        Retorna as configurações globais do sistema.
+        Ex: {'max_tentativas': 10, 'extensoes_aceitas': ['pdf', 'html']}
+        Retorna valores padrão em caso de falha para não interromper o daemon.
+        """
+        resultado = self._get("configuracoes")
+        if isinstance(resultado, dict):
+            return resultado
+        return {"max_tentativas": 10, "extensoes_aceitas": ["pdf", "html"]}
+
     def robot_heartbeat(self, status: str, pid: int, mensagem: str = "") -> bool:
         """
         POST /robot_heartbeat
@@ -285,4 +305,24 @@ class APIClient:
             "pid":      pid,
             "mensagem": mensagem,
         })
+        return resultado is not None
+
+    def listar_elegiveis_expurgo(self, dias: int = 10) -> list:
+        """
+        GET /expurgo_elegiveis?dias=N
+
+        Retorna arquivos com mais de N dias elegíveis para exclusão.
+        """
+        resultado = self._get(f"expurgo_elegiveis&dias={dias}")
+        if isinstance(resultado, list):
+            return resultado
+        return []
+
+    def registrar_expurgo(self, arquivo: dict) -> bool:
+        """
+        POST /registrar_expurgo
+
+        Registra a exclusão de um arquivo no histórico e remove da tabela de arquivos.
+        """
+        resultado = self._post("registrar_expurgo", arquivo)
         return resultado is not None

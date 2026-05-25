@@ -35,6 +35,7 @@ from datetime import datetime
 import config
 from core.api_client import APIClient
 from core.downloader import Downloader
+from core.expurgo import executar_expurgo, CICLOS_ENTRE_EXPURGOS
 from core.logger_setup import configurar_logger
 from main import processar_um
 
@@ -69,11 +70,13 @@ def executar_daemon(headless: bool) -> None:
     downloader = Downloader(diretorio_base=config.DEFAULT_DOWNLOAD_DIR)
 
     logger.info("=" * 60)
-    logger.info(f"Daemon iniciado  |  PID={pid}  |  Headless={headless}")
-    logger.info(f"Ciclo de verificação: {CICLO_SEGUNDOS}s")
+    logger.info(f"Daemon iniciado  |  PID={pid}  |  Headless={headless}  |  v{config.VERSION}")
+    logger.info(f"Ciclo de verificação: {CICLO_SEGUNDOS}s  |  Expurgo a cada {CICLOS_ENTRE_EXPURGOS} ciclos")
     logger.info(f"API: {config.API_BASE_URL}")
     logger.info("Aguardando ativação no painel — acesse ?page=robot")
     logger.info("=" * 60)
+
+    _ciclo_expurgo = 0
 
     while not _parar:
         try:
@@ -89,7 +92,7 @@ def executar_daemon(headless: bool) -> None:
 
             if not ativo:
                 # Modo standby: apenas heartbeat e dorme
-                api.robot_heartbeat("parado", pid, "Aguardando ativação no painel")
+                api.robot_heartbeat("parado", pid, f"Aguardando ativação | v{config.VERSION}")
                 logger.debug("Standby — robô desativado no painel")
                 _aguardar(CICLO_SEGUNDOS)
                 continue
@@ -133,6 +136,15 @@ def executar_daemon(headless: bool) -> None:
             except Exception:
                 pass
             _aguardar(CICLO_SEGUNDOS)
+
+        # ── Expurgo automático (1×/hora aprox.) ──────────────────────────────
+        _ciclo_expurgo += 1
+        if _ciclo_expurgo >= CICLOS_ENTRE_EXPURGOS:
+            _ciclo_expurgo = 0
+            try:
+                executar_expurgo(api)
+            except Exception as e:
+                logger.warning(f"Daemon: erro no expurgo automático: {e}")
 
         # Pausa antes do próximo ciclo (interrompível pelo sinal)
         if not _parar:

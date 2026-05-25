@@ -30,6 +30,19 @@ class ArquivoController
             exit;
         }
 
+        // Valida extensão contra as configuradas no painel
+        $formato = strtolower(trim($data['formato'] ?? ''));
+        if ($formato !== '') {
+            $permitidas = array_map('strtolower', $this->repo->getExtensoes());
+            if (!in_array($formato, $permitidas, true)) {
+                echo json_encode([
+                    "ignorado" => true,
+                    "motivo"   => "Extensão '{$formato}' não está na lista de aceitas: " . implode(', ', $permitidas),
+                ]);
+                exit;
+            }
+        }
+
         $id = $this->repo->criar($data);
         echo json_encode(["status" => "arquivo registrado", "id" => $id]);
     }
@@ -175,6 +188,17 @@ class ArquivoController
             exit;
         }
 
+        // Valida extensão do arquivo enviado contra as extensões configuradas
+        $extEnviada = strtolower(pathinfo($_FILES['arquivo']['name'], PATHINFO_EXTENSION));
+        $permitidas = array_map('strtolower', $this->repo->getExtensoes());
+        if ($extEnviada !== '' && !in_array($extEnviada, $permitidas, true)) {
+            echo json_encode([
+                "ignorado" => true,
+                "motivo"   => "Extensão '{$extEnviada}' não está na lista de aceitas: " . implode(', ', $permitidas),
+            ]);
+            exit;
+        }
+
         $registro = $this->repo->findById($id);
         if (!$registro) {
             http_response_code(404);
@@ -210,6 +234,28 @@ class ArquivoController
         $this->repo->updateCaminho($id, $destino);
 
         echo json_encode(["status" => "arquivo salvo", "caminho" => $destino]);
+    }
+
+    // ── Expurgo ───────────────────────────────────────────────────────────────
+
+    /** GET ?endpoint=expurgo_elegiveis&dias=N — lista arquivos elegíveis para exclusão */
+    public function expurgoElegiveis(): void
+    {
+        $dias = max(1, (int)($_GET['dias'] ?? 10));
+        echo json_encode($this->repo->getElegiveisExpurgo($dias));
+    }
+
+    /** POST ?endpoint=registrar_expurgo — registra exclusão e remove da tabela */
+    public function registrarExpurgo(): void
+    {
+        $data = json_decode(file_get_contents("php://input"), true) ?? [];
+        if (empty($data['caminho_arquivo'])) {
+            http_response_code(400);
+            echo json_encode(["erro" => "caminho_arquivo é obrigatório"]);
+            exit;
+        }
+        $this->repo->registrarExpurgo($data);
+        echo json_encode(["status" => "expurgo registrado"]);
     }
 
     // ── helpers ────────────────────────────────────────────────────────────────

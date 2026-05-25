@@ -79,6 +79,10 @@ switch ($endpoint) {
         $processoCtrl->listar();
         break;
 
+    case 'configuracoes':
+        $processoCtrl->configuracoes();
+        break;
+
     case 'registrar_arquivo':
         $arquivoCtrl->registrar();
         break;
@@ -97,6 +101,15 @@ switch ($endpoint) {
 
     case 'upload_arquivo':
         $arquivoCtrl->uploadArquivo();
+        break;
+
+    // ── Expurgo de arquivos ───────────────────────────────────────────────────
+    case 'expurgo_elegiveis':
+        $arquivoCtrl->expurgoElegiveis();
+        break;
+
+    case 'registrar_expurgo':
+        $arquivoCtrl->registrarExpurgo();
         break;
 
     // ── Robot daemon ──────────────────────────────────────────────────────────

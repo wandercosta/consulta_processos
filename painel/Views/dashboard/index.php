@@ -5,8 +5,17 @@
 ?>
 
 <!-- Cards de estatísticas -->
-<div class="row g-3 mb-4">
+<style>
+.stat-card-link { text-decoration: none; display: block; }
+.stat-card-link .stat-card { transition: transform .15s, box-shadow .15s; }
+.stat-card-link:hover .stat-card { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,.18); }
+.stat-card-link .stat-value { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.4); }
+</style>
+
+<!-- Linha 1: métricas principais -->
+<div class="row g-3 mb-3">
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">
             <i class="bi bi-collection stat-icon"></i>
             <div>
@@ -14,8 +23,10 @@
                 <div class="stat-label">Total de processos</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=PENDENTE" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
             <i class="bi bi-hourglass-split stat-icon"></i>
             <div>
@@ -23,30 +34,10 @@
                 <div class="stat-label">Pendentes</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669)">
-            <i class="bi bi-check-circle stat-icon"></i>
-            <div>
-                <div class="stat-value"><?= $comAta + $semAta ?></div>
-                <div class="stat-label">Finalizados</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="stat-card" style="background:linear-gradient(135deg,#ef4444,#dc2626)">
-            <i class="bi bi-exclamation-triangle stat-icon"></i>
-            <div>
-                <div class="stat-value"><?= $totais['ERRO'] ?? 0 ?></div>
-                <div class="stat-label">Com erro</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Segunda linha de cards -->
-<div class="row g-3 mb-4">
-    <div class="col-sm-6 col-xl-3">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=CONSULTANDO" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">
             <i class="bi bi-arrow-repeat stat-icon"></i>
             <div>
@@ -54,40 +45,119 @@
                 <div class="stat-label">Consultando</div>
             </div>
         </div>
+        </a>
     </div>
     <div class="col-sm-6 col-xl-3">
-        <div class="stat-card" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=ERRO" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#ef4444,#dc2626)">
+            <i class="bi bi-exclamation-triangle stat-icon"></i>
+            <div>
+                <div class="stat-value"><?= $totais['ERRO'] ?? 0 ?></div>
+                <div class="stat-label">Com erro</div>
+            </div>
+        </div>
+        </a>
+    </div>
+</div>
+
+<!-- Linha 2: status de finalização + botão -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+COM+ATA" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669)">
             <i class="bi bi-file-earmark-check stat-icon"></i>
             <div>
                 <div class="stat-value"><?= $comAta ?></div>
-                <div class="stat-label">Finalizados com ATA</div>
+                <div class="stat-label">Com ATA</div>
             </div>
         </div>
+        </a>
     </div>
-    <div class="col-sm-6 col-xl-3">
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=FINALIZADO+SEM+ATA" class="stat-card-link">
         <div class="stat-card" style="background:linear-gradient(135deg,#64748b,#475569)">
             <i class="bi bi-file-earmark-x stat-icon"></i>
             <div>
                 <div class="stat-value">
                     <?= $semAta ?>
                     <?php if ($reprocessando > 0): ?>
-                    <small class="fs-6 fw-normal opacity-75" title="Aguardando 10 min para reprocessar">
-                        (<?= $reprocessando ?> aguardando)
-                    </small>
+                    <small class="fs-6 fw-normal opacity-75" title="Aguardando reprocessar">(<?= $reprocessando ?>)</small>
                     <?php endif; ?>
                 </div>
-                <div class="stat-label">Finalizados sem ATA</div>
+                <div class="stat-label">Sem ATA</div>
             </div>
         </div>
+        </a>
     </div>
-    <div class="col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm d-flex flex-row align-items-center gap-3 p-3" style="border-radius:12px;">
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=ESGOTADO" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#1e293b,#0f172a)">
+            <i class="bi bi-slash-circle-fill stat-icon"></i>
+            <div>
+                <div class="stat-value"><?= $totais['ESGOTADO'] ?? 0 ?></div>
+                <div class="stat-label">Esgotados</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=N%C3%83O+COMPAT%C3%ADVEL" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#374151,#1f2937)">
+            <i class="bi bi-slash-circle stat-icon"></i>
+            <div>
+                <div class="stat-value"><?= $totais['NÃO COMPATÍVEL'] ?? 0 ?></div>
+                <div class="stat-label">Não compatível</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-2">
+        <a href="<?= PAINEL_URL ?>?page=processos&status=CANCELADO" class="stat-card-link">
+        <div class="stat-card" style="background:linear-gradient(135deg,#6b7280,#4b5563)">
+            <i class="bi bi-pause-circle stat-icon"></i>
+            <div>
+                <div class="stat-value"><?= $totais['CANCELADO'] ?? 0 ?></div>
+                <div class="stat-label">Cancelados</div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-sm-6 col-xl-2">
+        <div class="card border-0 shadow-sm h-100 d-flex align-items-center justify-content-center p-3" style="border-radius:12px;">
             <a href="<?= PAINEL_URL ?>?page=cadastrar" class="btn btn-primary w-100">
                 <i class="bi bi-plus-lg"></i> Novo Processo
             </a>
         </div>
     </div>
 </div>
+
+<!-- Banner: processos em consulta agora -->
+<?php if (!empty($consultando)): ?>
+<div class="card border-0 shadow-sm mb-3" style="border-radius:12px;border-left:4px solid #06b6d4!important;border-left-width:4px!important;">
+    <div class="card-body py-2 px-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="spinner-border spinner-border-sm text-info" role="status"></span>
+                <strong class="text-info">Robô consultando agora</strong>
+                <span class="badge bg-info text-dark"><?= count($consultando) ?> processo<?= count($consultando) > 1 ? 's' : '' ?></span>
+            </div>
+            <a href="<?= PAINEL_URL ?>?page=processos&status=CONSULTANDO" class="btn btn-sm btn-outline-info">
+                Ver todos <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+            <?php foreach ($consultando as $c): ?>
+            <a href="<?= PAINEL_URL ?>?page=detalhe&id=<?= $c['id'] ?>"
+               class="badge bg-info bg-opacity-10 text-info border border-info text-decoration-none font-monospace"
+               style="font-size:.78rem">
+                <?= htmlspecialchars($c['numero_processo']) ?>
+                <span class="ms-1 opacity-75"><?= htmlspecialchars($c['tribunal'] ?? '') ?></span>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Tabelas — linha 1 -->
 <div class="row g-3 mb-3">
@@ -127,8 +197,13 @@
                             <td class="text-muted small">
                                 <?php $qtd = (int)($p['qtd_consultas'] ?? 0); ?>
                                 <?php if ($qtd > 0): ?>
-                                    <span class="badge <?= $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning text-dark' : 'bg-secondary') ?>">
-                                        <?= $qtd ?>/10
+                                    <?php
+                                        $limDanger  = (int)round($maxTentativas * 0.8);
+                                        $limWarning = (int)round($maxTentativas * 0.5);
+                                        $corBadge   = $qtd >= $limDanger ? 'bg-danger' : ($qtd >= $limWarning ? 'bg-warning text-dark' : 'bg-secondary');
+                                    ?>
+                                    <span class="badge <?= $corBadge ?>" title="Faltam <?= $maxTentativas - $qtd ?> tentativa(s)">
+                                        <?= $qtd ?>/<?= $maxTentativas ?>
                                     </span>
                                 <?php else: ?>
                                     <span class="text-muted">—</span>
@@ -220,13 +295,17 @@
                         <tbody>
                         <?php foreach ($semAtaFila as $p):
                             $qtd      = (int)($p['qtd_consultas'] ?? 0);
-                            $total    = 10;
-                            $pct      = (int)round($qtd / $total * 100);
+                            $total    = $maxTentativas;
+                            $faltam   = $total - $qtd;
+                            $pct      = $total > 0 ? (int)round($qtd / $total * 100) : 0;
                             $proxima  = $p['proxima_consulta'] ?? null;
                             $agora    = time();
                             $tsProx   = $proxima ? strtotime($proxima) : null;
                             $pronto   = $tsProx && $tsProx <= $agora;
-                            $barCor   = $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning' : 'bg-primary');
+                            $limD     = (int)round($total * 0.8);
+                            $limW     = (int)round($total * 0.5);
+                            $barCor   = $qtd >= $limD ? 'bg-danger' : ($qtd >= $limW ? 'bg-warning' : 'bg-primary');
+                            $bdgCor   = $qtd >= $limD ? 'bg-danger' : ($qtd >= $limW ? 'bg-warning text-dark' : 'bg-secondary');
                         ?>
                         <tr style="cursor:pointer" onclick="location.href='<?= PAINEL_URL ?>?page=detalhe&id=<?= $p['id'] ?>'">
                             <td class="font-monospace small"><?= htmlspecialchars($p['numero_processo']) ?></td>
@@ -246,14 +325,15 @@
                                     <span class="text-muted">—</span>
                                 <?php endif; ?>
                             </td>
-                            <td style="min-width:130px">
+                            <td style="min-width:160px">
                                 <div class="d-flex align-items-center gap-2">
-                                    <div class="progress flex-grow-1" style="height:8px;border-radius:4px">
+                                    <div class="progress flex-grow-1" style="height:8px;border-radius:4px" title="<?= $qtd ?> de <?= $total ?> tentativas realizadas">
                                         <div class="progress-bar <?= $barCor ?>" style="width:<?= $pct ?>%"></div>
                                     </div>
-                                    <span class="badge <?= $qtd >= 8 ? 'bg-danger' : ($qtd >= 5 ? 'bg-warning text-dark' : 'bg-secondary') ?> flex-shrink-0">
-                                        <?= $qtd ?>/<?= $total ?>
-                                    </span>
+                                    <div class="flex-shrink-0 text-end" style="min-width:90px">
+                                        <span class="badge <?= $bdgCor ?>"><?= $qtd ?>/<?= $total ?></span>
+                                        <br><small class="text-muted" style="font-size:.7rem">faltam <?= $faltam ?></small>
+                                    </div>
                                 </div>
                             </td>
                         </tr>

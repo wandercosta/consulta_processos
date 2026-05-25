@@ -32,20 +32,23 @@ class ProcessoModel
 
     public function getProximosDaFila(): array
     {
-        return $this->db->query("
+        $max  = $this->maxTentativas();
+        $stmt = $this->db->prepare("
             SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, qtd_consultas, criado_em FROM processos
             WHERE status_consulta = 'PENDENTE'
-               OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 60 MINUTE AND qtd_consultas < 10)
+               OR (status_consulta = 'FINALIZADO SEM ATA' AND data_ultima_consulta < NOW() - INTERVAL 60 MINUTE AND qtd_consultas < ?)
             ORDER BY CASE status_consulta WHEN 'PENDENTE' THEN 0 ELSE 1 END ASC, criado_em ASC
             LIMIT 10
-        ")->fetchAll(PDO::FETCH_ASSOC);
+        ");
+        $stmt->execute([$max]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getUltimosProcessados(): array
     {
         return $this->db->query("
             SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, status_consulta, data_ultima_consulta FROM processos
-            WHERE status_consulta IN ('FINALIZADO COM ATA', 'FINALIZADO SEM ATA', 'FINALIZADO')
+            WHERE status_consulta IN ('FINALIZADO COM ATA', 'FINALIZADO SEM ATA', 'ESGOTADO', 'FINALIZADO')
             ORDER BY data_ultima_consulta DESC
             LIMIT 10
         ")->fetchAll(PDO::FETCH_ASSOC);
@@ -59,19 +62,42 @@ class ProcessoModel
         ")->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getSemAtaAguardando(): array
+    public function getConsultando(): array
     {
         return $this->db->query("
+            SELECT id, numero_processo, tribunal, tipo_sistema, data_ato, data_ultima_consulta
+            FROM processos
+            WHERE status_consulta = 'CONSULTANDO'
+            ORDER BY data_ultima_consulta DESC
+        ")->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getSemAtaAguardando(): array
+    {
+        $max  = $this->maxTentativas();
+        $stmt = $this->db->prepare("
             SELECT id, numero_processo, tribunal, tipo_sistema, data_ato,
                    data_ultima_consulta,
                    DATE_ADD(data_ultima_consulta, INTERVAL 60 MINUTE) AS proxima_consulta,
                    qtd_consultas
             FROM processos
             WHERE status_consulta = 'FINALIZADO SEM ATA'
-              AND qtd_consultas < 10
+              AND qtd_consultas < ?
             ORDER BY proxima_consulta ASC
             LIMIT 50
-        ")->fetchAll(PDO::FETCH_ASSOC);
+        ");
+        $stmt->execute([$max]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function maxTentativas(): int
+    {
+        try {
+            $row = $this->db->query("SELECT valor FROM configuracoes WHERE chave = 'max_tentativas'")->fetch(PDO::FETCH_ASSOC);
+            return $row ? max(1, (int)$row['valor']) : 10;
+        } catch (\Exception $e) {
+            return 10;
+        }
     }
 
     public function getUltimosLogs(): array
@@ -142,14 +168,37 @@ class ProcessoModel
         return (bool)$stmt->fetch();
     }
 
+    public function findByNumero(string $numero): ?array
+    {
+        $stmt = $this->db->prepare("SELECT id, status_consulta FROM processos WHERE numero_processo = ?");
+        $stmt->execute([$numero]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
+    public function reativarEsgotado(int $id): void
+    {
+        $this->db->prepare("
+            UPDATE processos
+            SET status_consulta = 'PENDENTE',
+                qtd_consultas   = 0,
+                mensagem_erro   = NULL,
+                data_ultima_consulta = NOW()
+            WHERE id = ?
+        ")->execute([$id]);
+    }
+
     public function criar(string $numero, string $tribunal, ?string $dataAto = null, ?string $codApi = null): int
     {
-        $tipo = self::inferirTipo($numero, $tribunal);
+        $tipo   = self::inferirTipo($numero, $tribunal);
+        $status = $tipo === 'DESCONHECIDO' ? 'NÃO COMPATÍVEL' : 'PENDENTE';
+        $erro   = $tipo === 'DESCONHECIDO' ? 'Tipo de processo não reconhecido para o tribunal informado. Nenhum sistema compatível identificado.' : null;
+
         $stmt = $this->db->prepare("
-            INSERT INTO processos (numero_processo, cod_api, tribunal, tipo_sistema, data_ato, status_consulta, criado_em)
-            VALUES (?, ?, ?, ?, ?, 'PENDENTE', NOW())
+            INSERT INTO processos (numero_processo, cod_api, tribunal, tipo_sistema, data_ato, status_consulta, mensagem_erro, criado_em)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
         ");
-        $stmt->execute([$numero, $codApi ?: null, $tribunal, $tipo, $dataAto ?: null]);
+        $stmt->execute([$numero, $codApi ?: null, $tribunal, $tipo, $dataAto ?: null, $status, $erro]);
         return (int)$this->db->lastInsertId();
     }
 
@@ -162,6 +211,16 @@ class ProcessoModel
             if ($primeiro === '5')                    return 'PJE';
             if (in_array($primeiro, ['0', '1'], true)) return 'EPROC';
             if ($primeiro === '2')                    return 'PROCON';
+        }
+
+        if ($tribunal === 'RJ') {
+            // Se NÃO está no formato CNJ (NNNNNNN-DD.AAAA.J.TT.OOOO) → PROCON
+            if (!preg_match('/^\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}$/', trim($numero))) {
+                return 'PROCON';
+            }
+            $dois = substr($digitos, 0, 2);
+            if ($dois === '08') return 'PJE';
+            if ($dois === '01') return 'TRABALHISTA';
         }
 
         return 'DESCONHECIDO';
